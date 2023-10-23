@@ -145,8 +145,7 @@ static TOKEN gettok() {
     columnNo++;
   }
 
-  if (isalpha(LastChar) ||
-      (LastChar == '_')) { // identifier: [a-zA-Z_][a-zA-Z_0-9]*
+  if (isalpha(LastChar) || (LastChar == '_')) { // identifier: [a-zA-Z_][a-zA-Z_0-9]*
     IdentifierStr = LastChar;
     columnNo++;
 
@@ -416,6 +415,8 @@ public:
 // Recursive Descent Parser - Function call for each production
 //===----------------------------------------------------------------------===//
 
+// The tokens are stored in program_tokens
+
 /* Add function calls for each production */
 
 // program ::= extern_list decl_list
@@ -459,15 +460,26 @@ int main(int argc, char **argv) {
   lineNo = 1;
   columnNo = 1;
 
+  // make a queue of tokens
+  static std::deque<TOKEN> program_tokens;
+
   // get the first token
   getNextToken();
+  program_tokens.push_back(CurTok);
   while (CurTok.type != EOF_TOK) {
-    fprintf(stderr, "Token: %s with type %d\n", CurTok.lexeme.c_str(),
-            CurTok.type);
+    fprintf(stderr, "Token: %s with type %d\n", CurTok.lexeme.c_str(), CurTok.type);
     getNextToken();
+    program_tokens.push_back(CurTok);
   }
+  // remove the last EOF_TOK
+  program_tokens.pop_back();
   fprintf(stderr, "Lexer Finished\n");
 
+  // print our deque of tokens
+  for (int i = 0; i<program_tokens.size(); i++){
+    fprintf(stderr, "Token: %s with type %d\n", program_tokens[i].lexeme.c_str(), program_tokens[i].type);
+  }
+      
   // Make the module, which holds all the code.
   TheModule = std::make_unique<Module>("mini-c", TheContext);
 
