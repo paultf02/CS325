@@ -6,4 +6,8 @@ mccomp: mccomp.cpp
 	$(CXX) mccomp.cpp $(CFLAGS) -o mccomp
 
 clean:
-	rm -rf mccomp 
+	rm -rf mccomp
+
+firstfollow: firstfollow.cpp
+	$(CXX) firstfollow.cpp $(CFLAGS) -o firstfollow
+
