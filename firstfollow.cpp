@@ -13,8 +13,10 @@ int main(){
     std::ifstream myfile ("transformedgrammar.txt");
     std::string mystring;
     if (myfile.is_open()){
-        myfile >> mystring;
-        std::cout << mystring;
+        while (myfile.good()){
+            myfile >> mystring;
+            std::cout << mystring;
+        }
     }
     myfile.close();
     return 0;
