@@ -12,7 +12,7 @@
 int main(){
     std::ifstream myfile ("transformedgrammar.txt");
     std::string mystring;
-    if (myfile.open()){
+    if (myfile.is_open()){
         myfile >> mystring;
         std::cout << mystring;
     }
