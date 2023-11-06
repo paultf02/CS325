@@ -1,0 +1,10 @@
+"extern"
+IDENT
+"("
+")"
+";"
+"int"
+"float"
+"bool"
+"{"
+"}"

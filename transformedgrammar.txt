@@ -28,7 +28,7 @@ params ::=
 	| epsilon
 param_list ::= param param_list1
 param_list1 ::=
-	| param param_list1
+	| "," param param_list1
 	| epsilon
 param ::= var_type IDENT
 block ::= "{" local_decls stmt_list "}"

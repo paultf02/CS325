@@ -11,7 +11,7 @@ var_type -> "int" | "float" | "bool"
 fun_decl -> type_spec IDENT "(" params ")" block
 params -> param_list | "void" | EPSILON
 param_list -> param param_list1
-param_list1 -> param param_list1 | EPSILON
+param_list1 -> "," param param_list1 | EPSILON
 param -> var_type IDENT
 block -> "{" local_decls stmt_list "}"
 local_decls -> local_decls1
