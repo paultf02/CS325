@@ -1,3 +1,4 @@
+start -> program EOF
 program -> extern_list decl_list | decl_list
 extern_list -> extern extern_list1
 extern_list1 -> extern extern_list1 | epsilon

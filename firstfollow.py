@@ -116,49 +116,50 @@ print("Computing first sets")
 for term in first.keys():
     if first[term] == None:
         findfirst(term)
-    #print(f"{term} has first set:\n{first[term]}")
+    print(f"{term} has first set:\n{first[term]}")
     
 
 print("finished computing first sets")
 
 ##################FOLLOW SET CODE
-first = {term: None for term in lhslist}
-first["epsilon"] = set()
-for t in terminals:
-    first[t] = set([t])
+# follow = {term: None for term in lhslist}
+# follow["epsilon"] = set()
+# for t in terminals:
+#     follow[t] = set([t])
     
-def findfirst(term):
-    if first[term] != None:
-        #epsilon and terminals should exit here
-        return first[term]
-    else:
-        #print(term)
-        #only non terminals go further than here
-        thisfirstset = set()
-        i = index[term]
-        rhs = rhslist[i]
+# #we go production by production
+# def findfollow(term):
+#     if first[term] != None:
+#         #epsilon and terminals should exit here
+#         return first[term]
+#     else:
+#         #print(term)
+#         #only non terminals go further than here
+#         thisfirstset = set()
+#         i = index[term]
+#         rhs = rhslist[i]
         
-        for or_statement in rhs:
-            if or_statement == ["epsilon"]:
-                #we need this because epsilon has empty first set
-                thisfirstset.add("epsilon")
+#         for or_statement in rhs:
+#             if or_statement == ["epsilon"]:
+#                 #we need this because epsilon has empty first set
+#                 thisfirstset.add("epsilon")
             
-            #in this loop we find orfirstset
-            orfirstset = set()
-            allnull = True
-            for atom in or_statement:
-                if nullable[atom] == False:
-                    orfirstset = orfirstset.union(findfirst(atom))
-                    allnull = False
-                    break
-                elif nullable[atom] == True:
-                    orfirstset = orfirstset.union(findfirst(atom) - set(["epsilon"]))
-            if allnull == True:
-                orfirstset.add("epsilon")
+#             #in this loop we find orfirstset
+#             orfirstset = set()
+#             allnull = True
+#             for atom in or_statement:
+#                 if nullable[atom] == False:
+#                     orfirstset = orfirstset.union(findfirst(atom))
+#                     allnull = False
+#                     break
+#                 elif nullable[atom] == True:
+#                     orfirstset = orfirstset.union(findfirst(atom) - set(["epsilon"]))
+#             if allnull == True:
+#                 orfirstset.add("epsilon")
             
-            thisfirstset = thisfirstset.union(orfirstset)
-        first[term] = thisfirstset
-        return first[term]
+#             thisfirstset = thisfirstset.union(orfirstset)
+#         first[term] = thisfirstset
+#         return first[term]
 
 
 #save this data to file
@@ -168,10 +169,9 @@ def findfirst(term):
 # ostring = ""
 # for term in first.keys():
 #     ostring += f"{term},{nullable[term]},{first[term]},{follow[term]}\n"
-
-with open("firstfollow.csv", 'w') as fout:
-    fout.write(ostring)
-print("first and follow sets saved into csv file")
+# with open("firstfollow.csv", 'w') as fout:
+#     fout.write(ostring)
+# print("first and follow sets saved into csv file")
 
 
 
