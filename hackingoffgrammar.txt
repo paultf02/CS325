@@ -1,0 +1,34 @@
+program -> | extern_list decl_list | decl_list
+extern_list -> extern extern_list1
+extern_list1 -> | extern extern_list1 | EPSILON
+extern -> "extern" type_spec IDENT "(" params ")" ";"
+decl_list -> decl decl_list1
+decl_list1 -> | decl decl_list1 | EPSILON
+decl -> | var_decl | fun_decl
+var_decl -> var_type IDENT ";"
+type_spec -> | "void" | var_type
+var_type -> | "int" | "float" | "bool"
+fun_decl -> type_spec IDENT "(" params ")" block
+params -> | param_list | "void" | EPSILON
+param_list -> param param_list1
+param_list1 -> | param param_list1 | EPSILON
+param -> var_type IDENT
+block -> "{" local_decls stmt_list "}"
+local_decls -> local_decls1
+local_decls1 -> | local_decl local_decls1 | EPSILON
+local_decl -> var_type IDENT ";"
+stmt_list -> stmt_list1
+stmt_list1 -> | stmt stmt_list1 | EPSILON
+stmt -> | expr_stmt | block | if_stmt | while_stmt | return_stmt
+expr_stmt -> | expr ";" | ";"
+while_stmt -> "while" "(" expr ")" stmt
+if_stmt -> "if" "(" expr ")" block else_stmt
+else_stmt -> | "else" block | EPSILON
+return_stmt -> | "return" ";" | "return" expr ";"
+expr -> | IDENT "=" expr | rval
+rval -> | "-" rval rval1 | "!" rval rval1 | "(" expr ")" rval1 | IDENT leftfactor1 | INT_LIT rval1 | FLOAT_LIT rval1 | BOOL_LIT rval1
+leftfactor1 -> | rval1 | "(" args ")" rval1
+rval1 -> | "||" rval rval1 | "&&" rval rval1 | "==" rval rval1 | "!=" rval rval1 | "<=" rval rval1 | "<" rval rval1 | ">=" rval rval1 | ">" rval rval1 | "+" rval rval1 | "-" rval rval1 | "*" rval rval1 | "/" rval rval1 | "%" rval rval1 | EPSILON
+args -> | arg_list | EPSILON
+arg_list -> expr arg_list1
+arg_list1 -> | “,” expr arg_list1 | EPSILON
