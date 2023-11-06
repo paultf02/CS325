@@ -78,7 +78,7 @@ rval1 ::=
 	| "&&" rval rval1
 	| "==" rval rval1
 	| "!=" rval rval1
-	| "<=" rval rval
+	| "<=" rval rval1
 	| "<" rval rval1
 	| ">=" rval rval1
 	| ">" rval rval1
