@@ -119,7 +119,7 @@ def findfirst(term):
         return first[term]
 
 
-print("Computing first sets")
+print("starting computing first sets")
 for term in first.keys():
     if first[term] == None:
         findfirst(term)
@@ -180,21 +180,67 @@ print("Dependencies")
 #[print(f"{key}: {value}") for (key, value) in dependencies.items()]
 [print(f"{lhs}: {dependencies[lhs]}") for lhs in lhssorted]
 
+# We have to deal with two problems
+# If followset(A) depends on followset(B) but B is after A in lhssorted
+# this means last appearance of B is after last appearance of A
+
+# this dependency graph has nodes that are sets
+# there is an arrow from the node of set X to the node of set Y if
+# set X contains set Y
+# there are two types of set that can be a node.
+# a node could be a follow set. this can have some or no outgoing arrows
+# a node could be a first set. this definitely has 0 outgoing arrows since we have already computed it
+# if we have a cycle then we need to contract all edges in the cycle
+# we keep contracting edges until the graph has no cycles
+# note that the number of connected components never change throughout this process of contracting
+
+# how do we do this in code
+
+# let G = dependencies
+# let A1, ..., Ak be a cycle k>=2
+# Let Gprime = G
+# union all the follow and first dependencies of A1,...,Ak and remove A1,...,Ak followdeps to get followdeps, firstdeps
+# delete A1,...,Ak from Gprime
+# add the tuple (A1,...,Ak) to Gprimes keys with followdeps and first deps
+# repeat to get a final graph G with no cycles
+
+G = dependencies.copy()
+namenum = 0
+numtoterms = {}
+
+while True:
+    cycle = find_cycle(G)
+    if cycle == None:
+        break
+    Gprime = G.copy()
+    newfollowdeps = set()
+
+    
+
+
+
+
+print("lhs that depend on followsets that are defined below")
+for linenum, lhs in enumerate(lhssorted, start=1):
+    for dependency in dependencies[lhs]["follow"]:
+        if last_appearance[dependency] >= linenum:
+            print(f"lhs: {lhs}, linenum: {linenum}, dependency: {dependency}, last appearance: {last_appearance[dependency]} ")
+#print(last_appearance["stmt"])
 
 #now compute follow sets
-for nonterminal in lhssorted:
-    print(f"{nonterminal} follow:")
-    thisfollowset = set()
-    followdep = dependencies[nonterminal]["follow"]
-    firstdep = dependencies[nonterminal]["first"]
-    for a in firstdep:
-        thisfollowset.update(first[a] - set("epsilon"))
-    for a in followdep:
-        if a != nonterminal:
-            thisfollowset.update(follow[a])
-    follow[nonterminal] = thisfollowset
-    print(follow[nonterminal])
-
+# for nonterminal in lhssorted:
+#     print(f"{nonterminal} follow:")
+#     thisfollowset = set()
+#     followdep = dependencies[nonterminal]["follow"]
+#     firstdep = dependencies[nonterminal]["first"]
+#     for a in firstdep:
+#         thisfollowset.update(first[a] - set("epsilon"))
+#     for a in followdep:
+#         if a != nonterminal:
+#             thisfollowset.update(follow[a])
+#     follow[nonterminal] = thisfollowset
+#     print(follow[nonterminal])
+# print("finished computing follow sets")
 
 
 
@@ -202,7 +248,7 @@ for nonterminal in lhssorted:
 
 #[print(f"{key}: {value}") for (key, value) in lhssorted]
 
-print("finished computing follow sets")
+
 
 
 
