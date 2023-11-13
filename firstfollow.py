@@ -306,9 +306,9 @@ while True:
 
 
 print("our final graphs is:")
-[print(f"{key}: {value}") for (key, value) in G.items()]
+# [print(f"{key}: {value}") for (key, value) in G.items()]
 print("the key for new nodes is:")
-[print(f"{key}: {value}") for (key, value) in nametoterms.items()]
+# [print(f"{key}: {value}") for (key, value) in nametoterms.items()]
 
 # now we need to topological sort the vertices of G
 
@@ -335,7 +335,7 @@ def topsort(graph):
 tsortedvertices = list(reversed(topsort(G)))
 print("the topological sorted vertices of the graph are:")
 #[print(v) for v in tsortedvertices]
-print(tsortedvertices)
+#print(tsortedvertices)
 
 
 follow = {lhs: None for lhs in tsortedvertices}
@@ -367,8 +367,8 @@ for compound in nametoterms.keys():
         follow.pop(compound)
 
 
-print("the follow sets are:")
-[print(f"{key}: {value}") for (key, value) in follow.items()]
+# print("the follow sets are:")
+# [print(f"{key}: {value}") for (key, value) in follow.items()]
 
 print(f"number of terms we computed followsets for: {len(follow.keys())}, number of terms in lhslist: {len(lhslist)}")
 assert len(follow.keys()) == len(lhslist)
@@ -387,6 +387,40 @@ with open("firstfollow.csv", 'w') as fout:
     fout.write(ostring)
 print("first and follow sets saved into csv file")
 
+print("starting building parser table")
+
+def sentence_first(sentence):
+    firstset = set()
+    for word in sentence:
+        if nullable[word]:
+            firstset.update(first[word] - set("epsilon"))
+        else:
+            firstset.update(first[word])
+            return firstset
+    if sentencenull(sentence):
+        firstset.add("epsilon")
+    return firstset
+    
+
+parser_table = {(nonterminal, terminal): [] for nonterminal in lhslist for terminal in terminals}
+for lhs in lhslist:
+    for terminal in terminals:
+        for i in range(len(rhslist)):
+            rhs = rhslist[i]
+            for j in range(len(rhs)):
+                or_sequence = rhs[j]
+                if terminal in sentence_first(or_sequence):
+                    parser_table[(lhs, terminal)].append((i,j))
+                if sentencenull(or_sequence) and (terminal in follow[lhs]):
+                    parser_table[(lhs, terminal)].append((i,j))
+
+print("finished building parser table")
+t0 = [f"{key} : {value}" for key, value in parser_table.items() if len(value) == 0]
+t1 = [f"{key} : {value}" for key, value in parser_table.items() if len(value) == 1]
+tm = [f"{key} : {value}" for key, value in parser_table.items() if len(value) > 1]
+print(f"{len(t0)} cells with 0 entries\n{len(t1)} cells with 1 entry\n{len(tm)} cells with more than 1 entry")
+# print("cells with more than 1 entry:")
+# [print(item) for item in tm]
 
 
 # print("lhs that depend on followsets that are defined below")
