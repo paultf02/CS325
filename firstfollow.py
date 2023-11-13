@@ -357,10 +357,11 @@ print("finished computing follow sets")
 print("modifying so that a multiple terminal node is split")
 
 for compound in nametoterms.keys():
-    thisfollowset = follow[compound]
-    for term in nametoterms[compound]:
-        follow[term] = thisfollowset
-    follow.pop(compound)
+    if compound in follow.keys():
+        thisfollowset = follow[compound]
+        for term in nametoterms[compound]:
+            follow[term] = thisfollowset
+        follow.pop(compound)
 
 
 print("the follow sets are:")
@@ -368,6 +369,20 @@ print("the follow sets are:")
 
 print(f"number of terms we computed followsets for: {len(follow.keys())}, number of terms in lhslist: {len(lhslist)}")
 assert len(follow.keys()) == len(lhslist)
+
+
+for t in terminals:
+    follow[t] = "N/A"
+follow["epsilon"] = "N/A"
+#save this data to file
+#csv in the form
+#term,nullable,firstset,followset
+ostring = ""
+for term in first.keys():
+    ostring += f"{term},{nullable[term]},{first[term]},{follow[term]}\n"
+with open("firstfollow.csv", 'w') as fout:
+    fout.write(ostring)
+print("first and follow sets saved into csv file")
 
 
 
@@ -446,15 +461,7 @@ assert len(follow.keys()) == len(lhslist)
 #         return first[term]
 
 
-#save this data to file
-#csv in the form
-#term,nullable,firstset,followset
-# ostring = ""
-# for term in first.keys():
-#     ostring += f"{term},{nullable[term]},{first[term]},{follow[term]}\n"
-# with open("firstfollow.csv", 'w') as fout:
-#     fout.write(ostring)
-# print("first and follow sets saved into csv file")
+
  
 
 
