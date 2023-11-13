@@ -141,7 +141,7 @@ print("finished computing first sets")
 # first set dependencies is a list
 # now order the terms by their last appearance
 
-print("starting computing follow sets")
+print("starting to build follow set dependencies")
 
 last_appearance = {nonterminal: -1 for nonterminal in lhslist}
 for linenum in range(len(lhslist)):
@@ -154,8 +154,8 @@ for linenum in range(len(lhslist)):
 lhssorted = sorted(last_appearance.items(), key=(lambda x: x[1]))
 lhssorted = list(map(lambda x: x[0], lhssorted))
 #[print(f"{key}: {value}") for (key, value) in last_appearance.items()]
-dependencies = {lhs: {"follow":[], "first":[]} for lhs in lhslist} # follow_dependencies, first_dependencies
-follow = {lhs: None for lhs in lhslist}
+dependencies = {lhs: {"follow":set(), "first":set()} for lhs in lhslist} # follow_dependencies, first_dependencies
+
 for linenum in range(len(rhslist)):
     lhs = lhslist[linenum]
     rhs = rhslist[linenum]
@@ -168,17 +168,18 @@ for linenum in range(len(rhslist)):
             if (i < l-1):
                 nextatom = orsequence[i+1]                
                 for j in range(i+1, l):
-                    dependencies[thisatom]["first"].append(nextatom)
+                    dependencies[thisatom]["first"].add(nextatom)
                     if nullable[orsequence[j]] == False:
                         break
                 if sentencenull(orsequence[i+1:]) == True:
-                    dependencies[thisatom]["follow"].append(lhs)
+                    dependencies[thisatom]["follow"].add(lhs)
             elif i == l-1:
-                dependencies[thisatom]["follow"].append(lhs)
+                dependencies[thisatom]["follow"].add(lhs)
+            dependencies[thisatom]["follow"] = dependencies[thisatom]["follow"] - set([thisatom])
 
-print("Dependencies")
+print("finished building follow set dependencies")
 #[print(f"{key}: {value}") for (key, value) in dependencies.items()]
-[print(f"{lhs}: {dependencies[lhs]}") for lhs in lhssorted]
+#[print(f"{lhs}: {dependencies[lhs]}") for lhs in lhssorted]
 
 # We have to deal with two problems
 # If followset(A) depends on followset(B) but B is after A in lhssorted
@@ -204,27 +205,178 @@ print("Dependencies")
 # add the tuple (A1,...,Ak) to Gprimes keys with followdeps and first deps
 # repeat to get a final graph G with no cycles
 
-G = dependencies.copy()
-namenum = 0
-numtoterms = {}
+print("contracting edges till dependency digraph has no cycles")
 
+def get_cycle(stack, vertex, detected_cycles):
+    # vertex is in stack
+    # we compute the cycle from the top of the stack to vertex 
+    # after the algorithm is done the stack is popped till vertex is the last one to be popped
+    cycle = []
+    cycle.append(stack[-1])
+    stack.pop()
+    while cycle[-1] != vertex:
+        cycle.append(stack[-1])
+        stack.pop()
+    if cycle not in detected_cycles:
+        detected_cycles.append(cycle)
+    return stack, detected_cycles
+
+def processDFSTree(graph, stack, visited, detected_cycles):
+    #print(f"stack at the beginning of call: {stack}")
+    if len(stack) == 0:
+        #print("stack is empty")
+        return stack, visited, detected_cycles
+    #print(f"the top of the stack is {stack[-1]}")
+    for vertex in graph[stack[-1]]["follow"]:
+        # looking at the children of the top of the stack
+        if visited[vertex] == "in_stack":
+            _, detected_cycles = get_cycle(stack.copy(), vertex, detected_cycles)
+            # now stack is pointing to below vertex (possibly empty)
+            # print(f"we have detected the following cycles: {detected_cycles}")
+            #print(f"stack: {stack}")
+        elif visited[vertex] == "not_visited":
+            stack.append(vertex)
+            # newstack = stack.copy() + [vertex]
+            visited[vertex] = "in_stack"
+            stack, visited, detected_cycles = processDFSTree(graph, stack.copy(), visited, detected_cycles)
+    
+    x = [name for (name, val) in visited.items() if val != "not_visited"]
+    #print(f"the stack here is: {stack}\nvisited is: {x}")
+    #print(f"the stack here is: {stack}")
+    visited[stack[-1]] = "visited"
+    stack.pop()
+    #print(f"stack at the end of the call: {stack}")
+    return stack, visited, detected_cycles
+
+
+
+def find_cycle(graph):
+    visited = {v: "not_visited" for v in graph.keys()}
+    for vertex in graph.keys():
+        if visited[vertex] == "not_visited":
+            stack = []
+            stack.append(vertex)
+            visited[vertex] = "in_stack"
+            detected_cycles = []
+            #stack points to vertex and this should always be at the base of the stack
+            stack, visited, detected_cycles = processDFSTree(graph, stack, visited, detected_cycles)
+            if len(detected_cycles) > 0:
+                return detected_cycles[-1]
+    return None
+
+G = dependencies.copy()
+availablename = 0
+nametoterms = {}
+# print(f"the graph is:")
+# [print(f"{key}: {value}") for (key, value) in G.items()]
 while True:
-    cycle = find_cycle(G)
+    print("finding cycle")
+    cycle = find_cycle(G) # note that cycle can only be where all nodes in cycle are follow sets
+    print(f"availablename: {availablename}, cycle: {cycle}")
     if cycle == None:
         break
+    
     Gprime = G.copy()
     newfollowdeps = set()
+    newfirstdeps = set()
+    for node in cycle:
+        newfollowdeps.update(G[node]["follow"])
+        newfirstdeps.update(G[node]["first"])
+        Gprime.pop(node)
+    newfollowdeps = newfollowdeps - set(cycle)
+    Gprime[availablename] = {"follow":set(), "first":set()}
+    Gprime[availablename]["follow"] = newfollowdeps.copy()
+    Gprime[availablename]["first"] = newfirstdeps.copy()
+    nametoterms[availablename] = cycle.copy()
 
-    
+    #now we need to replace any reference in follow to one of the elements of cycle with a reference to available name
+    for vertex in Gprime.keys():
+        for x in Gprime[vertex]["follow"]:
+            if x in cycle:
+                Gprime[vertex]["follow"].remove(x)
+                Gprime[vertex]["follow"].add(availablename)
+    print("graph contracted")
+    availablename += 1
+    G = Gprime.copy()
+    # print(f"the graph is:")
+    # [print(f"{key}: {value}") for (key, value) in G.items()]
+    # print(nametoterms)
+
+
+print("our final graphs is:")
+[print(f"{key}: {value}") for (key, value) in G.items()]
+print("the key for new nodes is:")
+[print(f"{key}: {value}") for (key, value) in nametoterms.items()]
+
+# now we need to topological sort the vertices of G
+
+
+def topsortutil(graph, vertex, visited, stack):
+    #print(vertex)
+    #print(stack)
+    visited[vertex] = True
+    for newvertex in graph[vertex]["follow"]:
+        #print(f"new vertex is: {newvertex}")
+        if visited[newvertex] == False:
+            visited, stack = topsortutil(graph, newvertex, visited, stack.copy())
+    stack.insert(0, vertex)
+    return visited, stack
+
+def topsort(graph):
+    visited = {vertex: False for vertex in graph.keys()}
+    stack = []
+    for vertex in graph.keys():
+        if visited[vertex] == False:
+            visited, stack = topsortutil(graph, vertex, visited, stack.copy())
+    return stack
+
+tsortedvertices = list(reversed(topsort(G)))
+print("the topological sorted vertices of the graph are:")
+#[print(v) for v in tsortedvertices]
+print(tsortedvertices)
+
+
+follow = {lhs: None for lhs in tsortedvertices}
+#now compute follow sets
+print("starting computing follow sets")
+for nonterminal in tsortedvertices:
+    #print("hi")
+    #print(f"{nonterminal} follow:")
+    thisfollowset = set()
+    followdep = G[nonterminal]["follow"]
+    firstdep = G[nonterminal]["first"]
+    for a in firstdep:
+        thisfollowset.update(first[a] - set("epsilon"))
+    for a in followdep:
+        if a != nonterminal:
+            thisfollowset.update(follow[a])
+    follow[nonterminal] = thisfollowset
+    #print(follow[nonterminal])
+print("finished computing follow sets")
+
+print("modifying so that a multiple terminal node is split")
+
+for compound in nametoterms.keys():
+    thisfollowset = follow[compound]
+    for term in nametoterms[compound]:
+        follow[term] = thisfollowset
+    follow.pop(compound)
+
+
+print("the follow sets are:")
+[print(f"{key}: {value}") for (key, value) in follow.items()]
+
+print(f"number of terms we computed followsets for: {len(follow.keys())}, number of terms in lhslist: {len(lhslist)}")
+assert len(follow.keys()) == len(lhslist)
 
 
 
+# print("lhs that depend on followsets that are defined below")
+# for linenum, lhs in enumerate(lhssorted, start=1):
+#     for dependency in dependencies[lhs]["follow"]:
+#         if last_appearance[dependency] >= linenum:
+#             print(f"lhs: {lhs}, linenum: {linenum}, dependency: {dependency}, last appearance: {last_appearance[dependency]} ")
 
-print("lhs that depend on followsets that are defined below")
-for linenum, lhs in enumerate(lhssorted, start=1):
-    for dependency in dependencies[lhs]["follow"]:
-        if last_appearance[dependency] >= linenum:
-            print(f"lhs: {lhs}, linenum: {linenum}, dependency: {dependency}, last appearance: {last_appearance[dependency]} ")
 #print(last_appearance["stmt"])
 
 #now compute follow sets
