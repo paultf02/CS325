@@ -261,7 +261,9 @@ def find_cycle(graph):
             #stack points to vertex and this should always be at the base of the stack
             stack, visited, detected_cycles = processDFSTree(graph, stack, visited, detected_cycles)
             if len(detected_cycles) > 0:
-                return detected_cycles[-1]
+                #actually this is a hack
+                cycle = max(detected_cycles, key=len)
+                return cycle
     return None
 
 G = dependencies.copy()
@@ -355,7 +357,8 @@ for nonterminal in tsortedvertices:
 print("finished computing follow sets")
 
 print("modifying so that a multiple terminal node is split")
-
+#this section has a possible error. if we need to do it for a different example
+# and there are multiple rounds of contraction, this will cause an error.
 for compound in nametoterms.keys():
     if compound in follow.keys():
         thisfollowset = follow[compound]
