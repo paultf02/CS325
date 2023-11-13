@@ -380,7 +380,7 @@ follow["epsilon"] = "N/A"
 #save this data to file
 #csv in the form
 #term,nullable,firstset,followset
-ostring = ""
+ostring = "term,nullable,firstset,followset\n"
 for term in first.keys():
     ostring += f"{term},{nullable[term]},{first[term]},{follow[term]}\n"
 with open("firstfollow.csv", 'w') as fout:
