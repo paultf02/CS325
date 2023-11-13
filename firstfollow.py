@@ -348,10 +348,20 @@ for nonterminal in tsortedvertices:
     followdep = G[nonterminal]["follow"]
     firstdep = G[nonterminal]["first"]
     for a in firstdep:
-        thisfollowset.update(first[a] - set("epsilon"))
+        thisfollowset.update(first[a] - set(["epsilon"]))
+        # if "epsilon" in (first[a] - set(["epsilon"])):
+        #     print("we have an error here")
     for a in followdep:
         if a != nonterminal:
             thisfollowset.update(follow[a])
+            # if "epsilon" in (follow[a]):
+            #     print(f"we have an error here, a={a}")
+
+    # if "epsilon" in thisfollowset:
+    #     print(f"epsilon in followset for {nonterminal}")
+    #     print(f"followset is:\n{thisfollowset}")
+    #     print(f"dependencies are:\n{dependencies[nonterminal]}")
+    #     raise ValueError
     follow[nonterminal] = thisfollowset
     #print(follow[nonterminal])
 print("finished computing follow sets")
@@ -393,7 +403,7 @@ def sentence_first(sentence):
     firstset = set()
     for word in sentence:
         if nullable[word]:
-            firstset.update(first[word] - set("epsilon"))
+            firstset.update(first[word] - set(["epsilon"]))
         else:
             firstset.update(first[word])
             return firstset
@@ -407,20 +417,25 @@ for lhs in lhslist:
     for terminal in terminals:
         for i in range(len(rhslist)):
             rhs = rhslist[i]
+            # trying this
+            if lhslist[i] != lhs:
+                continue
             for j in range(len(rhs)):
                 or_sequence = rhs[j]
                 if terminal in sentence_first(or_sequence):
-                    parser_table[(lhs, terminal)].append((i,j))
+                    if (i, j) not in parser_table[(lhs, terminal)]:
+                        parser_table[(lhs, terminal)].append((i,j))
                 if sentencenull(or_sequence) and (terminal in follow[lhs]):
-                    parser_table[(lhs, terminal)].append((i,j))
+                    if (i, j) not in parser_table[(lhs, terminal)]:
+                        parser_table[(lhs, terminal)].append((i,j))
 
 print("finished building parser table")
 t0 = [f"{key} : {value}" for key, value in parser_table.items() if len(value) == 0]
 t1 = [f"{key} : {value}" for key, value in parser_table.items() if len(value) == 1]
 tm = [f"{key} : {value}" for key, value in parser_table.items() if len(value) > 1]
 print(f"{len(t0)} cells with 0 entries\n{len(t1)} cells with 1 entry\n{len(tm)} cells with more than 1 entry")
-# print("cells with more than 1 entry:")
-# [print(item) for item in tm]
+print("cells with more than 1 entry:")
+[print(item) for item in tm]
 
 
 # print("lhs that depend on followsets that are defined below")

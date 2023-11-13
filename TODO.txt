@@ -3,3 +3,12 @@ why are there two minus signs in grammar? line 29 and line 31 in transformedgram
 why are there no commas in params?
 do we add EOF to the grammar?
 
+now we have first and follow sets
+we need to build the table and see how many cells have multiple entries
+can we change the grammar so it becomes LL(1)?
+can we easily modify the code so we can parse LL(k)?
+
+for ll(k) > 2 we need to compute first_k and follow_k sets
+how do we do this
+
+epsilon cannot be in any follow sets
