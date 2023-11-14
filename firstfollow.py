@@ -1,9 +1,9 @@
 # we have 3 categories of term
 # nonterminal, terminal, epsilon
 
-with open("terminals.txt", "r") as fin:
+with open("terminals2.txt", "r") as fin:
     terminals = [line.rstrip() for line in fin.readlines()]
-with open("transformedgrammar4.txt", "r") as fin:
+with open("transformedgrammar5.txt", "r") as fin:
     lines = fin.readlines()
 
 lhslist = [] # list of nonterminals in order of production
@@ -385,22 +385,23 @@ assert len(follow.keys()) == len(lhslist)
 
 
 for t in terminals:
-    follow[t] = "N/A"
-follow["epsilon"] = "N/A"
+    follow[t] = set(["N/A"])
+follow["epsilon"] = set(["N/A"])
 #save this data to file
 #csv in the form
 #term,nullable,firstset,followset
 def to_string(thisset):
     string = '"'
     for term in thisset:
-        if term[0] == "'":
+        if term[0] == '"':
             string += term[1:-1]
         else:
             string += term
         string += ","
-    string = string[0:-1] #remove last comma
-    print(string)
-    string.replace('"', "'")
+    if len(string) > 1:
+        string = string[0:-1] #remove last comma if thisset not empty
+    #print(string)
+    #string.replace('"', "'")
     print(string)
     string += '"'
     return string
