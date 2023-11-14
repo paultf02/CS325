@@ -1,0 +1,27 @@
+rval -> "-" rval rval1 | "!" rval rval1 | "(" expr ")" rval1 | IDENT leftfactor1 | INT_LIT rval1 | FLOAT_LIT rval1 | BOOL_LIT rval1
+leftfactor1 -> rval1 | "(" args ")" rval1
+rval1 -> "||" rval rval1 | "&&" rval rval1 | "==" rval rval1 | "!=" rval rval1 | "<=" rval rval1 | "<" rval rval1 | ">=" rval rval1 | ">" rval rval1 | "+" rval rval1 | "-" rval rval1 | "*" rval rval1 | "/" rval rval1 | "%" rval rval1 | epsilon
+
+
+  # operators in order of increasing precedence
+  expr ::= IDENT "=" expr
+        | rval
+  rval ::= rval "||" rval
+        | rval "&&" rval
+        | rval "==" rval | rval "!=" rval
+        | rval "<=" rval | rval "<" rval | rval ">=" rval | rval ">" rval
+        | rval "+" rval  | rval "-" rval
+        | rval "*" rval  | rval "/" rval  | rval "%" rval
+        | "-" rval | "!" rval
+        | "(" expr ")"
+        | IDENT | IDENT "(" args ")"
+        | INT_LIT | FLOAT_LIT | BOOL_LIT
+
+rval -> rval1 "||" rval | rval1
+rval1 -> rval2 "&&" rval1 | rval2
+rval2 -> rval3 "==" rval2 | rval3 "==" rval2 | rval3
+rval3 -> rval4 "<=" rval3 | rval4 "<" rval3 | rval4 ">=" rval3 | rval4 ">" rval3 | rval4
+rval4 -> rval5 "+" rval4  | rval5 "-" rval4 | rval5
+rval5 -> rval6 "*" rval5  | rval6 "/" rval5  | rval6 "%" rval5 | rval6
+rval6 -> "-" rval7 | "!" rval7 | rval7
+rval7 -> "(" expr ")" | IDENT | IDENT "(" args ")" | INT_LIT | FLOAT_LIT | BOOL_LIT

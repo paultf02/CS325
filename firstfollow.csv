@@ -1,70 +1,75 @@
 term,nullable,firstset,followset
-start,False,{'"extern"', '"int"', '"bool"', '"float"', '"void"'},set()
-program,False,{'"extern"', '"int"', '"bool"', '"float"', '"void"'},{'EOF'}
-extern_list,False,{'"extern"'},{'"int"', '"bool"', '"float"', '"void"'}
-extern_list1,True,{'"extern"', 'epsilon'},{'"int"', '"bool"', '"float"', '"void"'}
-extern,False,{'"extern"'},{'"extern"', '"float"', '"int"', '"bool"', '"void"'}
-decl_list,False,{'"int"', '"bool"', '"float"', '"void"'},{'EOF'}
-decl_list1,True,{'"int"', '"bool"', '"float"', '"void"', 'epsilon'},{'EOF'}
-decl,False,{'"int"', '"bool"', '"float"', '"void"'},{'EOF', '"int"', '"bool"', '"float"', '"void"'}
-var_decl,False,{'"int"', '"bool"', '"float"'},{'EOF', '"int"', '"bool"', '"float"', '"void"'}
-type_spec,False,{'"int"', '"bool"', '"float"', '"void"'},{'IDENT'}
-var_type,False,{'"int"', '"bool"', '"float"'},{'IDENT'}
-fun_decl,False,{'"int"', '"bool"', '"float"', '"void"'},{'EOF', '"int"', '"bool"', '"float"', '"void"'}
-params,True,{'"int"', '"bool"', '"float"', '"void"', 'epsilon'},{'")"'}
-param_list,False,{'"int"', '"bool"', '"float"'},{'")"'}
-param_list1,True,{'","', 'epsilon'},{'")"'}
-param,False,{'"int"', '"bool"', '"float"'},{'","', '")"'}
-block,False,{'"{"'},{'FLOAT_LIT', '"return"', '"float"', '";"', '"if"', 'IDENT', '"bool"', '"while"', '"!"', '"-"', 'EOF', 'INT_LIT', '"}"', '"else"', '"void"', 'BOOL_LIT', '"int"', '"("', '"{"'}
-local_decls,True,{'"int"', '"bool"', '"float"', 'epsilon'},{'"!"', '"-"', 'INT_LIT', 'FLOAT_LIT', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"while"', '"{"'}
-local_decl,False,{'"int"', '"bool"', '"float"'},{'"!"', '"-"', 'INT_LIT', 'FLOAT_LIT', '"float"', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"int"', '"bool"', '"while"', '"{"'}
-stmt_list,True,{'"!"', '"-"', 'INT_LIT', 'FLOAT_LIT', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"while"', '"{"', 'epsilon'},{'"}"'}
-stmt,False,{'"!"', '"-"', 'INT_LIT', 'FLOAT_LIT', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"while"', '"{"'},{'"!"', '"-"', 'INT_LIT', '"}"', 'FLOAT_LIT', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"while"', '"{"'}
-expr_stmt,False,{'"!"', '";"', 'BOOL_LIT', '"-"', 'INT_LIT', 'IDENT', '"("', 'FLOAT_LIT'},{'"!"', '"-"', 'INT_LIT', '"}"', 'FLOAT_LIT', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"while"', '"{"'}
-while_stmt,False,{'"while"'},{'"!"', '"-"', 'INT_LIT', '"}"', 'FLOAT_LIT', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"while"', '"{"'}
-if_stmt,False,{'"if"'},{'"!"', '"-"', 'INT_LIT', '"}"', 'FLOAT_LIT', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"while"', '"{"'}
-else_stmt,True,{'"else"', 'epsilon'},{'"!"', '"-"', 'INT_LIT', '"}"', 'FLOAT_LIT', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"while"', '"{"'}
-return_stmt,False,{'"return"'},{'"!"', '"-"', 'INT_LIT', '"}"', 'FLOAT_LIT', '"return"', '";"', 'BOOL_LIT', '"if"', 'IDENT', '"("', '"while"', '"{"'}
-expr,False,{'"!"', '"-"', 'INT_LIT', 'FLOAT_LIT', 'BOOL_LIT', 'IDENT', '"("'},{'","', '";"', '")"'}
-rval,False,{'"!"', 'FLOAT_LIT', '"-"', 'BOOL_LIT', 'IDENT', 'INT_LIT', '"("'},{'"-"', '"||"', '">="', '"!="', '"%"', '","', '";"', '"<"', '")"', '"<="', '"/"', '"&&"', '"*"', '">"', '"=="', '"+"'}
-leftfactor1,True,{'"-"', '"||"', '">="', '"!="', 'epsilon', '"%"', '"<"', '"<="', '"/"', '"("', '"&&"', '"*"', '">"', '"=="', '"+"'},{'"-"', '"||"', '">="', '"!="', '"%"', '","', '";"', '"<"', '")"', '"<="', '"/"', '"&&"', '"*"', '">"', '"=="', '"+"'}
-rval1,True,{'"/"', '"-"', '"||"', '">="', '"!="', '"%"', '"<"', '"<="', '"+"', '"&&"', '"*"', '">"', '"=="', 'epsilon'},{'"-"', '"||"', '">="', '"!="', '"%"', '","', '";"', '"<"', '")"', '"<="', '"/"', '"&&"', '"*"', '">"', '"=="', '"+"'}
-args,True,{'"!"', '"-"', 'INT_LIT', 'FLOAT_LIT', 'BOOL_LIT', 'IDENT', '"("', 'epsilon'},{'")"'}
-arg_list,False,{'"!"', 'BOOL_LIT', '"-"', 'INT_LIT', 'IDENT', '"("', 'FLOAT_LIT'},{'")"'}
-arg_list1,True,{'","', 'epsilon'},{'")"'}
-epsilon,True,set(),N/A
-"(",False,{'"("'},N/A
-")",False,{'")"'},N/A
-"{",False,{'"{"'},N/A
-"}",False,{'"}"'},N/A
-";",False,{'";"'},N/A
-",",False,{'","'},N/A
-"+",False,{'"+"'},N/A
-"-",False,{'"-"'},N/A
-"*",False,{'"*"'},N/A
-"/",False,{'"/"'},N/A
-"%",False,{'"%"'},N/A
-"<",False,{'"<"'},N/A
-">",False,{'">"'},N/A
-"!",False,{'"!"'},N/A
-"=",False,{'"="'},N/A
-"<=",False,{'"<="'},N/A
-">=",False,{'">="'},N/A
-"==",False,{'"=="'},N/A
-"!=",False,{'"!="'},N/A
-"||",False,{'"||"'},N/A
-"&&",False,{'"&&"'},N/A
-"extern",False,{'"extern"'},N/A
-"if",False,{'"if"'},N/A
-"else",False,{'"else"'},N/A
-"while",False,{'"while"'},N/A
-"return",False,{'"return"'},N/A
-"void",False,{'"void"'},N/A
-"int",False,{'"int"'},N/A
-"float",False,{'"float"'},N/A
-"bool",False,{'"bool"'},N/A
-BOOL_LIT,False,{'BOOL_LIT'},N/A
-INT_LIT,False,{'INT_LIT'},N/A
-FLOAT_LIT,False,{'FLOAT_LIT'},N/A
-IDENT,False,{'IDENT'},N/A
-EOF,False,{'EOF'},N/A
+start,False,""void","int","bool","extern","float"","
+program,False,""void","int","bool","extern","float"","EOF"
+extern_list,False,""extern"",""bool","void","int","float""
+extern_list1,True,"epsilon,"extern"",""bool","void","int","float""
+extern,False,""extern"",""bool","void","int","extern","float""
+decl_list,False,""void","float","int","bool"","EOF"
+decl_list1,True,"epsilon,"int","bool","void","float"","EOF"
+decl,False,""int","bool","void","float"",""int","bool",EOF,"void","float""
+var_decl,False,""bool","int","float"",""int","bool",EOF,"void","float""
+type_spec,False,""void","float","int","bool"","IDENT"
+var_type,False,""bool","int","float"","IDENT"
+fun_decl,False,""void","float","int","bool"",""int","bool",EOF,"void","float""
+params,True,"epsilon,"int","bool","void","float"","")""
+param_list,False,""bool","int","float"","")""
+param_list1,True,"epsilon,","","")""
+param,False,""bool","int","float"","")",",""
+block,False,""{"",""while",";","(",INT_LIT,"int",FLOAT_LIT,EOF,"if","float",BOOL_LIT,"{","else","bool","return","void","}","-",IDENT,"!""
+local_decls,True,"epsilon,"int","bool","float"","BOOL_LIT,"{","while",";","return","(",INT_LIT,"-",IDENT,FLOAT_LIT,"if","!""
+local_decl,False,""bool","int","float"","BOOL_LIT,"{","while",";","bool","return","(",INT_LIT,"-",IDENT,"int",FLOAT_LIT,"if","!","float""
+stmt_list,True,"epsilon,BOOL_LIT,"{","while",";","return","(",INT_LIT,"-",IDENT,FLOAT_LIT,"if","!"",""}""
+stmt,False,"BOOL_LIT,"{","while",";","return","(",INT_LIT,"-",IDENT,FLOAT_LIT,"if","!"","BOOL_LIT,"{","while",";","return","(",INT_LIT,"}","-",IDENT,FLOAT_LIT,"if","!""
+expr_stmt,False,"BOOL_LIT,"-",IDENT,";",FLOAT_LIT,"(",INT_LIT,"!"","BOOL_LIT,"{","while",";","return","(",INT_LIT,"}","-",IDENT,FLOAT_LIT,"if","!""
+while_stmt,False,""while"","BOOL_LIT,"{","while",";","return","(",INT_LIT,"}","-",IDENT,FLOAT_LIT,"if","!""
+if_stmt,False,""if"","BOOL_LIT,"{","while",";","return","(",INT_LIT,"}","-",IDENT,FLOAT_LIT,"if","!""
+else_stmt,True,"epsilon,"else"","BOOL_LIT,"{","while",";","return","(",INT_LIT,"}","-",IDENT,FLOAT_LIT,"if","!""
+return_stmt,False,""return"","BOOL_LIT,"{","while",";","return","(",INT_LIT,"}","-",IDENT,FLOAT_LIT,"if","!""
+expr,False,"BOOL_LIT,"(",INT_LIT,"-",IDENT,FLOAT_LIT,"!"","")",",",";""
+rval,False,"BOOL_LIT,"(",INT_LIT,"-",IDENT,FLOAT_LIT,"!"","")",",",";""
+rval1,False,"BOOL_LIT,"(",INT_LIT,"-",IDENT,FLOAT_LIT,"!"","";",")","||",",""
+rval2,False,"BOOL_LIT,"(",INT_LIT,"-",IDENT,FLOAT_LIT,"!"","")","&&",";","||",",""
+rval3,False,"BOOL_LIT,"(",INT_LIT,"-",IDENT,FLOAT_LIT,"!"","")","&&",";","||","==",",""
+rval4,False,"BOOL_LIT,"(",INT_LIT,"-",IDENT,FLOAT_LIT,"!"","",",";",">=","||",")","<=","&&","==","<",">""
+rval5,False,"BOOL_LIT,"(",INT_LIT,"-",IDENT,FLOAT_LIT,"!"","";",">=","||",")","-","<=","&&",">","+","==","<",",""
+rval6,False,"BOOL_LIT,"-",IDENT,FLOAT_LIT,"(",INT_LIT,"!"","",",";",">=","||","%",")","-","<=","&&","/","+","*","==","<",">""
+rval7,False,"BOOL_LIT,IDENT,FLOAT_LIT,"(",INT_LIT","",",";",">=","||","%",")","-","<=","&&","/","+","*","==","<",">""
+args,True,"epsilon,BOOL_LIT,"(",INT_LIT,"-",IDENT,FLOAT_LIT,"!"","")""
+arg_list,False,"BOOL_LIT,"-",IDENT,FLOAT_LIT,"(",INT_LIT,"!"","")""
+arg_list1,True,"epsilon,","","")""
+epsilon,True,","N,/,A"
+"(",False,""("","N,/,A"
+")",False,"")"","N,/,A"
+"{",False,""{"","N,/,A"
+"}",False,""}"","N,/,A"
+";",False,"";"","N,/,A"
+",",False,"","","N,/,A"
+"+",False,""+"","N,/,A"
+"-",False,""-"","N,/,A"
+"*",False,""*"","N,/,A"
+"/",False,""/"","N,/,A"
+"%",False,""%"","N,/,A"
+"<",False,""<"","N,/,A"
+">",False,"">"","N,/,A"
+"!",False,""!"","N,/,A"
+"=",False,""="","N,/,A"
+"<=",False,""<="","N,/,A"
+">=",False,"">="","N,/,A"
+"==",False,""=="","N,/,A"
+"!=",False,""!="","N,/,A"
+"||",False,""||"","N,/,A"
+"&&",False,""&&"","N,/,A"
+"extern",False,""extern"","N,/,A"
+"if",False,""if"","N,/,A"
+"else",False,""else"","N,/,A"
+"while",False,""while"","N,/,A"
+"return",False,""return"","N,/,A"
+"void",False,""void"","N,/,A"
+"int",False,""int"","N,/,A"
+"float",False,""float"","N,/,A"
+"bool",False,""bool"","N,/,A"
+BOOL_LIT,False,"BOOL_LIT","N,/,A"
+INT_LIT,False,"INT_LIT","N,/,A"
+FLOAT_LIT,False,"FLOAT_LIT","N,/,A"
+IDENT,False,"IDENT","N,/,A"
+EOF,False,"EOF","N,/,A"

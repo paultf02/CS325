@@ -54,3 +54,12 @@ Reserved identifier misuse.
 Multiple declaration of variable in a scope.
 Accessing an out of scope variable.
 Actual and formal parameter mismatch.
+
+grammar enforced precedence
+
+To do:
+Add grammar enforced operator precedence
+Remove left recursion
+Compute first and follow sets
+Use appropriate lookahead for certain cases to determine production to use
+Make a predictive recursive descent parser. No backtracking.

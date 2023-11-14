@@ -3,7 +3,7 @@
 
 with open("terminals.txt", "r") as fin:
     terminals = [line.rstrip() for line in fin.readlines()]
-with open("transformedgrammar3.txt", "r") as fin:
+with open("transformedgrammar4.txt", "r") as fin:
     lines = fin.readlines()
 
 lhslist = [] # list of nonterminals in order of production
@@ -390,9 +390,27 @@ follow["epsilon"] = "N/A"
 #save this data to file
 #csv in the form
 #term,nullable,firstset,followset
+def to_string(thisset):
+    string = '"'
+    for term in thisset:
+        if term[0] == "'":
+            string += term[1:-1]
+        else:
+            string += term
+        string += ","
+    string = string[0:-1] #remove last comma
+    print(string)
+    string.replace('"', "'")
+    print(string)
+    string += '"'
+    return string
+
 ostring = "term,nullable,firstset,followset\n"
 for term in first.keys():
-    ostring += f"{term},{nullable[term]},{first[term]},{follow[term]}\n"
+    #print(first[term])
+    thisrow = f"{term},{nullable[term]},{to_string(first[term])},{to_string(follow[term])}\n"
+    ostring += thisrow
+    print(thisrow)
 with open("firstfollow.csv", 'w') as fout:
     fout.write(ostring)
 print("first and follow sets saved into csv file")
