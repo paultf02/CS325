@@ -18,3 +18,39 @@ in the grammar how can you just take void as a param?
 int main(void){}; 
 is the above valid?
 see https://stackoverflow.com/questions/693788/is-it-better-to-use-c-void-arguments-void-foovoid-or-not-void-foo
+
+for rval1 in the ll parsing table, can we just pick the production that is not epsilon if the next character is + or whatever?
+
+let the terminal in the second index of tuple be called +1 token.
+('decl', '"int"') : [(7, 0), (7, 1)] # if +2 is IDENT and +3 is ; then do (7,0) | if +2 is IDENT and +3 is ( then do (7, 1)
+('decl', '"float"') : [(7, 0), (7, 1)] # if +2 is IDENT and +3 is ; then do (7,0) | if +2 is IDENT and +3 is ( then do (7, 1)
+('decl', '"bool"') : [(7, 0), (7, 1)] # if +2 is IDENT and +3 is ; then do (7,0) | if +2 is IDENT and +3 is ( then do (7, 1)
+('return_stmt', '"return"') : [(25, 0), (25, 1)] # if +2 is IDENT then do (25, 0) | otherwise do (25, 1)
+('expr', 'IDENT') : [(26, 0), (26, 1)] # if +2 is = then do (26, 0) | otherwise do (26, 1)
+('rval1', '"+"') : [(29, 8), (29, 13)] # never do (29, 13) ## CHECK THIS
+('rval1', '"-"') : [(29, 9), (29, 13)]
+('rval1', '"*"') : [(29, 10), (29, 13)]
+('rval1', '"/"') : [(29, 11), (29, 13)]
+('rval1', '"%"') : [(29, 12), (29, 13)]
+('rval1', '"<"') : [(29, 5), (29, 13)]
+('rval1', '">"') : [(29, 7), (29, 13)]
+('rval1', '"<="') : [(29, 4), (29, 13)]
+('rval1', '">="') : [(29, 6), (29, 13)]
+('rval1', '"=="') : [(29, 2), (29, 13)]
+('rval1', '"!="') : [(29, 3), (29, 13)]
+('rval1', '"||"') : [(29, 0), (29, 13)]
+('rval1', '"&&"') : [(29, 1), (29, 13)]
+
+After we have a parse tree what semantic analysis needs to be done?
+declaration and type
+type checking
+variable scope
+type inference / coercion
+where can x be stored: register, local, global, heap, static
+Array-bound checking # miniC does not have arrays
+Type mismatch
+Undeclared variable
+Reserved identifier misuse.
+Multiple declaration of variable in a scope.
+Accessing an out of scope variable.
+Actual and formal parameter mismatch.
