@@ -14,3 +14,7 @@ how do we do this
 epsilon cannot be in any follow sets
 
 revise the whole no epsilon productions stuff
+in the grammar how can you just take void as a param?
+int main(void){}; 
+is the above valid?
+see https://stackoverflow.com/questions/693788/is-it-better-to-use-c-void-arguments-void-foovoid-or-not-void-foo

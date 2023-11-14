@@ -17,8 +17,7 @@ param -> var_type IDENT
 block -> "{" local_decls stmt_list "}"
 local_decls -> local_decl local_decls | epsilon
 local_decl -> var_type IDENT ";"
-stmt_list -> stmt_list1
-stmt_list1 -> stmt stmt_list1 | epsilon
+stmt_list -> stmt stmt_list | epsilon
 stmt -> expr_stmt | block | if_stmt | while_stmt | return_stmt
 expr_stmt -> expr ";" | ";"
 while_stmt -> "while" "(" expr ")" stmt
