@@ -12,3 +12,5 @@ for ll(k) > 2 we need to compute first_k and follow_k sets
 how do we do this
 
 epsilon cannot be in any follow sets
+
+revise the whole no epsilon productions stuff

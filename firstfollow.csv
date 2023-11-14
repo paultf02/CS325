@@ -1,39 +1,39 @@
 term,nullable,firstset,followset
-start,False,{'"extern"', '"void"', '"int"', '"float"', '"bool"'},set()
-program,False,{'"extern"', '"void"', '"int"', '"float"', '"bool"'},{'EOF'}
-extern_list,False,{'"extern"'},{'"int"', '"void"', '"float"', '"bool"'}
-extern_list1,True,{'"extern"', 'epsilon'},{'"int"', '"void"', '"float"', '"bool"'}
-extern,False,{'"extern"'},{'"int"', '"bool"', '"extern"', '"void"', '"float"'}
-decl_list,False,{'"float"', '"void"', '"int"', '"bool"'},{'EOF'}
-decl_list1,True,{'"int"', '"void"', 'epsilon', '"float"', '"bool"'},{'EOF'}
-decl,False,{'"int"', '"void"', '"float"', '"bool"'},{'"void"', '"int"', '"float"', '"bool"', 'EOF'}
-var_decl,False,{'"float"', '"int"', '"bool"'},{'"void"', '"int"', '"float"', '"bool"', 'EOF'}
-type_spec,False,{'"float"', '"int"', '"void"', '"bool"'},{'IDENT'}
-var_type,False,{'"float"', '"int"', '"bool"'},{'IDENT'}
-fun_decl,False,{'"float"', '"int"', '"void"', '"bool"'},{'"void"', '"int"', '"float"', '"bool"', 'EOF'}
-params,True,{'"int"', '"void"', 'epsilon', '"float"', '"bool"'},{'")"'}
-param_list,False,{'"float"', '"int"', '"bool"'},{'")"'}
-param_list1,True,{'epsilon', '","'},{'")"'}
-param,False,{'"float"', '"int"', '"bool"'},{'")"', '","'}
-block,False,{'"{"'},{'"int"', '"return"', '"-"', 'IDENT', '";"', '"if"', '"}"', 'EOF', '"!"', 'INT_LIT', 'FLOAT_LIT', '"else"', '"bool"', '"{"', '"("', 'BOOL_LIT', '"void"', '"float"', '"while"'}
-local_decls,True,{'"float"', '"int"', '"bool"', 'epsilon'},{'"!"', 'INT_LIT', 'FLOAT_LIT', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"'}
-local_decls1,True,{'"int"', 'epsilon', '"float"', '"bool"'},{'"!"', 'INT_LIT', 'FLOAT_LIT', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"'}
-local_decl,False,{'"float"', '"int"', '"bool"'},{'"!"', '"int"', 'INT_LIT', 'FLOAT_LIT', '"bool"', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"float"', '"while"', '"if"'}
-stmt_list,True,{'"!"', 'INT_LIT', 'FLOAT_LIT', 'epsilon', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"'},{'"}"'}
-stmt_list1,True,{'"!"', 'INT_LIT', 'FLOAT_LIT', 'epsilon', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"'},{'"}"'}
-stmt,False,{'"!"', 'INT_LIT', 'FLOAT_LIT', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"'},{'"!"', 'INT_LIT', 'FLOAT_LIT', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"', '"}"'}
-expr_stmt,False,{'"!"', 'INT_LIT', 'FLOAT_LIT', '"-"', 'IDENT', '";"', '"("', 'BOOL_LIT'},{'"!"', 'INT_LIT', 'FLOAT_LIT', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"', '"}"'}
-while_stmt,False,{'"while"'},{'"!"', 'INT_LIT', 'FLOAT_LIT', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"', '"}"'}
-if_stmt,False,{'"if"'},{'"!"', 'INT_LIT', 'FLOAT_LIT', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"', '"}"'}
-else_stmt,True,{'"else"', 'epsilon'},{'"!"', 'INT_LIT', 'FLOAT_LIT', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"', '"}"'}
-return_stmt,False,{'"return"'},{'"!"', 'INT_LIT', 'FLOAT_LIT', '"return"', '"{"', '"("', 'BOOL_LIT', '"-"', 'IDENT', '";"', '"while"', '"if"', '"}"'}
-expr,False,{'"!"', 'INT_LIT', 'FLOAT_LIT', 'BOOL_LIT', '"("', '"-"', 'IDENT'},{'";"', '")"', '","'}
-rval,False,{'"-"', '"!"', 'INT_LIT', 'FLOAT_LIT', 'IDENT', 'BOOL_LIT', '"("'},{'">="', '"<"', '"+"', '"&&"', '"*"', '">"', '"||"', '";"', '"%"', '"=="', '"<="', '"-"', '"/"', '")"', '"!="', '","'}
-leftfactor1,True,{'">="', '"<"', 'epsilon', '"+"', '"&&"', '"*"', '">"', '"||"', '"("', '"%"', '"=="', '"<="', '"-"', '"/"', '"!="'},{'">="', '"<"', '"+"', '"&&"', '"*"', '">"', '"||"', '";"', '"%"', '"=="', '"<="', '"-"', '"/"', '")"', '"!="', '","'}
-rval1,True,{'">="', '"<"', 'epsilon', '"+"', '"&&"', '"*"', '">"', '"||"', '"%"', '"=="', '"<="', '"-"', '"/"', '"!="'},{'">="', '"<"', '"+"', '"&&"', '"*"', '">"', '"||"', '";"', '"%"', '"=="', '"<="', '"-"', '"/"', '")"', '"!="', '","'}
-args,True,{'"!"', 'INT_LIT', 'FLOAT_LIT', 'epsilon', '"("', 'BOOL_LIT', '"-"', 'IDENT'},{'")"'}
-arg_list,False,{'"!"', 'INT_LIT', 'FLOAT_LIT', '"-"', 'IDENT', '"("', 'BOOL_LIT'},{'")"'}
-arg_list1,True,{'epsilon', '","'},{'")"'}
+start,False,{'"void"', '"bool"', '"extern"', '"int"', '"float"'},set()
+program,False,{'"void"', '"bool"', '"extern"', '"int"', '"float"'},{'EOF'}
+extern_list,False,{'"extern"'},{'"int"', '"void"', '"bool"', '"float"'}
+extern_list1,True,{'"extern"', 'epsilon'},{'"int"', '"void"', '"bool"', '"float"'}
+extern,False,{'"extern"'},{'"bool"', '"int"', '"float"', '"void"', '"extern"'}
+decl_list,False,{'"int"', '"void"', '"bool"', '"float"'},{'EOF'}
+decl_list1,True,{'"void"', '"bool"', '"int"', '"float"', 'epsilon'},{'EOF'}
+decl,False,{'"void"', '"bool"', '"int"', '"float"'},{'"void"', '"bool"', 'EOF', '"int"', '"float"'}
+var_decl,False,{'"int"', '"bool"', '"float"'},{'"void"', '"bool"', 'EOF', '"int"', '"float"'}
+type_spec,False,{'"int"', '"void"', '"bool"', '"float"'},{'IDENT'}
+var_type,False,{'"int"', '"bool"', '"float"'},{'IDENT'}
+fun_decl,False,{'"int"', '"void"', '"bool"', '"float"'},{'"void"', '"bool"', 'EOF', '"int"', '"float"'}
+params,True,{'"void"', '"bool"', '"int"', '"float"', 'epsilon'},{'")"'}
+param_list,False,{'"int"', '"bool"', '"float"'},{'")"'}
+param_list1,True,{'","', 'epsilon'},{'")"'}
+param,False,{'"int"', '"bool"', '"float"'},{'","', '")"'}
+block,False,{'"{"'},{'"{"', '"}"', 'IDENT', '"bool"', '"-"', 'BOOL_LIT', '"void"', 'INT_LIT', 'FLOAT_LIT', '"else"', '"return"', '"if"', '";"', '"int"', '"float"', '"while"', 'EOF', '"("', '"!"'}
+local_decls,True,{'"int"', '"bool"', '"float"', 'epsilon'},{'"{"', 'IDENT', '"-"', '"("', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', 'BOOL_LIT', '"!"'}
+local_decls1,True,{'"bool"', '"int"', '"float"', 'epsilon'},{'"{"', 'IDENT', '"-"', '"("', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', 'BOOL_LIT', '"!"'}
+local_decl,False,{'"int"', '"bool"', '"float"'},{'"{"', '"bool"', 'IDENT', '"int"', '"float"', '"-"', 'BOOL_LIT', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', '"("', '"!"'}
+stmt_list,True,{'"{"', 'IDENT', '"-"', 'epsilon', 'BOOL_LIT', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', '"("', '"!"'},{'"}"'}
+stmt_list1,True,{'"{"', 'IDENT', '"("', '"-"', 'epsilon', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', 'BOOL_LIT', '"!"'},{'"}"'}
+stmt,False,{'"{"', 'IDENT', '"("', '"-"', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', 'BOOL_LIT', '"!"'},{'"{"', '"}"', 'IDENT', '"-"', 'BOOL_LIT', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', '"("', '"!"'}
+expr_stmt,False,{'BOOL_LIT', 'INT_LIT', 'IDENT', 'FLOAT_LIT', '";"', '"("', '"!"', '"-"'},{'"{"', '"}"', 'IDENT', '"-"', 'BOOL_LIT', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', '"("', '"!"'}
+while_stmt,False,{'"while"'},{'"{"', '"}"', 'IDENT', '"-"', 'BOOL_LIT', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', '"("', '"!"'}
+if_stmt,False,{'"if"'},{'"{"', '"}"', 'IDENT', '"-"', 'BOOL_LIT', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', '"("', '"!"'}
+else_stmt,True,{'"else"', 'epsilon'},{'"{"', '"}"', 'IDENT', '"-"', 'BOOL_LIT', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', '"("', '"!"'}
+return_stmt,False,{'"return"'},{'"{"', '"}"', 'IDENT', '"-"', 'BOOL_LIT', 'INT_LIT', '"while"', 'FLOAT_LIT', '"return"', '"if"', '";"', '"("', '"!"'}
+expr,False,{'IDENT', '"("', '"-"', 'INT_LIT', 'FLOAT_LIT', 'BOOL_LIT', '"!"'},{'","', '";"', '")"'}
+rval,False,{'BOOL_LIT', 'INT_LIT', 'IDENT', 'FLOAT_LIT', '"("', '"!"', '"-"'},{'"<="', '","', '"=="', '"%"', '"*"', '"+"', '"/"', '")"', '"-"', '">"', '">="', '"<"', '"||"', '"&&"', '";"', '"!="'}
+leftfactor1,True,{'"<="', '"=="', '"%"', '"*"', '"+"', '"/"', '"-"', 'epsilon', '">"', '">="', '"<"', '"||"', '"&&"', '"("', '"!="'},{'"<="', '","', '"=="', '"%"', '"*"', '"+"', '"/"', '")"', '"-"', '">"', '">="', '"<"', '"||"', '"&&"', '";"', '"!="'}
+rval1,True,{'"<="', '"=="', '"%"', '"*"', '"+"', '"/"', '"-"', 'epsilon', '">"', '">="', '"<"', '"||"', '"&&"', '"!="'},{'"<="', '","', '"=="', '"%"', '"*"', '"+"', '"/"', '")"', '"-"', '">"', '">="', '"<"', '"||"', '"&&"', '";"', '"!="'}
+args,True,{'IDENT', 'epsilon', '"("', '"-"', 'INT_LIT', 'FLOAT_LIT', 'BOOL_LIT', '"!"'},{'")"'}
+arg_list,False,{'BOOL_LIT', 'INT_LIT', 'IDENT', 'FLOAT_LIT', '"("', '"!"', '"-"'},{'")"'}
+arg_list1,True,{'","', 'epsilon'},{'")"'}
 epsilon,True,set(),N/A
 "(",False,{'"("'},N/A
 ")",False,{'")"'},N/A
