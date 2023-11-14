@@ -15,8 +15,7 @@ param_list -> param param_list1
 param_list1 -> "," param param_list1 | epsilon
 param -> var_type IDENT
 block -> "{" local_decls stmt_list "}"
-local_decls -> local_decls1
-local_decls1 -> local_decl local_decls1 | epsilon
+local_decls -> local_decl local_decls | epsilon
 local_decl -> var_type IDENT ";"
 stmt_list -> stmt_list1
 stmt_list1 -> stmt stmt_list1 | epsilon
