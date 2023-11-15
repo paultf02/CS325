@@ -24,9 +24,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <map>
 #include <memory>
 #include <queue>
+#include <set>
 #include <string.h>
 #include <string>
 #include <system_error>
@@ -398,7 +400,16 @@ class ASTnode {
 public:
   virtual ~ASTnode() {}
   virtual Value *codegen() = 0;
-  virtual std::string to_string() const {return "";};
+  virtual std::string to_string() const {
+    return "";
+  };
+};
+
+/// concrete general ASTnode
+class concreteASTnode : public ASTnode {
+  public:
+    std::string name;
+    std::vector<ASTnode*> children;
 };
 
 /// IntASTnode - Class for integer literals like 1, 2, 10,
@@ -418,15 +429,15 @@ public:
 // first let us do a parse where everything is an ASTnode. just get a basic tree sorted
 // 
 
-class BoolASTnode;
-class FloatASTnode;
-class FunctionDeclASTnode;
-class FunctionCallASTnode;
-class VariableDeclASTnode;
-class BinOpASTnode;
-class IfThenElseASTnode;
-class WhileASTnode;
-class ExpressionASTnode;
+// class BoolASTnode;
+// class FloatASTnode;
+// class FunctionDeclASTnode;
+// class FunctionCallASTnode;
+// class VariableDeclASTnode;
+// class BinOpASTnode;
+// class IfThenElseASTnode;
+// class WhileASTnode;
+// class ExpressionASTnode;
 
 
 /* add other AST nodes as nessasary */
@@ -448,11 +459,16 @@ std::vector<production_options> rhslist;
 std::vector<std::string> terminals;
 
 //below are our dictionaries for first and follow sets
-std::map<std::string, std::set> first;
-std::map<std::string, std::set> follow;
+std::map<std::string, std::set<std::string>> first;
+std::map<std::string, std::set<std::string>> follow;
+
+void load_data(){
+
+}
 
 /* Add function calls for each production */
 
+/*
 void production_call(std::string name){
   sentence s = choose_production(name);
   for (int i = 0; i<s.length; i++){
@@ -467,10 +483,11 @@ void production_call(std::string name){
     }
   }
 }
+*/
 
 static void parser() {
   // add body
-  production_call("start");
+  // production_call("start");
 }
 
 /*
@@ -581,11 +598,14 @@ int main(int argc, char **argv) {
 
   // print our deque of tokens
   for (int i = 0; i<program_tokens.size(); i++){
-    fprintf(stderr, "Token: %s with type %d\n", program_tokens[i].lexeme.c_str(), program_tokens[i].type);
+    //fprintf(stderr, "Token: %s with type %d\n", program_tokens[i].lexeme.c_str(), program_tokens[i].type);
   }
       
   // Make the module, which holds all the code.
   TheModule = std::make_unique<Module>("mini-c", TheContext);
+
+  // load first and follow set from file
+
 
   // Run the parser now.
   parser();
