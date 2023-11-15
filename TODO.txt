@@ -63,3 +63,62 @@ Remove left recursion
 Compute first and follow sets
 Use appropriate lookahead for certain cases to determine production to use
 Make a predictive recursive descent parser. No backtracking.
+Create parse tree
+Turn parse tree into abstract syntax tree
+Pretty print abstract syntax tree (see clang AST output and model it on that)
+Turn abstract syntax tree into LLVM IR by running recursive codegen() method
+    This will require type checking and variable scope (any other semantic checks?)
+Add meaningful error messages to parser, semantic checker and codegen
+
+1126 cells with 0 entries
+156 cells with 1 entry
+48 cells with more than 1 entry
+cells with more than 1 entry:
+('decl', "'int'") : [(7, 0), (7, 1)]
+('decl', "'float'") : [(7, 0), (7, 1)]
+('decl', "'bool'") : [(7, 0), (7, 1)]
+('return_stmt', "'return'") : [(25, 0), (25, 1)]
+('expr', 'IDENT') : [(26, 0), (26, 1)]
+('rval', "'('") : [(27, 0), (27, 1)]
+('rval', "'-'") : [(27, 0), (27, 1)]
+('rval', "'!'") : [(27, 0), (27, 1)]
+('rval', 'BOOL_LIT') : [(27, 0), (27, 1)]
+('rval', 'INT_LIT') : [(27, 0), (27, 1)]
+('rval', 'FLOAT_LIT') : [(27, 0), (27, 1)]
+('rval', 'IDENT') : [(27, 0), (27, 1)]
+('rval1', "'('") : [(28, 0), (28, 1)]
+('rval1', "'-'") : [(28, 0), (28, 1)]
+('rval1', "'!'") : [(28, 0), (28, 1)]
+('rval1', 'BOOL_LIT') : [(28, 0), (28, 1)]
+('rval1', 'INT_LIT') : [(28, 0), (28, 1)]
+('rval1', 'FLOAT_LIT') : [(28, 0), (28, 1)]
+('rval1', 'IDENT') : [(28, 0), (28, 1)]
+('rval2', "'('") : [(29, 0), (29, 1), (29, 2)]
+('rval2', "'-'") : [(29, 0), (29, 1), (29, 2)]
+('rval2', "'!'") : [(29, 0), (29, 1), (29, 2)]
+('rval2', 'BOOL_LIT') : [(29, 0), (29, 1), (29, 2)]
+('rval2', 'INT_LIT') : [(29, 0), (29, 1), (29, 2)]
+('rval2', 'FLOAT_LIT') : [(29, 0), (29, 1), (29, 2)]
+('rval2', 'IDENT') : [(29, 0), (29, 1), (29, 2)]
+('rval3', "'('") : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', "'-'") : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', "'!'") : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', 'BOOL_LIT') : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', 'INT_LIT') : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', 'FLOAT_LIT') : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', 'IDENT') : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval4', "'('") : [(31, 0), (31, 1), (31, 2)]
+('rval4', "'-'") : [(31, 0), (31, 1), (31, 2)]
+('rval4', "'!'") : [(31, 0), (31, 1), (31, 2)]
+('rval4', 'BOOL_LIT') : [(31, 0), (31, 1), (31, 2)]
+('rval4', 'INT_LIT') : [(31, 0), (31, 1), (31, 2)]
+('rval4', 'FLOAT_LIT') : [(31, 0), (31, 1), (31, 2)]
+('rval4', 'IDENT') : [(31, 0), (31, 1), (31, 2)]
+('rval5', "'('") : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', "'-'") : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', "'!'") : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', 'BOOL_LIT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', 'INT_LIT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', 'FLOAT_LIT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', 'IDENT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval7', 'IDENT') : [(34, 1), (34, 2)]

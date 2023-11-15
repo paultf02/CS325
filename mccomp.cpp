@@ -363,12 +363,16 @@ static TOKEN gettok() {
 }
 
 //===----------------------------------------------------------------------===//
-// Parser
+// Parser Buffer
 //===----------------------------------------------------------------------===//
 
 /// CurTok/getNextToken - Provide a simple token buffer.  CurTok is the current
 /// token the parser is looking at.  getNextToken reads another token from the
 /// lexer and updates CurTok with its results.
+/// we also need to build the parse tree
+
+
+
 static TOKEN CurTok;
 static std::deque<TOKEN> tok_buffer;
 
@@ -411,6 +415,20 @@ public:
   //};
 };
 
+// first let us do a parse where everything is an ASTnode. just get a basic tree sorted
+// 
+
+class BoolASTnode;
+class FloatASTnode;
+class FunctionDeclASTnode;
+class FunctionCallASTnode;
+class VariableDeclASTnode;
+class BinOpASTnode;
+class IfThenElseASTnode;
+class WhileASTnode;
+class ExpressionASTnode;
+
+
 /* add other AST nodes as nessasary */
 
 //===----------------------------------------------------------------------===//
@@ -419,11 +437,95 @@ public:
 
 // The tokens are stored in program_tokens
 
+// each element of rhslist is rhs which is a list of sentences (each sentence for each or)
+// std::vector<string> rhs;
+// rhs is the list of atoms in the sentence
+
+typedef std::vector<std::string> sentence;
+typedef std::vector<sentence> production_options;
+std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
+std::vector<production_options> rhslist;
+std::vector<std::string> terminals;
+
+//below are our dictionaries for first and follow sets
+std::map<std::string, std::set> first;
+std::map<std::string, std::set> follow;
+
 /* Add function calls for each production */
 
-// program ::= extern_list decl_list
+void production_call(std::string name){
+  sentence s = choose_production(name);
+  for (int i = 0; i<s.length; i++){
+    std::string element = s[i];
+    if (element in nonterminals){
+      production_call(element);
+    } else if (element == CurTok){
+      // create an AST node and add it to the tree
+      CurTok++
+    } else{
+      //raise error
+    }
+  }
+}
+
 static void parser() {
   // add body
+  production_call("start");
+}
+
+/*
+Recursive descent predictive parsing
+void A(){
+  choose A-production A -> X1X2...Xk
+  for (i=1 to k){
+    if (Xi is a nonterminal){
+      call procedure Xi();
+    } else if (Xi == current input symbol a){
+      advance input to the next symbol;
+    } else {
+      raise error
+    }
+  }
+}
+
+*/
+
+// program ::= extern_list decl_list
+
+
+
+/*
+get the table parser_table[nonterm, term]
+stack.push("EOF")
+stack.push("start")
+curTok is prev declared
+while True:
+  t = stack.pop()
+  if t is a terminal:
+    if t == curTok:
+      curTok++
+    elif t != curTok:
+      raise Error
+  elif t is a nonterminal:
+    declare selected_production
+    if parser_table[t, curTok] has zero productions then raise Error
+    elif parser_table[t, curTok] has one production then that is selected_production
+    elif parser_table[t, curTok] has multiple productions then
+      based on t, curTok, curTok + 1, curtok + 2 choose selected_production appropriately
+    let P1 ... Pk be selected_production
+    push Pk, ..., P1 to the stack so P1 is on top
+*/
+
+
+
+
+
+typedef std::string parse_tree;
+
+parse_tree recursive_descent_parser(){
+  parse_tree tree;
+  
+  return tree;
 }
 
 //===----------------------------------------------------------------------===//

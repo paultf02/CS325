@@ -402,7 +402,7 @@ def to_string(thisset):
         string = string[0:-1] #remove last comma if thisset not empty
     #print(string)
     #string.replace('"', "'")
-    print(string)
+    #print(string)
     string += '"'
     return string
 
