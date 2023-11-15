@@ -29,6 +29,8 @@
 #include <memory>
 #include <queue>
 #include <set>
+#include <sstream>
+#include <stdexcept>
 #include <string.h>
 #include <string>
 #include <system_error>
@@ -463,7 +465,39 @@ std::map<std::string, std::set<std::string>> first;
 std::map<std::string, std::set<std::string>> follow;
 
 void load_data(){
+  //std::string csvfilename = "firstfollow.csv";
+  std::fstream csvfile;
+  csvfile.open("firstfollowsemicolon.csv", std::ios::in);
+  if (!csvfile) {                        
+    std::cout<<"File doesn’t exist.";
+    throw std::runtime_error("could not open file");         
+  }
+  std::string line, colname;
+  int val;
 
+  /*
+  if (myFile.good()){
+    // Extract the first line in the file
+    std::getline(myFile, line);
+    // Create a stringstream from line
+    std::stringstream ss(line);
+
+    // Extract each column name
+    while(std::getline(ss, colname, ',')){
+      // Initialize and add <colname, int vector> pairs to result
+      result.push_back({colname, std::vector<int> {}});
+    }
+  }
+  */
+  std::getline(csvfile, line);
+  std::cout << line << '\n';
+  // Read data, line by line
+  std::stringstream ss(line);
+  std::string part;
+  while (std::getline(ss, part, ';')){
+    std::cout << part << '\n';
+  }
+  csvfile.close();
 }
 
 /* Add function calls for each production */
@@ -605,6 +639,7 @@ int main(int argc, char **argv) {
   TheModule = std::make_unique<Module>("mini-c", TheContext);
 
   // load first and follow set from file
+  load_data();
 
 
   // Run the parser now.
