@@ -406,13 +406,14 @@ def to_string(thisset):
     string += '"'
     return string
 
-ostring = "term;nullable;firstset;followset\n"
+sep = "?"
+ostring = f"term{sep}nullable{sep}firstset{sep}followset\n"
 for term in first.keys():
     #print(first[term])
-    thisrow = f"{term};{nullable[term]};{to_string(first[term])};{to_string(follow[term])}\n"
+    thisrow = f"{term}{sep}{nullable[term]}{sep}{to_string(first[term])}{sep}{to_string(follow[term])}\n"
     ostring += thisrow
     print(thisrow)
-with open("firstfollowsemicolon.csv", 'w') as fout:
+with open("firstfollowseparator.csv", 'w') as fout:
     fout.write(ostring)
 print("first and follow sets saved into csv file")
 

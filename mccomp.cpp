@@ -461,13 +461,49 @@ std::vector<production_options> rhslist;
 std::vector<std::string> terminals;
 
 //below are our dictionaries for first and follow sets
-std::map<std::string, std::set<std::string>> first;
-std::map<std::string, std::set<std::string>> follow;
+std::map<std::string, bool> nullable;
+std::map<std::string, std::vector<std::string>> first;
+std::map<std::string, std::vector<std::string>> follow;
+
+std::vector<std::string> deconstruct_firstfollow(std::string in_string){
+  std::vector<std::string> deconstructed;
+  std::stringstream ss(in_string);
+
+
+  return deconstructed;
+}
+/*
+The below is ChatGPT3.5 code with the prompt
+"write cpp code that takes a string and splits it delimited by commas. make sure to escape out commas in single quotes."
+*/
+std::vector<std::string> splitString(const std::string& input) {
+    std::vector<std::string> substrings;
+    std::string currentSubstring;
+
+    bool insideSingleQuotes = false;
+
+    for (char c : input) {
+        if (c == '\'') {
+            insideSingleQuotes = !insideSingleQuotes;
+        } else if (c == ',' && !insideSingleQuotes) {
+            // If it's a comma and not inside single quotes, start a new substring
+            substrings.push_back(currentSubstring);
+            currentSubstring.clear();
+        } else {
+            // Otherwise, append the character to the current substring
+            currentSubstring += c;
+        }
+    }
+
+    // Add the last substring after the loop
+    substrings.push_back(currentSubstring);
+
+    return substrings;
+}
 
 void load_data(){
-  //std::string csvfilename = "firstfollow.csv";
   std::fstream csvfile;
-  csvfile.open("firstfollowsemicolon.csv", std::ios::in);
+  csvfile.open("firstfollowseparator.csv", std::ios::in);
   if (!csvfile) {                        
     std::cout<<"File doesn’t exist.";
     throw std::runtime_error("could not open file");         
@@ -475,29 +511,39 @@ void load_data(){
   std::string line, colname;
   int val;
 
-  /*
-  if (myFile.good()){
-    // Extract the first line in the file
-    std::getline(myFile, line);
-    // Create a stringstream from line
-    std::stringstream ss(line);
-
-    // Extract each column name
-    while(std::getline(ss, colname, ',')){
-      // Initialize and add <colname, int vector> pairs to result
-      result.push_back({colname, std::vector<int> {}});
-    }
-  }
-  */
+  // first line
   std::getline(csvfile, line);
-  std::cout << line << '\n';
-  // Read data, line by line
-  std::stringstream ss(line);
+  // std::cout << line << '\n';
+  std::stringstream ss;
   std::string part;
-  while (std::getline(ss, part, ';')){
-    std::cout << part << '\n';
+  std::string name, nullable, firstset, followset;
+  char sep = '?';
+  // Read data, line by line
+  while (std::getline(csvfile, line)){
+    // ss = line;
+    std::stringstream ss(line);
+    std::getline(ss, name, sep);
+    std::getline(ss, nullable, sep);
+    std::getline(ss, firstset, sep);
+    std::getline(ss, followset, sep);
+
+    firstset = firstset.substr(1, firstset.length()-2);
+    followset = followset.substr(1, followset.length()-2);
+    first.insert({name, splitString(firstset)});
+    follow.insert({name, splitString(followset)});
+    nullable.insert({name, (bool) nullable});
   }
+  
   csvfile.close();
+  name = "expr";
+  std::cout << name <<" first:\n";
+  for (int i=0; i<first[name].size(); i++){
+    std::cout << first[name][i] << '\n';
+  }
+  std::cout << name <<" follow:\n";
+  for (int i=0; i<follow[name].size(); i++){
+    std::cout << follow[name][i] << '\n';
+  }
 }
 
 /* Add function calls for each production */
