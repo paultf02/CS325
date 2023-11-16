@@ -559,7 +559,7 @@ void load_data(){
   std::cout << "just before error\n";
 
   grammarfile.open("transformedgrammar5.txt", std::ios::in);
-  if (!terminalfile) {                        
+  if (!grammarfile) {                        
     std::cout<<"File doesn’t exist.";
     throw std::runtime_error("could not open grammar file");         
   }
@@ -569,10 +569,34 @@ void load_data(){
     // std::cout << lhs << '\n';
 
     std::vector<std::string> splitline = splitString_strdelim(line, " -> ");
+    std::string lhs = splitline[0];
+    std::string rhs = splitline[1];
+
+    nonterminals.push_back(lhs);
+    std::vector<std::string> splitor = splitString_strdelim(rhs, " | ");
+
+
     std::cout << "These are the elements of splitline:\n";
     for (auto &elem : splitline){
       std::cout << elem << '\n';
     }
+    std::cout << "These are the elements of splitor:\n";
+    for (auto &elem : splitor){
+      std::cout << elem << '\n';
+    }
+
+    production_options rhstyped;
+    sentence thissentence;
+    for (auto &elem: splitor){
+      thissentence = splitString_strdelim(elem, " ");
+      rhstyped.push_back(thissentence);
+      std::cout << "These are the elements of this sentence:\n";
+      for (auto &elem : thissentence){
+        std::cout << elem << '\n';
+      }
+    }
+    rhslist.push_back(rhstyped);
+
 
   }
   grammarfile.close();
