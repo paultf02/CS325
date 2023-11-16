@@ -465,16 +465,10 @@ std::map<std::string, bool> nullable;
 std::map<std::string, std::vector<std::string>> first;
 std::map<std::string, std::vector<std::string>> follow;
 
-std::vector<std::string> deconstruct_firstfollow(std::string in_string){
-  std::vector<std::string> deconstructed;
-  std::stringstream ss(in_string);
-
-
-  return deconstructed;
-}
 /*
 The below is ChatGPT3.5 code with the prompt
 "write cpp code that takes a string and splits it delimited by commas. make sure to escape out commas in single quotes."
+there were some minor errors with the generated code so i changed some parts
 */
 std::vector<std::string> splitString(const std::string& input) {
     std::vector<std::string> substrings;
@@ -485,6 +479,7 @@ std::vector<std::string> splitString(const std::string& input) {
     for (char c : input) {
         if (c == '\'') {
             insideSingleQuotes = !insideSingleQuotes;
+            currentSubstring += c;
         } else if (c == ',' && !insideSingleQuotes) {
             // If it's a comma and not inside single quotes, start a new substring
             substrings.push_back(currentSubstring);
@@ -501,29 +496,41 @@ std::vector<std::string> splitString(const std::string& input) {
     return substrings;
 }
 
+// chatgpt3.5 
+// "write cpp code to split a string based on a string delimiter"
+std::vector<std::string> splitString_strdelim(const std::string& input, const std::string& delimiter) {
+    std::vector<std::string> tokens;
+    size_t start = 0, end = 0;
+
+    while ((end = input.find(delimiter, start)) != std::string::npos) {
+        tokens.push_back(input.substr(start, end - start));
+        start = end + delimiter.length();
+    }
+
+    // Add the last token (or the only token if there is no delimiter)
+    tokens.push_back(input.substr(start));
+
+    return tokens;
+}
+
 void load_data(){
-  std::fstream csvfile;
+  std::fstream csvfile, terminalfile, grammarfile;
+  std::string line, part;
+  std::string name, isnullable, firstset, followset, lhs, rhs, or_sequence;
+  char sep = '?';
+
   csvfile.open("firstfollowseparator.csv", std::ios::in);
   if (!csvfile) {                        
     std::cout<<"File doesn’t exist.";
     throw std::runtime_error("could not open file");         
   }
-  std::string line, colname;
-  int val;
-
   // first line
-  std::getline(csvfile, line);
-  // std::cout << line << '\n';
-  std::stringstream ss;
-  std::string part;
-  std::string name, nullable, firstset, followset;
-  char sep = '?';
+  std::getline(csvfile, line); 
   // Read data, line by line
   while (std::getline(csvfile, line)){
-    // ss = line;
     std::stringstream ss(line);
     std::getline(ss, name, sep);
-    std::getline(ss, nullable, sep);
+    std::getline(ss, isnullable, sep);
     std::getline(ss, firstset, sep);
     std::getline(ss, followset, sep);
 
@@ -531,18 +538,58 @@ void load_data(){
     followset = followset.substr(1, followset.length()-2);
     first.insert({name, splitString(firstset)});
     follow.insert({name, splitString(followset)});
-    nullable.insert({name, (bool) nullable});
+    if (isnullable == "True"){
+      nullable.insert({name, true});
+    } else if (isnullable == "False"){
+      nullable.insert({name, false});
+    }
   }
-  
   csvfile.close();
+
+  terminalfile.open("terminals2.txt", std::ios::in);
+  if (!terminalfile) {                        
+    std::cout<<"File doesn’t exist.";
+    throw std::runtime_error("could not open file");         
+  }
+  while (std::getline(terminalfile, line)){
+    terminals.push_back(line);
+  }
+  terminalfile.close();
+
+  std::cout << "just before error\n";
+
+  grammarfile.open("transformedgrammar5.txt", std::ios::in);
+  if (!terminalfile) {                        
+    std::cout<<"File doesn’t exist.";
+    throw std::runtime_error("could not open grammar file");         
+  }
+  while (std::getline(grammarfile, line)){
+    // std::stringstream ss(line);
+    // std::getline(line, lhs, " -> ");
+    // std::cout << lhs << '\n';
+
+    std::vector<std::string> splitline = splitString_strdelim(line, " -> ");
+    std::cout << "These are the elements of splitline:\n";
+    for (auto &elem : splitline){
+      std::cout << elem << '\n';
+    }
+
+  }
+  grammarfile.close();
+
   name = "expr";
   std::cout << name <<" first:\n";
-  for (int i=0; i<first[name].size(); i++){
-    std::cout << first[name][i] << '\n';
+  for (auto &elem : first[name]){
+    std::cout << elem << '\n';
   }
   std::cout << name <<" follow:\n";
-  for (int i=0; i<follow[name].size(); i++){
-    std::cout << follow[name][i] << '\n';
+  for (auto &elem : follow[name]){
+    std::cout << elem << '\n';
+  }
+
+  std::cout << "iterating through terminals: " << '\n';
+  for (auto &elem : terminals){
+    std::cout << elem << '\n';
   }
 }
 
