@@ -758,10 +758,14 @@ void A(){
 
 std::vector<std::string> find_sentence_first(sentence &sentence){
   // NOTE: THIS WILL CONTAIN DUPLICATES
+  // error: this will include an epsilon even when it is not 
   std::vector<std::string> sentence_first;
   for (auto &word : sentence){
     std::vector<std::string> thisfirst = first[word];
     sentence_first.insert(sentence_first.end(), thisfirst.begin(), thisfirst.end());
+    if (nullable[word] == false){
+      break;
+    }
   }
   return sentence_first;
 }
@@ -790,13 +794,43 @@ bool sentencenullable(sentence &sentence){
 }
 
 sentence look_ahead_special_case(std::string nonterminal, production_options productions){
+  sentence answer;
   if (nonterminal == "decl"){
-
+    // what if we cant index this far
+    if (curTokIndex + 2 >= program_tokens.size()){
+      throw std::runtime_error("missing some tokens");
+    } else if (program_tokens[curTokIndex+2].type == word_to_type("'('")){
+      answer = productions[1];
+    } else {
+      //this should have a token ';' at program_tokens[curTokIndex+2]
+      answer = productions[0];
+    }
   } else if (nonterminal == "return_stmt"){
-
+      if (curTokIndex + 1 >= program_tokens.size()){
+        throw std::runtime_error("missing some tokens");
+      } else if (program_tokens[curTokIndex+1].type == word_to_type("';'")){
+        answer = productions[0];
+      } else {
+        answer = productions[1];
+      }
   } else if (nonterminal == "expr"){
-
+      if (curTokIndex + 1 >= program_tokens.size()){
+        throw std::runtime_error("missing some tokens");
+      } else if (program_tokens[curTokIndex+1].type == word_to_type("'='")){
+        answer = productions[0];
+      } else {
+        answer = productions[1];
+      }
+  } else if (nonterminal == "rval7"){
+      if (curTokIndex + 1 >= program_tokens.size()){
+        throw std::runtime_error("missing some tokens");
+      } else if (program_tokens[curTokIndex+1].type == word_to_type("'('")){
+        answer = productions[2];
+      } else {
+        answer = productions[1];
+      }
   }
+  return answer;
 }
 
 sentence choose_production(std::string nonterminal, production_options productions){
@@ -829,6 +863,14 @@ sentence choose_production(std::string nonterminal, production_options productio
       continue;
     }
     std::vector<std::string> sentencefirstold = find_sentence_first(prod);
+
+    // if (nonterminal == "rval6"){
+    //   std::cout << "elements of first set of rval6 production i=" << i << '\n';
+    //   for (auto &elem : sentencefirstold){
+    //     std::cout << elem << '\n';
+    //   }
+    // }
+
     std::vector<int> sentencefirst = terminals_to_int(sentencefirstold);
     if (std::find(sentencefirst.begin(), sentencefirst.end(), program_tokens[curTokIndex].type) != sentencefirst.end()){
       numfirstsets += 1;
@@ -839,7 +881,7 @@ sentence choose_production(std::string nonterminal, production_options productio
   if (numfirstsets == 1){
       answer =  productions[lastsetindex];
   } else if (numfirstsets > 1){
-      std::cout << "this is the uncompleted path\n";
+      std::cout << "we will use lookahead\n";
       answer = look_ahead_special_case(nonterminal, productions); // this needs to handle the special case where we lookahead
   } else if (numfirstsets == 0){
       std::vector<int> nontermfollowset = terminals_to_int(follow[nonterminal]);
@@ -867,29 +909,37 @@ sentence choose_production(std::string nonterminal, production_options productio
   } else {
     throw std::runtime_error("error");
   }
+  if (answer.size() == 0){
+    std::string err_msg = "nonterminal: " + nonterminal + " current token: " + program_tokens[curTokIndex].lexeme;
+    throw std::runtime_error("we have not been able to find a production and this is not a case we have seen\n" + err_msg);
+  }
   return answer;
 }
 
 
 
-void parse_general(std::string nonterminal){
-  std::cout << nonterminal << '\n';
+void parse_general(std::string nonterminal, int depth){
+  std::cout << nonterminal << " depth=" << depth << '\n';
   if (nonterminal=="epsilon"){
     return;
   }
   production_options productions = rhslist[nonterminal_index(nonterminal)];
+  // std::cout << "index: " << nonterminal_index(nonterminal) << '\n';
   //note it will only have one
   // find some way of choosing this
   sentence prod = choose_production(nonterminal, productions);
-
+  // std::cout << "finished choosing production\n";
   for (int i=0; i<prod.size(); i++){
     if (std::find(terminals.begin(), terminals.end(), prod[i]) == terminals.end()){
       // prod[i] is not a terminal 
-      parse_general(prod[i]);
+      parse_general(prod[i], depth+1);
     } else if (word_to_type(prod[i]) == program_tokens[curTokIndex].type){
       // prod[i] is a terminal and matches the current token
       curTokIndex++;
-      std::cout << "next token\n";
+      std::cout << "next token which is " << program_tokens[curTokIndex].lexeme << " depth=" << depth << '\n';
+      if (program_tokens[curTokIndex].type == 0){
+        return;
+      }
       // curNode.children = something;
     } else {
       // prod[i] is a terminal but doesn't match current token
@@ -901,7 +951,7 @@ void parse_general(std::string nonterminal){
 
 // ASTnode root;
 static void parser() {
-  parse_general("start");
+  parse_general("start", 0);
 }
 
 

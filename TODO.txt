@@ -1,3 +1,20 @@
+To do:
+Add grammar enforced operator precedence
+Remove left recursion
+Compute first and follow sets
+Use appropriate lookahead for certain cases to determine production to use
+Make a predictive recursive descent parser. No backtracking.
+Create parse tree
+Turn parse tree into abstract syntax tree
+Pretty print abstract syntax tree (see clang AST output and model it on that)
+Turn abstract syntax tree into LLVM IR by running recursive codegen() method
+    This will require type checking and variable scope (any other semantic checks?)
+Add meaningful error messages to lexer, parser, semantic checker and codegen
+Fix error in find_sentence_first (will include epsilon erroneously)
+Failed cosine, pi, recurse, rfact, unary 
+    the current token is always '-' and it is using lookahead
+
+
 check operator precedence
 why are there two minus signs in grammar? line 29 and line 31 in transformedgrammar3
 why are there no commas in params?
@@ -57,18 +74,6 @@ Actual and formal parameter mismatch.
 
 grammar enforced precedence
 
-To do:
-Add grammar enforced operator precedence
-Remove left recursion
-Compute first and follow sets
-Use appropriate lookahead for certain cases to determine production to use
-Make a predictive recursive descent parser. No backtracking.
-Create parse tree
-Turn parse tree into abstract syntax tree
-Pretty print abstract syntax tree (see clang AST output and model it on that)
-Turn abstract syntax tree into LLVM IR by running recursive codegen() method
-    This will require type checking and variable scope (any other semantic checks?)
-Add meaningful error messages to lexer, parser, semantic checker and codegen
 
 1126 cells with 0 entries
 156 cells with 1 entry
