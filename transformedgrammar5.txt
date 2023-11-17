@@ -27,7 +27,7 @@ return_stmt -> 'return' ';' | 'return' expr ';'
 expr -> IDENT '=' expr | rval
 rval -> rval1 '||' rval | rval1
 rval1 -> rval2 '&&' rval1 | rval2
-rval2 -> rval3 '==' rval2 | rval3 '==' rval2 | rval3
+rval2 -> rval3 '==' rval2 | rval3 '!=' rval2 | rval3
 rval3 -> rval4 '<=' rval3 | rval4 '<' rval3 | rval4 '>=' rval3 | rval4 '>' rval3 | rval4
 rval4 -> rval5 '+' rval4 | rval5 '-' rval4 | rval5
 rval5 -> rval6 '*' rval5 | rval6 '/' rval5 | rval6 '%' rval5 | rval6

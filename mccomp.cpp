@@ -110,6 +110,93 @@ enum TOKEN_TYPE {
   INVALID = -100 // signal invalid token
 };
 
+int word_to_type(std::string word){
+  int type = -100;
+  if (word=="IDENT"){
+    type = -1;
+  } else if (word=="'='"){
+    type = int('=');
+  } else if (word=="'{'"){
+    type = int('{');
+  } else if (word=="'}'"){
+    type = int('}');
+  } else if (word=="'('"){
+    type = int('(');
+  } else if (word=="')'"){
+    type = int(')');
+  } else if (word=="';'"){
+    type = int(';');
+  } else if (word=="','"){
+    type = int(',');
+  } else if (word=="'int'"){
+    type = -2;
+  } else if (word=="'void'"){
+    type = -3;
+  } else if (word=="'float'"){
+    type = -4;
+  } else if (word=="'bool'"){
+    type = -5;
+  } else if (word=="'extern'"){
+    type = -6;
+  } else if (word=="'if'"){
+    type = -7;
+  } else if (word=="'else'"){
+    type = -8;
+  } else if (word=="'while'"){
+    type = -9;
+  } else if (word=="'return'"){
+    type = -10;
+  } else if (word=="INT_LIT"){
+    type = -14;
+  } else if (word=="FLOAT_LIT"){
+    type = -15;
+  } else if (word=="BOOL_LIT"){
+    type = -16;
+  } else if (word=="'&&'"){
+    type = -17;
+  } else if (word=="'||'"){
+    type = -18;
+  } else if (word=="'+'"){
+    type = int('+');
+  } else if (word=="'-'"){
+    type = int('_');
+  } else if (word=="'*'"){
+    type = int('*');
+  } else if (word=="'/'"){
+    type = int('/');
+  } else if (word=="'%'"){
+    type = int('%');
+  } else if (word=="'!'"){
+    type = int('!');
+  } else if (word=="'=='"){
+    type = -19;
+  } else if (word=="'!='"){
+    type = -20;
+  } else if (word=="'<='"){
+    type = -21;
+  } else if (word=="'<'"){
+    type = int('<');
+  } else if (word=="'>='"){
+    type = -23;
+  } else if (word=="'>'"){
+    type = int('>');
+  } else if (word=="EOF"){
+    type = 0;
+  } else {
+    type = -100;
+  }
+  return type;
+}
+
+bool str_to_bool(std::string word){
+  if (word == "True"){
+    return true;
+  } else if (word == "False"){
+    return false;
+  } else {
+    throw std::runtime_error("cannot convert string to bool");
+  }
+}
 // TOKEN struct is used to keep track of information about a token
 struct TOKEN {
   int type = -100;
@@ -675,6 +762,39 @@ std::vector<std::string> find_sentence_first(sentence &sentence){
   return sentence_first;
 }
 
+std::vector<int> terminals_to_int(std::vector<std::string> terminals){
+  std::vector<int> intvector(terminals.size());
+  for (int i=0; i<terminals.size();i++){
+    intvector[i] = word_to_type(terminals[i]);
+  }
+  return intvector;
+}
+
+bool sentencenullable(sentence &sentence){
+  bool ans = true;
+  for (auto &word: sentence){
+    if (word == "epsilon"){
+      continue;
+    }
+    else if (std::find(terminals.begin(), terminals.end(), word) != terminals.end()){
+      return false;
+    } else {
+        ans = ans && nullable[word];
+    }
+  }
+  return ans;
+}
+
+sentence look_ahead_special_case(std::string nonterminal, production_options productions){
+  if (nonterminal == "decl"){
+
+  } else if (nonterminal == "return_stmt"){
+
+  } else if (nonterminal == "expr"){
+    
+  }
+}
+
 sentence choose_production(std::string nonterminal, production_options productions){
   /*
   let productions = s1, ..., sk 
@@ -696,52 +816,63 @@ sentence choose_production(std::string nonterminal, production_options productio
     else
       raise error
   */
+  sentence answer;
   int numfirstsets = 0;
-  for (auto &prod : productions){
+  int lastsetindex = 0;
+  for (int i=0; i<productions.size(); i++){
+    auto prod = productions[i];
     if (prod[0] == "epsilon"){
       continue;
     }
-    std::vector<std::string> sentencefirst = find_sentence_first(prod);
-    if (std::find(sentencefirst.begin(), sentencefirst.end(), program_tokens[curTokIndex]) != terminals.end()){
+    std::vector<std::string> sentencefirstold = find_sentence_first(prod);
+    std::vector<int> sentencefirst = terminals_to_int(sentencefirstold);
+    if (std::find(sentencefirst.begin(), sentencefirst.end(), program_tokens[curTokIndex].type) != sentencefirst.end()){
       numfirstsets += 1;
+      lastsetindex = i;
     }
   }
 
-  return productions[0];
-}
-
-int word_to_type(std::string word){
-  int type = -100;
-  switch(word){
-    case "IDENT":
-      type = -1;
-      break;
-    case "'='":
-      type = int('=')
-      break;
-    case "'{'":
-      type = int('{')
-      break;
-    case "'}'":
-      type = int('}')
-      break;
-    case "'('":
-      type = int('(')
-      break;
-    case "')'":
-      type = int(')')
-      break;
-    case "X":
-      type = int('X')
-      break;
-
+  if (numfirstsets == 1){
+      answer =  productions[lastsetindex];
+  } else if (numfirstsets > 1){
+      std::cout << "this is the uncompleted path\n";
+      answer = look_ahead_special_case(nonterminal, productions); // this needs to handle the special case where we lookahead
+  } else if (numfirstsets == 0){
+      std::vector<int> nontermfollowset = terminals_to_int(follow[nonterminal]);
+      if (std::find(nontermfollowset.begin(), nontermfollowset.end(), program_tokens[curTokIndex].type) != nontermfollowset.end()){
+        // current token is in follow[nonterminal]
+        int numnullable = 0;
+        int lastnullableindex = 0;
+        for (int i; i<productions.size(); i++){
+          sentence s = productions[i];
+          if (sentencenullable(s)){
+            numnullable +=1;
+            lastnullableindex = i;
+          }
+        }
+        if (numnullable == 1){
+          answer = productions[lastnullableindex];
+        }
+        else if (numnullable > 1){
+          throw std::runtime_error("There is an issue with the grammar because more than one set is nullable");
+        }
+        else if (numnullable ==0){
+          throw std::runtime_error("there is a syntax error");
+        }
+      }
+  } else {
+    throw std::runtime_error("error");
   }
-
-  return type
-
+  return answer;
 }
+
+
 
 void parse_general(std::string nonterminal){
+  std::cout << nonterminal << '\n';
+  if (nonterminal=="epsilon"){
+    return;
+  }
   production_options productions = rhslist[nonterminal_index(nonterminal)];
   //note it will only have one
   // find some way of choosing this
@@ -751,9 +882,10 @@ void parse_general(std::string nonterminal){
     if (std::find(terminals.begin(), terminals.end(), prod[i]) == terminals.end()){
       // prod[i] is not a terminal 
       parse_general(prod[i]);
-    } else if (prod[i] == program_tokens[curTokIndex].type){
+    } else if (word_to_type(prod[i]) == program_tokens[curTokIndex].type){
       // prod[i] is a terminal and matches the current token
       curTokIndex++;
+      std::cout << "next token\n";
       // curNode.children = something;
     } else {
       // prod[i] is a terminal but doesn't match current token
@@ -765,7 +897,7 @@ void parse_general(std::string nonterminal){
 
 // ASTnode root;
 static void parser() {
-  // parse_general("start");
+  parse_general("start");
 }
 
 
