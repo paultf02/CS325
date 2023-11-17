@@ -1,9 +1,14 @@
 # we have 3 categories of term
 # nonterminal, terminal, epsilon
 
-with open("terminals2.txt", "r") as fin:
+inputgrammarfile = "transformedgrammar6.txt"
+inputterminalsfile = "terminals2.txt"
+outputcsvfile = "firstfollowg6.csv"
+sep = ","
+
+with open(inputterminalsfile, "r") as fin:
     terminals = [line.rstrip() for line in fin.readlines()]
-with open("transformedgrammar5.txt", "r") as fin:
+with open(inputgrammarfile, "r") as fin:
     lines = fin.readlines()
 
 lhslist = [] # list of nonterminals in order of production
@@ -406,14 +411,14 @@ def to_string(thisset):
     string += '"'
     return string
 
-sep = "?"
+
 ostring = f"term{sep}nullable{sep}firstset{sep}followset\n"
 for term in first.keys():
     #print(first[term])
     thisrow = f"{term}{sep}{nullable[term]}{sep}{to_string(first[term])}{sep}{to_string(follow[term])}\n"
     ostring += thisrow
     print(thisrow)
-with open("firstfollowseparator.csv", 'w') as fout:
+with open(outputcsvfile, 'w') as fout:
     fout.write(ostring)
 print("first and follow sets saved into csv file")
 
@@ -444,10 +449,11 @@ for lhs in lhslist:
                 or_sequence = rhs[j]
                 if terminal in sentence_first(or_sequence):
                     if (i, j) not in parser_table[(lhs, terminal)]:
-                        parser_table[(lhs, terminal)].append((i,j))
+                        parser_table[(lhs, terminal)].append(("first",i,j))
                 if sentencenull(or_sequence) and (terminal in follow[lhs]):
                     if (i, j) not in parser_table[(lhs, terminal)]:
-                        parser_table[(lhs, terminal)].append((i,j))
+                        #print("used nullable condition")
+                        parser_table[(lhs, terminal)].append(("nullable",i,j))
 
 print("finished building parser table")
 t0 = [f"{key} : {value}" for key, value in parser_table.items() if len(value) == 0]
