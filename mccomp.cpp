@@ -616,12 +616,16 @@ std::vector<std::string> splitString_strdelim(const std::string& input, const st
 }
 
 void load_data(){
+  std::string csvfilename, terminalfilename, grammarfilename;
+  csvfilename = "firstfollowg6sep.csv";
+  terminalfilename = "terminals2.txt";
+  grammarfilename = "transformedgrammar6.txt";
   std::fstream csvfile, terminalfile, grammarfile;
   std::string line, part;
   std::string name, isnullable, firstset, followset, lhs, rhs, or_sequence;
   char sep = '?';
 
-  csvfile.open("firstfollowseparator.csv", std::ios::in);
+  csvfile.open(csvfilename, std::ios::in);
   if (!csvfile) {                        
     std::cout<<"File doesn’t exist.";
     throw std::runtime_error("could not open file");         
@@ -648,7 +652,7 @@ void load_data(){
   }
   csvfile.close();
 
-  terminalfile.open("terminals2.txt", std::ios::in);
+  terminalfile.open(terminalfilename, std::ios::in);
   if (!terminalfile) {                        
     std::cout<<"File doesn’t exist.";
     throw std::runtime_error("could not open file");         
@@ -658,7 +662,7 @@ void load_data(){
   }
   terminalfile.close();
 
-  grammarfile.open("transformedgrammar5.txt", std::ios::in);
+  grammarfile.open(grammarfilename, std::ios::in);
   if (!grammarfile) {                        
     std::cout<<"File doesn’t exist.";
     throw std::runtime_error("could not open grammar file");         
@@ -791,7 +795,7 @@ sentence look_ahead_special_case(std::string nonterminal, production_options pro
   } else if (nonterminal == "return_stmt"){
 
   } else if (nonterminal == "expr"){
-    
+
   }
 }
 

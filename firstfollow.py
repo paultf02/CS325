@@ -3,8 +3,8 @@
 
 inputgrammarfile = "transformedgrammar6.txt"
 inputterminalsfile = "terminals2.txt"
-outputcsvfile = "firstfollowg6.csv"
-sep = ","
+outputcsvfile = "firstfollowg6sep.csv"
+sep = "?"
 
 with open(inputterminalsfile, "r") as fin:
     terminals = [line.rstrip() for line in fin.readlines()]

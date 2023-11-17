@@ -122,3 +122,12 @@ cells with more than 1 entry:
 ('rval5', 'FLOAT_LIT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
 ('rval5', 'IDENT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
 ('rval7', 'IDENT') : [(34, 1), (34, 2)]
+
+
+if i use transformedgrammar6 then the ambiguities are
+('decl', "'int'") : [('first', 7, 0), ('first', 7, 1)]
+('decl', "'float'") : [('first', 7, 0), ('first', 7, 1)]
+('decl', "'bool'") : [('first', 7, 0), ('first', 7, 1)]
+('return_stmt', "'return'") : [('first', 25, 0), ('first', 25, 1)]
+('expr', 'IDENT') : [('first', 26, 0), ('first', 26, 1)]
+('rval7', 'IDENT') : [('first', 40, 1), ('first', 40, 2)]
