@@ -1,9 +1,9 @@
 # we have 3 categories of term
 # nonterminal, terminal, epsilon
 
-inputgrammarfile = "transformedgrammar6.txt"
+inputgrammarfile = "transformedgrammar7.txt"
 inputterminalsfile = "terminals2.txt"
-outputcsvfile = "firstfollowg6sep.csv"
+outputcsvfile = "firstfollowg7sep.csv"
 sep = "?"
 
 with open(inputterminalsfile, "r") as fin:
@@ -311,9 +311,9 @@ while True:
 
 
 print("our final graphs is:")
-# [print(f"{key}: {value}") for (key, value) in G.items()]
+[print(f"{key}: {value}") for (key, value) in G.items()]
 print("the key for new nodes is:")
-# [print(f"{key}: {value}") for (key, value) in nametoterms.items()]
+[print(f"{key}: {value}") for (key, value) in nametoterms.items()]
 
 # now we need to topological sort the vertices of G
 
@@ -339,7 +339,7 @@ def topsort(graph):
 
 tsortedvertices = list(reversed(topsort(G)))
 print("the topological sorted vertices of the graph are:")
-#[print(v) for v in tsortedvertices]
+[print(v) for v in tsortedvertices]
 #print(tsortedvertices)
 
 
@@ -372,18 +372,47 @@ for nonterminal in tsortedvertices:
 print("finished computing follow sets")
 
 print("modifying so that a multiple terminal node is split")
+keystopop = [key for key in follow.keys() if (key in nametoterms.keys())]
+#replacekeywith = {key: [] for key in keystopop.keys()}
+
+def get_replacekeywith(keystopop, nametoterms):
+    replacekeywith = {key: None for key in keystopop}
+    for key in keystopop:
+        ourlist = nametoterms[key].copy()
+        while True:
+            to_replace = [name for name in ourlist if name in nametoterms.keys()]
+            if len(to_replace) ==0:
+                break
+            #remove only removes the first occurrence but it should only have one
+            for name in to_replace:
+                ourlist.remove(name)
+                ourlist.extend(nametoterms[name])
+        replacekeywith[key] = ourlist
+    return replacekeywith
+
+replacekeywith = get_replacekeywith(keystopop, nametoterms)
+
+for key, replacementlist in replacekeywith.items():
+    thisfollowset = follow[key]
+    follow.pop(key)
+    for newkey in replacementlist:
+        follow[newkey] = thisfollowset
+    
+
+
+
 #this section has a possible error. if we need to do it for a different example
 # and there are multiple rounds of contraction, this will cause an error.
-for compound in nametoterms.keys():
-    if compound in follow.keys():
-        thisfollowset = follow[compound]
-        for term in nametoterms[compound]:
-            follow[term] = thisfollowset
-        follow.pop(compound)
+# for compound in nametoterms.keys():
+#     if compound in follow.keys():
+#         thisfollowset = follow[compound]
+#         for term in nametoterms[compound]:
+#             follow[term] = thisfollowset
+#         follow.pop(compound)
 
 
 # print("the follow sets are:")
-# [print(f"{key}: {value}") for (key, value) in follow.items()]
+[print(f"{key}: {value}") for (key, value) in follow.items()]
 
 print(f"number of terms we computed followsets for: {len(follow.keys())}, number of terms in lhslist: {len(lhslist)}")
 assert len(follow.keys()) == len(lhslist)
@@ -417,7 +446,7 @@ for term in first.keys():
     #print(first[term])
     thisrow = f"{term}{sep}{nullable[term]}{sep}{to_string(first[term])}{sep}{to_string(follow[term])}\n"
     ostring += thisrow
-    print(thisrow)
+    #print(thisrow)
 with open(outputcsvfile, 'w') as fout:
     fout.write(ostring)
 print("first and follow sets saved into csv file")
