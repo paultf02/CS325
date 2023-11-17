@@ -159,7 +159,7 @@ int word_to_type(std::string word){
   } else if (word=="'+'"){
     type = int('+');
   } else if (word=="'-'"){
-    type = int('_');
+    type = int('-');
   } else if (word=="'*'"){
     type = int('*');
   } else if (word=="'/'"){
@@ -864,14 +864,21 @@ sentence choose_production(std::string nonterminal, production_options productio
     }
     std::vector<std::string> sentencefirstold = find_sentence_first(prod);
 
-    // if (nonterminal == "rval6"){
-    //   std::cout << "elements of first set of rval6 production i=" << i << '\n';
-    //   for (auto &elem : sentencefirstold){
-    //     std::cout << elem << '\n';
-    //   }
-    // }
+    if (nonterminal == "expr"){
+      std::cout << "elements of first set of expr production i=" << i << '\n';
+      for (auto &elem : sentencefirstold){
+        std::cout << elem << '\n';
+      }
+    }
 
     std::vector<int> sentencefirst = terminals_to_int(sentencefirstold);
+    if (nonterminal == "expr"){
+      std::cout << "elements of first set of expr production i=" << i << '\n';
+      for (auto &elem : sentencefirst){
+        std::cout << elem << '\n';
+      }
+    }
+
     if (std::find(sentencefirst.begin(), sentencefirst.end(), program_tokens[curTokIndex].type) != sentencefirst.end()){
       numfirstsets += 1;
       lastsetindex = i;
@@ -902,8 +909,8 @@ sentence choose_production(std::string nonterminal, production_options productio
         else if (numnullable > 1){
           throw std::runtime_error("There is an issue with the grammar because more than one set is nullable");
         }
-        else if (numnullable ==0){
-          throw std::runtime_error("there is a syntax error");
+        else if (numnullable == 0){
+          throw std::runtime_error("there is a syntax error, no production is nullable");
         }
       }
   } else {
@@ -936,14 +943,14 @@ void parse_general(std::string nonterminal, int depth){
     } else if (word_to_type(prod[i]) == program_tokens[curTokIndex].type){
       // prod[i] is a terminal and matches the current token
       curTokIndex++;
-      std::cout << "next token which is " << program_tokens[curTokIndex].lexeme << " depth=" << depth << '\n';
+      std::cout << "next token which is " << program_tokens[curTokIndex].lexeme << " lineno="<< program_tokens[curTokIndex].lineNo <<" type=" << program_tokens[curTokIndex].type <<" depth=" << depth << '\n';
       if (program_tokens[curTokIndex].type == 0){
         return;
       }
       // curNode.children = something;
     } else {
       // prod[i] is a terminal but doesn't match current token
-      std::string err_msg = "compiling error with token number " + std::to_string(curTokIndex);
+      std::string err_msg = "compiling error with token number " + std::to_string(curTokIndex) + "on line " + std::to_string(program_tokens[curTokIndex].lineNo);
       throw std::runtime_error(err_msg);
     }
   }
