@@ -30,6 +30,7 @@
 #include <queue>
 #include <set>
 #include <sstream>
+#include <stack>
 #include <stdexcept>
 #include <string.h>
 #include <string>
@@ -391,7 +392,9 @@ static TOKEN getNextToken() {
   return CurTok = temp;
 }
 
-static void putBackToken(TOKEN tok) { tok_buffer.push_front(tok); }
+static void putBackToken(TOKEN tok) {
+  tok_buffer.push_front(tok);
+}
 
 //===----------------------------------------------------------------------===//
 // AST nodes
@@ -405,13 +408,6 @@ public:
   virtual std::string to_string() const {
     return "";
   };
-};
-
-/// concrete general ASTnode
-class concreteASTnode : public ASTnode {
-  public:
-    std::string name;
-    std::vector<ASTnode*> children;
 };
 
 /// IntASTnode - Class for integer literals like 1, 2, 10,
@@ -428,6 +424,10 @@ public:
   //};
 };
 
+class GenericASTnode: public ASTnode {
+  public:
+    std::vector<ASTnode*> children;
+};
 // first let us do a parse where everything is an ASTnode. just get a basic tree sorted
 // 
 
@@ -464,6 +464,21 @@ std::vector<std::string> terminals;
 std::map<std::string, bool> nullable;
 std::map<std::string, std::vector<std::string>> first;
 std::map<std::string, std::vector<std::string>> follow;
+
+// make a queue of tokens
+static std::deque<TOKEN> program_tokens;
+static int curTokIndex = 0;
+
+static int nonterminal_index(std::string term){
+  auto it = std::find(nonterminals.begin(), nonterminals.end(), term);
+  if (it == nonterminals.end()){
+    // name not in vector
+    throw std::runtime_error("this term is not in the terminal list");
+  } else {
+    auto index = std::distance(nonterminals.begin(), it);
+    return index;
+  }
+}
 
 /*
 The below is ChatGPT3.5 code with the prompt
@@ -556,8 +571,6 @@ void load_data(){
   }
   terminalfile.close();
 
-  std::cout << "just before error\n";
-
   grammarfile.open("transformedgrammar5.txt", std::ios::in);
   if (!grammarfile) {                        
     std::cout<<"File doesn’t exist.";
@@ -576,24 +589,24 @@ void load_data(){
     std::vector<std::string> splitor = splitString_strdelim(rhs, " | ");
 
 
-    std::cout << "These are the elements of splitline:\n";
-    for (auto &elem : splitline){
-      std::cout << elem << '\n';
-    }
-    std::cout << "These are the elements of splitor:\n";
-    for (auto &elem : splitor){
-      std::cout << elem << '\n';
-    }
+    // std::cout << "These are the elements of splitline:\n";
+    // for (auto &elem : splitline){
+    //   std::cout << elem << '\n';
+    // }
+    // std::cout << "These are the elements of splitor:\n";
+    // for (auto &elem : splitor){
+    //   std::cout << elem << '\n';
+    // }
 
     production_options rhstyped;
     sentence thissentence;
     for (auto &elem: splitor){
       thissentence = splitString_strdelim(elem, " ");
       rhstyped.push_back(thissentence);
-      std::cout << "These are the elements of this sentence:\n";
-      for (auto &elem : thissentence){
-        std::cout << elem << '\n';
-      }
+      // std::cout << "These are the elements of this sentence:\n";
+      // for (auto &elem : thissentence){
+      //   std::cout << elem << '\n';
+      // }
     }
     rhslist.push_back(rhstyped);
 
@@ -601,20 +614,20 @@ void load_data(){
   }
   grammarfile.close();
 
-  name = "expr";
-  std::cout << name <<" first:\n";
-  for (auto &elem : first[name]){
-    std::cout << elem << '\n';
-  }
-  std::cout << name <<" follow:\n";
-  for (auto &elem : follow[name]){
-    std::cout << elem << '\n';
-  }
+  // name = "expr";
+  // std::cout << name <<" first:\n";
+  // for (auto &elem : first[name]){
+  //   std::cout << elem << '\n';
+  // }
+  // std::cout << name <<" follow:\n";
+  // for (auto &elem : follow[name]){
+  //   std::cout << elem << '\n';
+  // }
 
-  std::cout << "iterating through terminals: " << '\n';
-  for (auto &elem : terminals){
-    std::cout << elem << '\n';
-  }
+  // std::cout << "iterating through terminals: " << '\n';
+  // for (auto &elem : terminals){
+  //   std::cout << elem << '\n';
+  // }
 }
 
 /* Add function calls for each production */
@@ -636,11 +649,6 @@ void production_call(std::string name){
 }
 */
 
-static void parser() {
-  // add body
-  // production_call("start");
-}
-
 /*
 Recursive descent predictive parsing
 void A(){
@@ -655,8 +663,112 @@ void A(){
     }
   }
 }
-
 */
+
+std::vector<std::string> find_sentence_first(sentence &sentence){
+  // NOTE: THIS WILL CONTAIN DUPLICATES
+  std::vector<std::string> sentence_first;
+  for (auto &word : sentence){
+    std::vector<std::string> thisfirst = first[word];
+    sentence_first.insert(sentence_first.end(), thisfirst.begin(), thisfirst.end());
+  }
+  return sentence_first;
+}
+
+sentence choose_production(std::string nonterminal, production_options productions){
+  /*
+  let productions = s1, ..., sk 
+  so si is a sentence
+  if curTok is in exactly one of first(s1), ... ,first(sk) namely si then
+    return si
+  else if curTok in multiple of them then
+    use furtheer lookahead to uniquely determine which si to return
+  else if curTok is in zero of them then
+    if curTok in follow(nonterminal) then
+      if exactly one of the s1, ..., sk is nullable namely si then
+        return si
+      if many of s1, ..., sk are nullable then
+        is this an ambiguous grammar??
+        we believe in our grammar that at most one option is nullable
+        raise error
+      else if none of s1, ..., sk are nullable then
+        raise error
+    else
+      raise error
+  */
+  int numfirstsets = 0;
+  for (auto &prod : productions){
+    if (prod[0] == "epsilon"){
+      continue;
+    }
+    std::vector<std::string> sentencefirst = find_sentence_first(prod);
+    if (std::find(sentencefirst.begin(), sentencefirst.end(), program_tokens[curTokIndex]) != terminals.end()){
+      numfirstsets += 1;
+    }
+  }
+
+  return productions[0];
+}
+
+int word_to_type(std::string word){
+  int type = -100;
+  switch(word){
+    case "IDENT":
+      type = -1;
+      break;
+    case "'='":
+      type = int('=')
+      break;
+    case "'{'":
+      type = int('{')
+      break;
+    case "'}'":
+      type = int('}')
+      break;
+    case "'('":
+      type = int('(')
+      break;
+    case "')'":
+      type = int(')')
+      break;
+    case "X":
+      type = int('X')
+      break;
+
+  }
+
+  return type
+
+}
+
+void parse_general(std::string nonterminal){
+  production_options productions = rhslist[nonterminal_index(nonterminal)];
+  //note it will only have one
+  // find some way of choosing this
+  sentence prod = choose_production(nonterminal, productions);
+
+  for (int i=0; i<prod.size(); i++){
+    if (std::find(terminals.begin(), terminals.end(), prod[i]) == terminals.end()){
+      // prod[i] is not a terminal 
+      parse_general(prod[i]);
+    } else if (prod[i] == program_tokens[curTokIndex].type){
+      // prod[i] is a terminal and matches the current token
+      curTokIndex++;
+      // curNode.children = something;
+    } else {
+      // prod[i] is a terminal but doesn't match current token
+      std::string err_msg = "compiling error with token number " + std::to_string(curTokIndex);
+      throw std::runtime_error(err_msg);
+    }
+  }
+}
+
+// ASTnode root;
+static void parser() {
+  // parse_general("start");
+}
+
+
 
 // program ::= extern_list decl_list
 
@@ -687,15 +799,6 @@ while True:
 
 
 
-
-typedef std::string parse_tree;
-
-parse_tree recursive_descent_parser(){
-  parse_tree tree;
-  
-  return tree;
-}
-
 //===----------------------------------------------------------------------===//
 // Code Generation
 //===----------------------------------------------------------------------===//
@@ -708,8 +811,7 @@ static std::unique_ptr<Module> TheModule;
 // AST Printer
 //===----------------------------------------------------------------------===//
 
-inline llvm::raw_ostream &operator<<(llvm::raw_ostream &os,
-                                     const ASTnode &ast) {
+inline llvm::raw_ostream &operator<<(llvm::raw_ostream &os, const ASTnode &ast) {
   os << ast.to_string();
   return os;
 }
@@ -717,6 +819,9 @@ inline llvm::raw_ostream &operator<<(llvm::raw_ostream &os,
 //===----------------------------------------------------------------------===//
 // Main driver code.
 //===----------------------------------------------------------------------===//
+
+
+
 
 int main(int argc, char **argv) {
   if (argc == 2) {
@@ -732,9 +837,9 @@ int main(int argc, char **argv) {
   lineNo = 1;
   columnNo = 1;
 
-  // make a queue of tokens
-  static std::deque<TOKEN> program_tokens;
+  
 
+  // if we are parsing and lexing at the same time then we do not do this part of the code.
   // get the first token
   getNextToken();
   program_tokens.push_back(CurTok);
@@ -746,22 +851,24 @@ int main(int argc, char **argv) {
   // remove the last EOF_TOK
   program_tokens.pop_back();
   fprintf(stderr, "Lexer Finished\n");
+  // fprintf(stderr, "This is our token: %d\n", CurTok.type);
 
-  // print our deque of tokens
-  for (int i = 0; i<program_tokens.size(); i++){
-    //fprintf(stderr, "Token: %s with type %d\n", program_tokens[i].lexeme.c_str(), program_tokens[i].type);
-  }
+  // // print our deque of tokens
+  // for (int i = 0; i<program_tokens.size(); i++){
+  //   fprintf(stderr, "Token: %s with type %d\n", program_tokens[i].lexeme.c_str(), program_tokens[i].type);
+  // }
       
   // Make the module, which holds all the code.
   TheModule = std::make_unique<Module>("mini-c", TheContext);
 
-  // load first and follow set from file
+  // load first and follow set from file, load list of terminals, load list of production lhs and rhs respectively
   load_data();
 
 
   // Run the parser now.
   parser();
   fprintf(stderr, "Parsing Finished\n");
+  // std::cout << std::to_string(nonterminal_index("block"))<<'\n';
 
   //********************* Start printing final IR **************************
   // Print out all of the generated code into a file called output.ll

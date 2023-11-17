@@ -68,7 +68,7 @@ Turn parse tree into abstract syntax tree
 Pretty print abstract syntax tree (see clang AST output and model it on that)
 Turn abstract syntax tree into LLVM IR by running recursive codegen() method
     This will require type checking and variable scope (any other semantic checks?)
-Add meaningful error messages to parser, semantic checker and codegen
+Add meaningful error messages to lexer, parser, semantic checker and codegen
 
 1126 cells with 0 entries
 156 cells with 1 entry
