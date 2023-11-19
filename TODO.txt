@@ -11,8 +11,11 @@ Turn abstract syntax tree into LLVM IR by running recursive codegen() method
     This will require type checking and variable scope (any other semantic checks?)
 Add meaningful error messages to lexer, parser, semantic checker and codegen
 Fix error in find_sentence_first (will include epsilon erroneously)
-Failed cosine, pi, recurse, rfact, unary 
+Failed cosine, pi, recurse, rfact, unary  
     the current token is always '-' and it is using lookahead
+    THIS IS FIXED
+    NOW JUST NEED TO DEAL WITH unary
+
 
 
 check operator precedence
