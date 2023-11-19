@@ -1,9 +1,9 @@
 # we have 3 categories of term
 # nonterminal, terminal, epsilon
 
-inputgrammarfile = "transformedgrammar7.txt"
+inputgrammarfile = "transformedgrammar8.txt"
 inputterminalsfile = "terminals2.txt"
-outputcsvfile = "firstfollowg7sep.csv"
+outputcsvfile = "firstfollowg8sep.csv"
 sep = "?"
 
 with open(inputterminalsfile, "r") as fin:
