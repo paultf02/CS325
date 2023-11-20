@@ -1,20 +1,20 @@
 To do:
-Add grammar enforced operator precedence
-Remove left recursion
-Compute first and follow sets
-Use appropriate lookahead for certain cases to determine production to use
-Make a predictive recursive descent parser. No backtracking.
-Create parse tree
-Turn parse tree into abstract syntax tree
-Pretty print abstract syntax tree (see clang AST output and model it on that)
+Add grammar enforced operator precedence DONE, NEED TO TEST
+Remove left recursion, DONE
+Compute first and follow sets, DONE
+Use appropriate lookahead for certain cases to determine production to use, DONE (not for all grammars though)
+Make a predictive recursive descent parser. No backtracking. DONE
+Create abstract syntax tree
+Pretty print abstract syntax tree (see clang AST output and model it on that) by implementing to string method
+Make error message exception class
 Turn abstract syntax tree into LLVM IR by running recursive codegen() method
     This will require type checking and variable scope (any other semantic checks?)
 Add meaningful error messages to lexer, parser, semantic checker and codegen
-Fix error in find_sentence_first (will include epsilon erroneously)
+Fix error in find_sentence_first (will include epsilon erroneously) DONE
 Failed cosine, pi, recurse, rfact, unary  
     the current token is always '-' and it is using lookahead
     THIS IS FIXED
-    NOW JUST NEED TO DEAL WITH unary
+    NOW JUST NEED TO DEAL WITH unary, ALSO FIXED
 
 
 
