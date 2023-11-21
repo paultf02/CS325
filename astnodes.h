@@ -15,17 +15,33 @@ public:
     return "";
   };
 };
-class ProgramASTnode : public ASTnode{};
+class ProgramASTnode : public ASTnode{
+  // std::vector<std::unique_ptr<ExternASTnode>> externs;
+  // std::vector<std::unique_ptr<DeclASTnode>> decls;
+  
+public:
+  std::string s;
+  // ProgramASTnode(std::vector<std::unique_ptr<ExternASTnode>> e, 
+  //                std::vector<std::unique_ptr<DeclASTnode>> d) : externs(e), decls(d){}
+  ProgramASTnode(){
+    s = "hi";
+  };
+  virtual llvm::Value *codegen(){
+    return nullptr;
+  };
+};
 class ExternASTnode : public ASTnode{};
-class VariableDeclASTnode : public ASTnode{};
-class FunctionDeclASTnode : public ASTnode{};
-class ArgASTnode : public ASTnode{};
+class DeclASTnode : public ASTnode{};
+class VarDeclASTnode : public DeclASTnode{};
+class FuncDeclASTnode : public DeclASTnode{};
+class ParamASTnode : public ASTnode{};
+// class ArgASTnode : public ASTnode{};
 class BlockASTnode : public ASTnode{};
-class VariableAssignASTnode : public ASTnode{};
+class VarAssignASTnode : public ASTnode{};
 class ExprASTnode : public ASTnode{};
 class BinOpASTnode : public ASTnode{};
-class UnaryOpASTnode : public ASTnode{};
-class LiteralASTnode : public ASTnode{};
+class UnOpASTnode : public ASTnode{};
+class LitASTnode : public ASTnode{};
 class IfThenElseASTnode : public ASTnode{};
 class WhileASTnode : public ASTnode{};
 class IntASTnode : public ASTnode {
@@ -44,7 +60,7 @@ public:
 class BoolASTnode : public ASTnode{};
 class FloatASTnode : public ASTnode{};
 class IdentASTnode : public ASTnode{};
-class FunctionCallASTnode : public ASTnode{};
+class FuncCallASTnode : public ASTnode{};
 
 
 /* add other AST nodes as nessasary */

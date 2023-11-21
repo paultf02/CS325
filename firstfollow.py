@@ -4,6 +4,7 @@
 inputgrammarfile = "./grammars/transformedgrammar9.txt"
 inputterminalsfile = "./grammars/terminals2.txt"
 outputcsvfile = "./firstfollow/firstfollowg9sep.csv"
+outputlookaheadfile = "./grammars/needlookaheadg9.txt"
 sep = "?"
 
 with open(inputterminalsfile, "r") as fin:
@@ -488,9 +489,15 @@ print("finished building parser table")
 t0 = [f"{key} : {value}" for key, value in parser_table.items() if len(value) == 0]
 t1 = [f"{key} : {value}" for key, value in parser_table.items() if len(value) == 1]
 tm = [f"{key} : {value}" for key, value in parser_table.items() if len(value) > 1]
-print(f"{len(t0)} cells with 0 entries\n{len(t1)} cells with 1 entry\n{len(tm)} cells with more than 1 entry")
-print("cells with more than 1 entry:")
-[print(item) for item in tm]
+need_lookahead_str = ""
+need_lookahead_str += f"{len(lhslist)} terms in lhs of grammar * {len(terminals)} terminals = {len(lhslist)*len(terminals)}, there are {len(parser_table.keys())} cells in the table\n"
+need_lookahead_str += f"{len(t0)} cells with 0 entries\n{len(t1)} cells with 1 entry\n{len(tm)} cells with more than 1 entry\n"
+need_lookahead_str += "cells with more than 1 entry:\n"
+for item in tm:
+    need_lookahead_str += (item + '\n')
+with open(outputlookaheadfile, 'w') as fout:
+    fout.write(need_lookahead_str)
+
 
 
 # print("lhs that depend on followsets that are defined below")

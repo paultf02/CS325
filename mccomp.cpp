@@ -68,6 +68,8 @@ std::map<std::string, bool> nullable;
 std::map<std::string, std::vector<std::string>> first;
 std::map<std::string, std::vector<std::string>> follow;
 
+std::unique_ptr<ProgramASTnode> programrootnode;
+
 
 //===----------------------------------------------------------------------===//
 // Code Generation
@@ -135,7 +137,7 @@ int main(int argc, char **argv) {
   load_data();
 
   // Run the parser now.
-  parser();
+  programrootnode = parser();
   fprintf(stderr, "Parsing Finished\n");
   // std::cout << std::to_string(nonterminal_index("block"))<<'\n';
 

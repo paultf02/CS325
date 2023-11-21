@@ -5,6 +5,10 @@ Compute first and follow sets, DONE
 Use appropriate lookahead for certain cases to determine production to use, DONE (not for all grammars though)
 Make a predictive recursive descent parser. No backtracking. DONE
 Create abstract syntax tree
+    parse each expression
+    create appropriate ASTnode classes
+    figure out how to use std::move
+    
 Pretty print abstract syntax tree (see clang AST output and model it on that) by implementing to string method
 Make error message exception class
 Turn abstract syntax tree into LLVM IR by running recursive codegen() method

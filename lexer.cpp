@@ -244,3 +244,18 @@ TOKEN gettok() {
   columnNo++;
   return returnTok(s, int(ThisChar));
 } 
+
+TOKEN getNextToken() {
+
+  if (tok_buffer.size() == 0)
+    tok_buffer.push_back(gettok());
+
+  TOKEN temp = tok_buffer.front();
+  tok_buffer.pop_front();
+
+  return CurTok = temp;
+}
+
+void putBackToken(TOKEN tok) {
+  tok_buffer.push_front(tok);
+}
