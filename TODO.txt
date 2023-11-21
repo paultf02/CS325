@@ -139,3 +139,13 @@ if i use transformedgrammar6 then the ambiguities are
 ('return_stmt', "'return'") : [('first', 25, 0), ('first', 25, 1)]
 ('expr', 'IDENT') : [('first', 26, 0), ('first', 26, 1)]
 ('rval7', 'IDENT') : [('first', 40, 1), ('first', 40, 2)]
+
+NOT GOING TO WORK:
+
+// now turn the parse tree into an AST
+// extern_list and children that are extern and extern_list1 can be turned into one node
+// same for decl_list, param_list, local_decls, stmt_list, arg_list
+// expr mixes assignment and nested expressions.
+// we want to remove rvals and then make it all 
+// take a particular look at nodes with keywords and then turn them into an AST node without keyword children
+// so for if_stmt then turn it into IfThenElseASTnode

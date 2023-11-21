@@ -1,3 +1,20 @@
+#include "lexer.h"
+#include "astnodes.h"
+#include "loaddata.h"
+#include "parser.h"
+#include <vector>
+#include <string>
+#include <deque>
+#include <algorithm>
+#include <stdexcept>
+#include <iostream>
+
+
+//===----------------------------------------------------------------------===//
+// Recursive Descent Parser - Function call for each production
+//===----------------------------------------------------------------------===//
+
+
 /*
 void production_call(std::string name){
   sentence s = choose_production(name);
@@ -15,21 +32,111 @@ void production_call(std::string name){
 }
 */
 
-/*
-Recursive descent predictive parsing
-void A(){
-  choose A-production A -> X1X2...Xk
-  for (i=1 to k){
-    if (Xi is a nonterminal){
-      call procedure Xi();
-    } else if (Xi == current input symbol a){
-      advance input to the next symbol;
-    } else {
-      raise error
-    }
+//===----------------------------------------------------------------------===//
+// Parser Buffer
+//===----------------------------------------------------------------------===//
+
+/// CurTok/getNextToken - Provide a simple token buffer.  CurTok is the current
+/// token the parser is looking at.  getNextToken reads another token from the
+/// lexer and updates CurTok with its results.
+/// we also need to build the parse tree
+
+
+
+
+
+int word_to_type(std::string word){
+  int type = -100;
+  if (word=="IDENT"){
+    type = -1;
+  } else if (word=="'='"){
+    type = int('=');
+  } else if (word=="'{'"){
+    type = int('{');
+  } else if (word=="'}'"){
+    type = int('}');
+  } else if (word=="'('"){
+    type = int('(');
+  } else if (word=="')'"){
+    type = int(')');
+  } else if (word=="';'"){
+    type = int(';');
+  } else if (word=="','"){
+    type = int(',');
+  } else if (word=="'int'"){
+    type = -2;
+  } else if (word=="'void'"){
+    type = -3;
+  } else if (word=="'float'"){
+    type = -4;
+  } else if (word=="'bool'"){
+    type = -5;
+  } else if (word=="'extern'"){
+    type = -6;
+  } else if (word=="'if'"){
+    type = -7;
+  } else if (word=="'else'"){
+    type = -8;
+  } else if (word=="'while'"){
+    type = -9;
+  } else if (word=="'return'"){
+    type = -10;
+  } else if (word=="INT_LIT"){
+    type = -14;
+  } else if (word=="FLOAT_LIT"){
+    type = -15;
+  } else if (word=="BOOL_LIT"){
+    type = -16;
+  } else if (word=="'&&'"){
+    type = -17;
+  } else if (word=="'||'"){
+    type = -18;
+  } else if (word=="'+'"){
+    type = int('+');
+  } else if (word=="'-'"){
+    type = int('-');
+  } else if (word=="'*'"){
+    type = int('*');
+  } else if (word=="'/'"){
+    type = int('/');
+  } else if (word=="'%'"){
+    type = int('%');
+  } else if (word=="'!'"){
+    type = int('!');
+  } else if (word=="'=='"){
+    type = -19;
+  } else if (word=="'!='"){
+    type = -20;
+  } else if (word=="'<='"){
+    type = -21;
+  } else if (word=="'<'"){
+    type = int('<');
+  } else if (word=="'>='"){
+    type = -23;
+  } else if (word=="'>'"){
+    type = int('>');
+  } else if (word=="EOF"){
+    type = 0;
+  } else {
+    type = -100;
   }
+  return type;
 }
-*/
+
+TOKEN getNextToken() {
+
+  if (tok_buffer.size() == 0)
+    tok_buffer.push_back(gettok());
+
+  TOKEN temp = tok_buffer.front();
+  tok_buffer.pop_front();
+
+  return CurTok = temp;
+}
+
+void putBackToken(TOKEN tok) {
+  tok_buffer.push_front(tok);
+}
 
 std::vector<std::string> find_sentence_first(sentence &sentence){
   // NOTE: THIS WILL CONTAIN DUPLICATES
@@ -45,10 +152,10 @@ std::vector<std::string> find_sentence_first(sentence &sentence){
   return sentence_first;
 }
 
-std::vector<int> terminals_to_int(std::vector<std::string> terminals){
-  std::vector<int> intvector(terminals.size());
-  for (int i=0; i<terminals.size();i++){
-    intvector[i] = word_to_type(terminals[i]);
+std::vector<int> terminals_to_int(std::vector<std::string> list_of_terminals){
+  std::vector<int> intvector(list_of_terminals.size());
+  for (int i=0; i<list_of_terminals.size();i++){
+    intvector[i] = word_to_type(list_of_terminals[i]);
   }
   return intvector;
 }
@@ -198,34 +305,6 @@ sentence choose_production(std::string nonterminal, production_options productio
   return answer;
 }
 
-/*
-Templated or conditional code
-
-parse_general(node){
-  returns pointer to node
-  (inside the node there are children)
-}
-
-programpointer = parse_general("start")
-
-*/
-
-// create a parse tree
-class ParseTreeNode{
-  std::string name;
-  std::vector<std::unique_ptr<ParseTreeNode>> children;
-}
-
-// now turn the parse tree into an AST
-// extern_list and children that are extern and extern_list1 can be turned into one node
-// same for decl_list, param_list, local_decls, stmt_list, arg_list
-// expr mixes assignment and nested expressions.
-// we want to remove rvals and then make it all 
-// take a particular look at nodes with keywords and then turn them into an AST node without keyword children
-// so for if_stmt then turn it into IfThenElseASTnode
-
-
-
 void parse_general(std::string nonterminal, int depth){
   std::cout << nonterminal << " depth=" << depth << '\n';
   if (nonterminal=="epsilon"){
@@ -257,106 +336,6 @@ void parse_general(std::string nonterminal, int depth){
   }
 }
 
-// ASTnode root;
-static void parser() {
+void parser() {
   parse_general("start", 0);
 }
-
-/*
-get the table parser_table[nonterm, term]
-stack.push("EOF")
-stack.push("start")
-curTok is prev declared
-while True:
-  t = stack.pop()
-  if t is a terminal:
-    if t == curTok:
-      curTok++
-    elif t != curTok:
-      raise Error
-  elif t is a nonterminal:
-    declare selected_production
-    if parser_table[t, curTok] has zero productions then raise Error
-    elif parser_table[t, curTok] has one production then that is selected_production
-    elif parser_table[t, curTok] has multiple productions then
-      based on t, curTok, curTok + 1, curtok + 2 choose selected_production appropriately
-    let P1 ... Pk be selected_production
-    push Pk, ..., P1 to the stack so P1 is on top
-*/
-
-// start -> program EOF
-parse_start(){}
-// program -> extern_list decl_list | decl_list
-parse_program(){}
-// extern_list -> extern extern_list1
-parse_extern_list(){}
-// extern_list1 -> extern extern_list1 | epsilon
-parse_extern_list1(){}
-// extern -> 'extern' type_spec IDENT '(' params ')' ';'
-parse_extern(){}
-// decl_list -> decl decl_list1
-parse_decl_list(){}
-// decl_list1 -> decl decl_list1 | epsilon
-parse_decl_list1(){}
-// decl -> var_decl | fun_decl
-parse_decl(){}
-// var_decl -> var_type IDENT ';'
-parse_var_decl(){}
-// type_spec -> 'void' | var_type
-parse_type_spec(){}
-// var_type -> 'int' | 'float' | 'bool'
-parse_var_type(){}
-// fun_decl -> type_spec IDENT '(' params ')' block
-parse_fun_decl(){}
-// params -> param_list | 'void' | epsilon
-parse_params(){}
-// param_list -> param param_list1
-parse_param_list(){}
-// param_list1 -> ',' param param_list1 | epsilon
-parse_param_list1(){}
-// param -> var_type IDENT
-parse_param(){}
-// block -> '{' local_decls stmt_list '}'
-parse_block(){}
-// local_decls -> local_decl local_decls | epsilon
-parse_local_decls(){}
-// local_decl -> var_type IDENT ';'
-parse_local_decl(){}
-// stmt_list -> stmt stmt_list | epsilon
-parse_stmt_list(){}
-// stmt -> expr_stmt | block | if_stmt | while_stmt | return_stmt
-parse_stmt(){}
-// expr_stmt -> expr ';' | ';'
-parse_expr_stmt(){}
-// while_stmt -> 'while' '(' expr ')' stmt
-parse_while_stmt(){}
-// if_stmt -> 'if' '(' expr ')' block else_stmt
-parse_if_stmt(){}
-// else_stmt -> 'else' block | epsilon
-parse_else_stmt(){}
-// return_stmt -> 'return' ';' | 'return' expr ';'
-parse_return_stmt(){}
-// expr -> IDENT '=' expr | rval
-parse_expr(){}
-// rval -> rval1 '||' rval | rval1
-parse_rval(){}
-// rval1 -> rval2 '&&' rval1 | rval2
-parse_rval1(){}
-// rval2 -> rval3 '==' rval2 | rval3 '!=' rval2 | rval3
-parse_rval2(){}
-// rval3 -> rval4 '<=' rval3 | rval4 '<' rval3 | rval4 '>=' rval3 | rval4 '>' rval3 | rval4
-parse_rval3(){}
-// rval4 -> rval5 '+' rval4 | rval5 '-' rval4 | rval5
-parse_rval4(){}
-// rval5 -> rval6 '*' rval5 | rval6 '/' rval5 | rval6 '%' rval5 | rval6
-parse_rval5(){}
-// rval6 -> '-' rval6 | '!' rval6 | rval7
-parse_rval6(){}
-// rval7 -> '(' expr ')' | IDENT | IDENT '(' args ')' | INT_LIT | FLOAT_LIT | BOOL_LIT
-parse_rval7(){}
-// args -> arg_list | epsilon
-parse_args(){}
-// arg_list -> expr arg_list1
-parse_args_list(){}
-// arg_list1 -> ',' expr arg_list1 | epsilon
-parse_args_list1(){}

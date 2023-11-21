@@ -1,19 +1,9 @@
-// TOKEN struct is used to keep track of information about a token
-struct TOKEN {
-  int type = -100;
-  std::string lexeme;
-  int lineNo;
-  int columnNo;
-};
+#include "lexer.h"
+#include <string>
 
-static std::string IdentifierStr; // Filled in if IDENT
-static int IntVal;                // Filled in if INT_LIT
-static bool BoolVal;              // Filled in if BOOL_LIT
-static float FloatVal;            // Filled in if FLOAT_LIT
-static std::string StringVal;     // Filled in if String Literal
-static int lineNo, columnNo;
 
-static TOKEN returnTok(std::string lexVal, int tok_type) {
+
+TOKEN returnTok(std::string lexVal, int tok_type) {
   TOKEN return_tok;
   return_tok.lexeme = lexVal;
   return_tok.type = tok_type;
@@ -25,7 +15,7 @@ static TOKEN returnTok(std::string lexVal, int tok_type) {
 // Read file line by line -- or look for \n and if found add 1 to line number
 // and reset column number to 0
 /// gettok - Return the next token from standard input.
-static TOKEN gettok() {
+TOKEN gettok() {
 
   static int LastChar = ' ';
   static int NextChar = ' ';

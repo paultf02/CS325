@@ -1,6 +1,19 @@
+#pragma once
+#include <string>
+#include <cstdio>
+
 //===----------------------------------------------------------------------===//
 // Lexer
 //===----------------------------------------------------------------------===//
+
+extern FILE *pFile;
+
+std::string IdentifierStr; // Filled in if IDENT
+int IntVal;                // Filled in if INT_LIT
+bool BoolVal;              // Filled in if BOOL_LIT
+float FloatVal;            // Filled in if FLOAT_LIT
+std::string StringVal;     // Filled in if String Literal
+extern int lineNo, columnNo; // not static because used in mccomp.cpp
 
 // The lexer returns one of these for known things.
 enum TOKEN_TYPE {
@@ -62,3 +75,15 @@ enum TOKEN_TYPE {
   // invalid
   INVALID = -100 // signal invalid token
 };
+
+// TOKEN struct is used to keep track of information about a token
+struct TOKEN {
+  int type = -100;
+  std::string lexeme;
+  int lineNo;
+  int columnNo;
+};
+
+
+TOKEN returnTok(std::string lexVal, int tok_type);
+TOKEN gettok();
