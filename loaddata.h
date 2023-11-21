@@ -11,14 +11,14 @@
 typedef std::vector<std::string> sentence;
 typedef std::vector<sentence> production_options;
 
-std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
-std::vector<production_options> rhslist;
-std::vector<std::string> terminals;
+extern std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
+extern std::vector<production_options> rhslist;
+extern std::vector<std::string> terminals;
 
 //below are our dictionaries for first and follow sets
-std::map<std::string, bool> nullable;
-std::map<std::string, std::vector<std::string>> first;
-std::map<std::string, std::vector<std::string>> follow;
+extern std::map<std::string, bool> nullable;
+extern std::map<std::string, std::vector<std::string>> first;
+extern std::map<std::string, std::vector<std::string>> follow;
 
 bool str_to_bool(std::string word);
 int nonterminal_index(std::string term);

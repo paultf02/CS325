@@ -77,9 +77,9 @@ std::vector<std::string> splitString_strdelim(const std::string& input, const st
 
 void load_data(){
   std::string csvfilename, terminalfilename, grammarfilename;
-  csvfilename = "firstfollowg9sep.csv";
-  terminalfilename = "terminals2.txt";
-  grammarfilename = "transformedgrammar9.txt";
+  csvfilename = "./firstfollow/firstfollowg9sep.csv";
+  terminalfilename = "./grammars/terminals2.txt";
+  grammarfilename = "./grammars/transformedgrammar9.txt";
   std::fstream csvfile, terminalfile, grammarfile;
   std::string line, part;
   std::string name, isnullable, firstset, followset, lhs, rhs, or_sequence;

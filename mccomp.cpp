@@ -42,22 +42,40 @@
 #include <utility>
 #include <vector>
 
-using namespace llvm;
-using namespace llvm::sys;
+// using namespace llvm;
+// using namespace llvm::sys;
 
 FILE *pFile;
-int lineNo;
-int columnNo;
+
+std::string IdentifierStr; // Filled in if IDENT
+int IntVal;                // Filled in if INT_LIT
+bool BoolVal;              // Filled in if BOOL_LIT
+float FloatVal;            // Filled in if FLOAT_LIT
+std::string StringVal;     // Filled in if String Literal
+int lineNo, columnNo; // not static because used in mccomp.cpp
+
 std::deque<TOKEN> program_tokens;
 int curTokIndex = 0;
+
+TOKEN CurTok;
+std::deque<TOKEN> tok_buffer;
+
+std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
+std::vector<production_options> rhslist;
+std::vector<std::string> terminals;
+//below are our dictionaries for first and follow sets
+std::map<std::string, bool> nullable;
+std::map<std::string, std::vector<std::string>> first;
+std::map<std::string, std::vector<std::string>> follow;
+
 
 //===----------------------------------------------------------------------===//
 // Code Generation
 //===----------------------------------------------------------------------===//
 
-static LLVMContext TheContext;
-static IRBuilder<> Builder(TheContext);
-static std::unique_ptr<Module> TheModule;
+static llvm::LLVMContext TheContext;
+static llvm::IRBuilder<> Builder(TheContext);
+static std::unique_ptr<llvm::Module> TheModule;
 
 //===----------------------------------------------------------------------===//
 // AST Printer
@@ -111,7 +129,7 @@ int main(int argc, char **argv) {
   // }
       
   // Make the module, which holds all the code.
-  TheModule = std::make_unique<Module>("mini-c", TheContext);
+  TheModule = std::make_unique<llvm::Module>("mini-c", TheContext);
 
   // load first and follow set from file, load list of terminals, load list of production lhs and rhs respectively
   load_data();
@@ -125,14 +143,14 @@ int main(int argc, char **argv) {
   // Print out all of the generated code into a file called output.ll
   auto Filename = "output.ll";
   std::error_code EC;
-  raw_fd_ostream dest(Filename, EC, sys::fs::OF_None);
+  llvm::raw_fd_ostream dest(Filename, EC, llvm::sys::fs::OF_None);
 
   if (EC) {
-    errs() << "Could not open file: " << EC.message();
+    llvm::errs() << "Could not open file: " << EC.message();
     return 1;
   }
   // TheModule->print(errs(), nullptr); // print IR to terminal
-  TheModule->print(dest, nullptr);
+  TheModule->llvm::Module::print(dest, nullptr);
   //********************* End printing final IR ****************************
 
   fclose(pFile); // close the file that contains the code that was parsed
