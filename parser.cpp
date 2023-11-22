@@ -177,7 +177,7 @@ std::unique_ptr<ProgramASTnode> parse_program(){
   // std::vector<std::unique_ptr<ExternASTnode>> externs; // these default to empty vector
   // std::vector<std::unique_ptr<DeclASTnode>> decls;
   std::unique_ptr<ExternListASTnode> externlist = nullptr;
-  std::unique_ptr<ExternListASTnode> decllist = nullptr;
+  std::unique_ptr<DeclListASTnode> decllist = nullptr;
   std::unique_ptr<ProgramASTnode> ans;
   // ans = std::make_unique<ProgramASTnode>();
 
@@ -186,7 +186,7 @@ std::unique_ptr<ProgramASTnode> parse_program(){
 
   if (in_sentence_first(CurTok, prod0)){
     // program -> extern_list decl_list
-    // externs = parse_extern_list();
+    externlist = parse_extern_list();
     // decls = parse_decl_list();
     // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
     // ans = std::make_unique<ProgramASTnode>(externs, decls);
@@ -195,13 +195,13 @@ std::unique_ptr<ProgramASTnode> parse_program(){
 
   } else if (in_sentence_first(CurTok, prod1)){
     // program -> decl_list
-    // decls = parse_decl_list();
+    decllist = parse_decl_list();
     // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
     // ans = std::make_unique<ProgramASTnode>(externs, decls);
     // ans = std::make_unique<ProgramASTnode>();
     ans = std::make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
   } else {
-    throw ParseError(CurTok, "could not parse either externs or declarations");
+    throw ParseError(CurTok, "could not parse program");
   }
 
   // return std::move(ans);
@@ -209,14 +209,33 @@ std::unique_ptr<ProgramASTnode> parse_program(){
 }
 // extern_list -> extern extern_list1
 std::unique_ptr<ExternListASTnode> parse_extern_list(){
+  std::vector<std::unique_ptr<ExternASTnode>> externs;
+  std::unique_ptr<ExternListASTnode> externlist1;
+  // std::vector<std::unique_ptr<ExternASTnode>> externlist1;
+  std::unique_ptr<ExternASTnode> ext;
+  std::unique_ptr<ExternListASTnode> ans;
+
+  sentence prod0 = rhslist[lhs_to_index("extern_list")][0];
+
+  if (in_sentence_first(CurTok, prod0)){
+    ext = parse_extern();
+    externlist1 = parse_extern_list1();
+    
+  } else {
+    throw ParseError(CurTok, "could not parse extern_list");
+  }
   return nullptr;
 }
 
-// // extern_list1 -> extern extern_list1 | epsilon
-// parse_extern_list1(){}
+// extern_list1 -> extern extern_list1 | epsilon
+std::unique_ptr<ExternListASTnode> parse_extern_list1(){
+  return nullptr;
+}
 
-// // extern -> 'extern' type_spec IDENT '(' params ')' ';'
-// parse_extern(){}
+// extern -> 'extern' type_spec IDENT '(' params ')' ';'
+std::unique_ptr<ExternASTnode> parse_extern(){
+  return nullptr;
+}
 
 // decl_list -> decl decl_list1
 std::unique_ptr<DeclListASTnode> parse_decl_list(){

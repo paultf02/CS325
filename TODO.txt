@@ -20,7 +20,21 @@ Failed cosine, pi, recurse, rfact, unary
     THIS IS FIXED
     NOW JUST NEED TO DEAL WITH unary, ALSO FIXED
 
-
+/*
+Recursive descent predictive parsing
+void A(){
+  choose A-production A -> X1X2...Xk // we will use if then else
+  for (i=1 to k){
+    if (Xi is a nonterminal){
+      call procedure Xi();
+    } else if (Xi == current input symbol a){
+      advance input to the next symbol;
+    } else {
+      raise error
+    }
+  }
+}
+*/
 
 check operator precedence
 why are there two minus signs in grammar? line 29 and line 31 in transformedgrammar3

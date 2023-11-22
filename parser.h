@@ -39,6 +39,10 @@ std::vector<int> terminals_to_int(std::vector<std::string> terminals);
 
 std::unique_ptr<ProgramASTnode> parser();
 std::unique_ptr<ProgramASTnode> parse_program();
+std::unique_ptr<ExternListASTnode> parse_extern_list();
+std::unique_ptr<DeclListASTnode> parse_decl_list();
+std::unique_ptr<ExternASTnode> parse_extern();
+std::unique_ptr<ExternListASTnode> parse_extern_list1();
 
 class ParseError : public std::exception {
   TOKEN tok;
