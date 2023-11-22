@@ -168,6 +168,8 @@ std::unique_ptr<ProgramASTnode> parser(){
 // possible production options
 // if not then there is a syntax error
 
+// for a nonterminal that is nullable, we need to check if it has returned a nullptr
+
 // do you need to fill the below in so that we can eat the EOF?
 // start -> program EOF
 // parse_start(){}
@@ -178,7 +180,7 @@ std::unique_ptr<ProgramASTnode> parse_program(){
   // std::vector<std::unique_ptr<DeclASTnode>> decls;
   std::unique_ptr<ExternListASTnode> externlist = nullptr;
   std::unique_ptr<DeclListASTnode> decllist = nullptr;
-  std::unique_ptr<ProgramASTnode> ans;
+  // std::unique_ptr<ProgramASTnode> ans;
   // ans = std::make_unique<ProgramASTnode>();
 
   sentence prod0 = rhslist[lhs_to_index("program")][0];
@@ -191,7 +193,7 @@ std::unique_ptr<ProgramASTnode> parse_program(){
     // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
     // ans = std::make_unique<ProgramASTnode>(externs, decls);
     // ans = std::make_unique<ProgramASTnode>();
-    ans = std::make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
+    return std::make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
 
   } else if (in_sentence_first(CurTok, prod1)){
     // program -> decl_list
@@ -199,13 +201,12 @@ std::unique_ptr<ProgramASTnode> parse_program(){
     // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
     // ans = std::make_unique<ProgramASTnode>(externs, decls);
     // ans = std::make_unique<ProgramASTnode>();
-    ans = std::make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
+    return std::make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
   } else {
     throw ParseError(CurTok, "could not parse program");
   }
-
   // return std::move(ans);
-  return ans;
+  // return ans;
 }
 // extern_list -> extern extern_list1
 std::unique_ptr<ExternListASTnode> parse_extern_list(){
@@ -213,27 +214,50 @@ std::unique_ptr<ExternListASTnode> parse_extern_list(){
   std::unique_ptr<ExternListASTnode> externlist1;
   // std::vector<std::unique_ptr<ExternASTnode>> externlist1;
   std::unique_ptr<ExternASTnode> ext;
-  std::unique_ptr<ExternListASTnode> ans;
+  // std::unique_ptr<ExternListASTnode> ans;
 
   sentence prod0 = rhslist[lhs_to_index("extern_list")][0];
 
   if (in_sentence_first(CurTok, prod0)){
     ext = parse_extern();
     externs.push_back(std::move(ext));
-    externlist1 = parse_extern_list1();
-    for (int i=0; i<externlist1->externs.size(); i++){
-      externs.push_back(std::move(externlist1->externs.at(i)));
+    externlist1 = parse_extern_list1(); // this can be nullptr
+    if (externlist1){
+      for (int i=0; i<externlist1->externs.size(); i++){
+        externs.push_back(std::move(externlist1->externs.at(i)));
+      }
     }
-    ans = std::make_unique<ExternListASTnode>(externs);
+
+    return std::make_unique<ExternListASTnode>(externs);
   } else {
     throw ParseError(CurTok, "could not parse extern_list");
   }
-  return ans;
+  // return ans;
 }
 
 // extern_list1 -> extern extern_list1 | epsilon
 std::unique_ptr<ExternListASTnode> parse_extern_list1(){
-  return nullptr;
+  std::vector<std::unique_ptr<ExternASTnode>> externs;
+  std::unique_ptr<ExternListASTnode> externlist1;
+  std::unique_ptr<ExternASTnode> ext;
+  // std::unique_ptr<ExternListASTnode> ans;
+
+  sentence prod0 = rhslist[lhs_to_index("extern_list1")][0];
+  sentence prod1_eps = rhslist[lhs_to_index("extern_list1")][1]; // this is epsilon
+  
+  if (in_sentence_first(CurTok, prod0)){
+    ext = parse_extern();
+    externs.push_back(std::move(ext));
+    externlist1 = parse_extern_list1(); // this could be nullptr
+    if (externlist1){
+      for (int i=0; i<externlist1->externs.size(); i++){
+        externs.push_back(std::move(externlist1->externs.at(i)));
+      }
+    }
+    return std::make_unique<ExternListASTnode>(externs);
+  } else {
+    return nullptr;
+  }
 }
 
 // extern -> 'extern' type_spec IDENT '(' params ')' ';'
@@ -247,9 +271,38 @@ std::unique_ptr<DeclListASTnode> parse_decl_list(){
   std::unique_ptr<DeclListASTnode> decllist1;
   // std::vector<std::unique_ptr<ExternASTnode>> externlist1;
   std::unique_ptr<DeclASTnode> decl;
-  std::unique_ptr<DeclListASTnode> ans;
+  // std::unique_ptr<DeclListASTnode> ans;
 
   sentence prod0 = rhslist[lhs_to_index("decl_list")][0];
+  
+
+  if (in_sentence_first(CurTok, prod0)){
+    decl = parse_decl();
+    decls.push_back(std::move(decl));
+    decllist1 = parse_decl_list1(); // this could be nullptr
+    if (decllist1){
+      for (int i=0; i<decllist1->decls.size(); i++){
+        decls.push_back(std::move(decllist1->decls.at(i)));
+      }
+    }
+
+    return std::make_unique<DeclListASTnode>(decls);
+  } else {
+    throw ParseError(CurTok, "could not parse decl_list");
+  }
+}
+
+// decl_list1 -> decl decl_list1 | epsilon
+std::unique_ptr<DeclListASTnode> parse_decl_list1(){
+  std::vector<std::unique_ptr<DeclASTnode>> decls;
+  std::unique_ptr<DeclListASTnode> decllist1;
+  // std::vector<std::unique_ptr<ExternASTnode>> externlist1;
+  std::unique_ptr<DeclASTnode> decl;
+  // std::unique_ptr<DeclListASTnode> ans;
+
+  sentence prod0 = rhslist[lhs_to_index("decl_list1")][0];
+  sentence prod1_eps = rhslist[lhs_to_index("extern_list1")][1]; // this is epsilon
+  
 
   if (in_sentence_first(CurTok, prod0)){
     decl = parse_decl();
@@ -258,16 +311,10 @@ std::unique_ptr<DeclListASTnode> parse_decl_list(){
     for (int i=0; i<decllist1->decls.size(); i++){
       decls.push_back(std::move(decllist1->decls.at(i)));
     }
-    ans = std::make_unique<DeclListASTnode>(decls);
+    return std::make_unique<DeclListASTnode>(decls);
   } else {
-    throw ParseError(CurTok, "could not parse decl_list");
+    return nullptr;
   }
-  return ans;
-}
-
-// decl_list1 -> decl decl_list1 | epsilon
-std::unique_ptr<DeclListASTnode> parse_decl_list1(){
-  return nullptr;
 }
 // decl -> var_decl | fun_decl
 std::unique_ptr<DeclASTnode> parse_decl(){

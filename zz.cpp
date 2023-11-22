@@ -71,5 +71,16 @@ int main(){
     for (auto &elem : vec){
         std::cout << elem->name << '\n';
     }
+
+    std::unique_ptr<std::string> p = std::make_unique<std::string>("hi");
+    if (p){
+      std::cout << "got here\n";
+    }
+
+    std::unique_ptr<std::string> q = std::make_unique<std::string>("hi");
+    q = nullptr;
+    if (!q){
+      std::cout << "got here\n";
+    }
     return 0;
 }
