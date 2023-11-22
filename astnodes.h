@@ -16,8 +16,18 @@ public:
   virtual std::string to_string() const {return "";};
 };
 
+class VarTypeASTnode : public ASTnode{
+public:
+  std::string vartype;
+  VarTypeASTnode(std::string vt) : vartype(vt) {};
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
 class VarDeclASTnode : public ASTnode{
 public:
+  std::unique_ptr<VarTypeASTnode> vartype;
+  std::string name;
+  VarDeclASTnode(std::unique_ptr<VarTypeASTnode> vt, std::string n) : vartype(std::move(vt)), name(n){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
@@ -26,7 +36,14 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
-class TypeSpecASTnode : public ASTnode{};
+class TypeSpecASTnode : public ASTnode{
+public:
+  bool isVoid = false;
+  std::unique_ptr<VarTypeASTnode> vartype;
+  TypeSpecASTnode(std::string v) : isVoid(true){};
+  TypeSpecASTnode(std::unique_ptr<VarTypeASTnode> vt) : vartype(std::move(vt)){};
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
 
 class ParamsASTnode : public ASTnode{};
 
@@ -96,8 +113,9 @@ public:
 
 
 
+
 class ParamASTnode : public ASTnode{};
-class VarTypeASTnode : public ASTnode{};
+
 class ParamListASTnode : public ASTnode{};
 // class ArgASTnode : public ASTnode{};
 class BlockASTnode : public ASTnode{};

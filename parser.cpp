@@ -382,14 +382,14 @@ std::unique_ptr<DeclASTnode> parse_decl(){
     putBackToken(temp1);
     putBackToken(tempcur);
     getNextToken(); // CurTok is now back to what it was (same value as tempcur)
-    std::unique_ptr<FunDeclASTnode> fundecl = parse_fun_decl();
+    std::unique_ptr<FunDeclASTnode> fundecl = parse_fun_decl(); // not nullable
     return std::make_unique<DeclASTnode>(std::move(fundecl));
   } else if (temp2.type == SC){
     putBackToken(temp2);
     putBackToken(temp1);
     putBackToken(tempcur);
     getNextToken(); // CurTok is now back to what it was (same value as tempcur)
-    std::unique_ptr<VarDeclASTnode> vardecl = parse_var_decl();
+    std::unique_ptr<VarDeclASTnode> vardecl = parse_var_decl(); // not nullable
     return std::make_unique<DeclASTnode>(std::move(vardecl));
   } else {
     if (tempcur.type == VOID_TOK){
@@ -402,16 +402,55 @@ std::unique_ptr<DeclASTnode> parse_decl(){
 
 // var_decl -> var_type IDENT ';'
 std::unique_ptr<VarDeclASTnode> parse_var_decl(){
-  return nullptr;
+  sentence prod0 = rhslist[lhs_to_index("var_decl")][0];
+  std::unique_ptr<VarTypeASTnode> vt;
+  if (in_sentence_first(CurTok, prod0)){
+    std::unique_ptr<VarTypeASTnode> vt = parse_var_type();
+  } else {
+    throw ParseError(CurTok, "could not parse var_decl");
+  }
+  getNextToken();
+  if (CurTok.type != IDENT){
+    throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
+  }
+  TOKEN idtok = CurTok;
+  getNextToken();
+  if (CurTok.type != SC){
+    throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
+  }
+  return std::make_unique<VarDeclASTnode>(std::move(vt), CurTok.lexeme);
 }
 
 // type_spec -> 'void' | var_type
 std::unique_ptr<TypeSpecASTnode> parse_type_spec(){
-  return nullptr;
+  // sentence prod0 = rhslist[lhs_to_index("type_spec")][0];
+  sentence prod1 = rhslist[lhs_to_index("type_spec")][1];
+
+  if (CurTok.type == VOID_TOK){
+    getNextToken();
+    return std::make_unique<TypeSpecASTnode>("void");
+  } else if (in_sentence_first(CurTok, prod1)) {
+    std::unique_ptr<VarTypeASTnode> vartypeptr = parse_var_type();
+    return std::make_unique<TypeSpecASTnode>(std::move(vartypeptr));
+  } else {
+    throw ParseError(CurTok, "could not parse type_spec");
+  }
 }
+
 // var_type -> 'int' | 'float' | 'bool'
 std::unique_ptr<VarTypeASTnode> parse_var_type(){
-  return nullptr;
+  if (CurTok.type == INT_TOK){
+    getNextToken();
+    return std::make_unique<VarTypeASTnode>("int");
+  } else if (CurTok.type == FLOAT_TOK){
+    getNextToken();
+    return std::make_unique<VarTypeASTnode>("float");
+  } else if (CurTok.type == BOOL_TOK){
+    getNextToken();
+    return std::make_unique<VarTypeASTnode>("bool");
+  } else {
+    throw ParseError(CurTok, "was expecting 'int', 'float' or 'bool' but got " + CurTok.lexeme);
+  }
 }
 
 // fun_decl -> type_spec IDENT '(' params ')' block
@@ -423,6 +462,7 @@ std::unique_ptr<FunDeclASTnode> parse_fun_decl(){
 std::unique_ptr<ParamsASTnode> parse_params(){
   return nullptr;
 }
+
 // param_list -> param param_list1
 std::unique_ptr<ParamListASTnode> parse_param_list(){
   return nullptr;
