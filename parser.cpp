@@ -205,7 +205,7 @@ std::unique_ptr<ProgramASTnode> parse_program(){
   }
 
   // return std::move(ans);
-  return nullptr;
+  return ans;
 }
 // extern_list -> extern extern_list1
 std::unique_ptr<ExternListASTnode> parse_extern_list(){
@@ -219,12 +219,16 @@ std::unique_ptr<ExternListASTnode> parse_extern_list(){
 
   if (in_sentence_first(CurTok, prod0)){
     ext = parse_extern();
+    externs.push_back(std::move(ext));
     externlist1 = parse_extern_list1();
-    
+    for (int i=0; i<externlist1->externs.size(); i++){
+      externs.push_back(std::move(externlist1->externs.at(i)));
+    }
+    ans = std::make_unique<ExternListASTnode>(externs);
   } else {
     throw ParseError(CurTok, "could not parse extern_list");
   }
-  return nullptr;
+  return ans;
 }
 
 // extern_list1 -> extern extern_list1 | epsilon
