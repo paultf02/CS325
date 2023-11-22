@@ -44,8 +44,8 @@ class ParseError : public std::exception {
   TOKEN tok;
   std::string message = "";
 public:
-  ParseError(TOKEN t) : tok(t) {
-    this->message += ("parsing error with token " + tok.lexeme + " of type " + std::to_string(tok.type) + " on line " + std::to_string(tok.lineNo) + ", column " + std::to_string(tok.columnNo));
+  ParseError(TOKEN t, std::string comment) : tok(t) {
+    this->message += ("parsing error with token " + tok.lexeme + " of type " + std::to_string(tok.type) + " on line " + std::to_string(tok.lineNo) + ", column " + std::to_string(tok.columnNo) + "\n" + comment);
   }
   const char *what() const noexcept override {
     return message.c_str();

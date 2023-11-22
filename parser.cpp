@@ -40,84 +40,6 @@ int lhs_to_index(std::string lhs){
   }
 }
 
-// TOKEN_TYPE word_to_type(std::string word){
-//   TOKEN_TYPE type = -100;
-//   if (word=="IDENT"){
-//     type = -1;
-//   } else if (word=="'='"){
-//     type = int('=');
-//   } else if (word=="'{'"){
-//     type = int('{');
-//   } else if (word=="'}'"){
-//     type = int('}');
-//   } else if (word=="'('"){
-//     type = int('(');
-//   } else if (word=="')'"){
-//     type = int(')');
-//   } else if (word=="';'"){
-//     type = int(';');
-//   } else if (word=="','"){
-//     type = int(',');
-//   } else if (word=="'int'"){
-//     type = -2;
-//   } else if (word=="'void'"){
-//     type = -3;
-//   } else if (word=="'float'"){
-//     type = -4;
-//   } else if (word=="'bool'"){
-//     type = -5;
-//   } else if (word=="'extern'"){
-//     type = -6;
-//   } else if (word=="'if'"){
-//     type = -7;
-//   } else if (word=="'else'"){
-//     type = -8;
-//   } else if (word=="'while'"){
-//     type = -9;
-//   } else if (word=="'return'"){
-//     type = -10;
-//   } else if (word=="INT_LIT"){
-//     type = -14;
-//   } else if (word=="FLOAT_LIT"){
-//     type = -15;
-//   } else if (word=="BOOL_LIT"){
-//     type = -16;
-//   } else if (word=="'&&'"){
-//     type = -17;
-//   } else if (word=="'||'"){
-//     type = -18;
-//   } else if (word=="'+'"){
-//     type = int('+');
-//   } else if (word=="'-'"){
-//     type = int('-');
-//   } else if (word=="'*'"){
-//     type = int('*');
-//   } else if (word=="'/'"){
-//     type = int('/');
-//   } else if (word=="'%'"){
-//     type = int('%');
-//   } else if (word=="'!'"){
-//     type = int('!');
-//   } else if (word=="'=='"){
-//     type = -19;
-//   } else if (word=="'!='"){
-//     type = -20;
-//   } else if (word=="'<='"){
-//     type = -21;
-//   } else if (word=="'<'"){
-//     type = int('<');
-//   } else if (word=="'>='"){
-//     type = -23;
-//   } else if (word=="'>'"){
-//     type = int('>');
-//   } else if (word=="EOF"){
-//     type = 0;
-//   } else {
-//     type = -100;
-//   }
-//   return type;
-// }
-
 enum TOKEN_TYPE word_to_type(std::string word){
   TOKEN_TYPE type = INVALID;
   if (word=="IDENT"){
@@ -246,12 +168,16 @@ std::unique_ptr<ProgramASTnode> parser(){
 // possible production options
 // if not then there is a syntax error
 
+// do you need to fill the below in so that we can eat the EOF?
 // start -> program EOF
 // parse_start(){}
+
 // program -> extern_list decl_list | decl_list
 std::unique_ptr<ProgramASTnode> parse_program(){
-  std::vector<std::unique_ptr<ExternASTnode>> externs; // these default to empty vector
-  std::vector<std::unique_ptr<DeclASTnode>> decls;
+  // std::vector<std::unique_ptr<ExternASTnode>> externs; // these default to empty vector
+  // std::vector<std::unique_ptr<DeclASTnode>> decls;
+  std::unique_ptr<ExternListASTnode> externlist = nullptr;
+  std::unique_ptr<ExternListASTnode> decllist = nullptr;
   std::unique_ptr<ProgramASTnode> ans;
   // ans = std::make_unique<ProgramASTnode>();
 
@@ -263,22 +189,28 @@ std::unique_ptr<ProgramASTnode> parse_program(){
     // externs = parse_extern_list();
     // decls = parse_decl_list();
     // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
-    ans = std::make_unique<ProgramASTnode>(externs, decls);
+    // ans = std::make_unique<ProgramASTnode>(externs, decls);
+    // ans = std::make_unique<ProgramASTnode>();
+    ans = std::make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
 
   } else if (in_sentence_first(CurTok, prod1)){
     // program -> decl_list
     // decls = parse_decl_list();
     // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
-    ans = std::make_unique<ProgramASTnode>(externs, decls);
-
+    // ans = std::make_unique<ProgramASTnode>(externs, decls);
+    // ans = std::make_unique<ProgramASTnode>();
+    ans = std::make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
   } else {
-    throw ParseError(CurTok);
+    throw ParseError(CurTok, "could not parse either externs or declarations");
   }
 
-  return std::move(ans);
+  // return std::move(ans);
+  return nullptr;
 }
 // extern_list -> extern extern_list1
-// std::vector<std::unique_ptr<ExternASTnode>> parse_extern_list(){}
+std::unique_ptr<ExternListASTnode> parse_extern_list(){
+  return nullptr;
+}
 
 // // extern_list1 -> extern extern_list1 | epsilon
 // parse_extern_list1(){}
@@ -287,7 +219,9 @@ std::unique_ptr<ProgramASTnode> parse_program(){
 // parse_extern(){}
 
 // decl_list -> decl decl_list1
-// std::vector<std::unique_ptr<DeclASTnode>> parse_decl_list(){}
+std::unique_ptr<DeclListASTnode> parse_decl_list(){
+  return nullptr;
+}
 
 // // decl_list1 -> decl decl_list1 | epsilon
 // parse_decl_list1(){}

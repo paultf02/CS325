@@ -1,6 +1,8 @@
 #pragma once
 #include "lexer.h"
 #include "llvm/IR/Value.h"
+#include <memory>
+#include <utility>
 
 //===----------------------------------------------------------------------===//
 // AST nodes
@@ -9,31 +11,49 @@
 /// ASTnode - Base class for all AST nodes.
 class ASTnode {
 public:
-  virtual ~ASTnode() {}
+  virtual ~ASTnode() {};
   virtual llvm::Value *codegen() = 0;
-  virtual std::string to_string() const {
-    return "";
-  };
+  virtual std::string to_string() const {return "";};
 };
-class ProgramASTnode : public ASTnode{
+
+class ExternASTnode : public ASTnode{
 public:
-  std::vector<std::unique_ptr<ExternASTnode>> externs;
-  std::vector<std::unique_ptr<DeclASTnode>> decls;
-  std::string s = "hi";
-  ProgramASTnode(std::vector<std::unique_ptr<ExternASTnode>> e, 
-                 std::vector<std::unique_ptr<DeclASTnode>> d) : externs(e), decls(d){}
-  // ProgramASTnode(){
-  //   s = "lemon";
-  // };
-  virtual llvm::Value *codegen(){
-    return nullptr;
-  };
+  virtual llvm::Value *codegen() override {return nullptr;};
 };
-class ExternASTnode : public ASTnode{};
+
 class DeclASTnode : public ASTnode{
 public:
-  virtual llvm::Value *codegen() = 0;
+  virtual llvm::Value *codegen() override {return nullptr;};
 };
+
+class ExternListASTnode : public ASTnode{
+public:
+  std::vector<std::unique_ptr<ExternASTnode>> externs;
+  virtual llvm::Value *codegen() override {return nullptr;};
+};
+
+class DeclListASTnode : public ASTnode{
+public:
+  std::vector<std::unique_ptr<DeclASTnode>> decls;
+  virtual llvm::Value *codegen() override {return nullptr;};
+};
+
+
+class ProgramASTnode : public ASTnode{
+public:
+  // std::vector<std::unique_ptr<ExternASTnode>> externs;
+  // std::vector<std::unique_ptr<DeclASTnode>> decls;
+  std::unique_ptr<ExternListASTnode> externlist;
+  std::unique_ptr<ExternListASTnode> decllist;
+  std::string s = "hi";
+  ProgramASTnode(std::unique_ptr<ExternListASTnode> el, 
+                 std::unique_ptr<ExternListASTnode> dl) : externlist(std::move(el)), decllist(std::move(dl)){}
+  ProgramASTnode(){
+    s = "lemon";
+  };
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
 class VarDeclASTnode : public DeclASTnode{};
 class FuncDeclASTnode : public DeclASTnode{};
 class ParamASTnode : public ASTnode{};
@@ -47,14 +67,13 @@ class LitASTnode : public ASTnode{};
 class IfThenElseASTnode : public ASTnode{};
 class WhileASTnode : public ASTnode{};
 class IntASTnode : public ASTnode {
+public:
   /// IntASTnode - Class for integer literals like 1, 2, 10,
   int Val;
   TOKEN Tok;
   std::string Name;
-
-public:
   IntASTnode(TOKEN tok, int val) : Tok(tok), Val(val){}
-  virtual llvm::Value *codegen() override;
+  virtual llvm::Value *codegen() override{return nullptr;};
   // virtual std::string to_string() const override {
   //   //return a sting representation of this AST node
   // };
