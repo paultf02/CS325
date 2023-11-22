@@ -1,7 +1,7 @@
 #include "lexer.h"
 #include "astnodes.h"
 #include "loaddata.h"
-#include "parser.h"
+#include "oldparser.h"
 #include <vector>
 #include <string>
 #include <deque>

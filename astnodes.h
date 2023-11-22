@@ -16,22 +16,24 @@ public:
   };
 };
 class ProgramASTnode : public ASTnode{
-  // std::vector<std::unique_ptr<ExternASTnode>> externs;
-  // std::vector<std::unique_ptr<DeclASTnode>> decls;
-  
 public:
-  std::string s;
-  // ProgramASTnode(std::vector<std::unique_ptr<ExternASTnode>> e, 
-  //                std::vector<std::unique_ptr<DeclASTnode>> d) : externs(e), decls(d){}
-  ProgramASTnode(){
-    s = "hi";
-  };
+  std::vector<std::unique_ptr<ExternASTnode>> externs;
+  std::vector<std::unique_ptr<DeclASTnode>> decls;
+  std::string s = "hi";
+  ProgramASTnode(std::vector<std::unique_ptr<ExternASTnode>> e, 
+                 std::vector<std::unique_ptr<DeclASTnode>> d) : externs(e), decls(d){}
+  // ProgramASTnode(){
+  //   s = "lemon";
+  // };
   virtual llvm::Value *codegen(){
     return nullptr;
   };
 };
 class ExternASTnode : public ASTnode{};
-class DeclASTnode : public ASTnode{};
+class DeclASTnode : public ASTnode{
+public:
+  virtual llvm::Value *codegen() = 0;
+};
 class VarDeclASTnode : public DeclASTnode{};
 class FuncDeclASTnode : public DeclASTnode{};
 class ParamASTnode : public ASTnode{};

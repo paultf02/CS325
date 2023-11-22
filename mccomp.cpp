@@ -114,15 +114,15 @@ int main(int argc, char **argv) {
   // if we are parsing and lexing at the same time then we do not do this part of the code.
   // get the first token
   getNextToken();
-  program_tokens.push_back(CurTok);
-  while (CurTok.type != EOF_TOK) {
-    fprintf(stderr, "Token: %s with type %d\n", CurTok.lexeme.c_str(), CurTok.type);
-    getNextToken();
-    program_tokens.push_back(CurTok);
-  }
-  // remove the last EOF_TOK
-  program_tokens.pop_back();
-  fprintf(stderr, "Lexer Finished\n");
+  // program_tokens.push_back(CurTok);
+  // while (CurTok.type != EOF_TOK) {
+  //   fprintf(stderr, "Token: %s with type %d\n", CurTok.lexeme.c_str(), CurTok.type);
+  //   getNextToken();
+  //   program_tokens.push_back(CurTok);
+  // }
+  // // remove the last EOF_TOK
+  // program_tokens.pop_back();
+  // fprintf(stderr, "Lexer Finished\n");
   // fprintf(stderr, "This is our token: %d\n", CurTok.type);
 
   // // print our deque of tokens

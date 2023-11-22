@@ -7,6 +7,7 @@
 #include "astnodes.h"
 #include "loaddata.h"
 #include <memory>
+#include <exception>
 
 extern std::deque<TOKEN> program_tokens;
 extern int curTokIndex;
@@ -32,12 +33,25 @@ extern std::unique_ptr<ProgramASTnode> programrootnode;
 TOKEN getNextToken();
 void putBackToken(TOKEN tok);
 
-int word_to_type(std::string word);
+// int word_to_type(std::string word);
+enum TOKEN_TYPE word_to_type(std::string word);
 std::vector<int> terminals_to_int(std::vector<std::string> terminals);
 
 std::unique_ptr<ProgramASTnode> parser();
 std::unique_ptr<ProgramASTnode> parse_program();
 
+class ParseError : public std::exception {
+  TOKEN tok;
+  std::string message = "";
+public:
+  ParseError(TOKEN t) : tok(t) {
+    this->message += ("parsing error with token " + tok.lexeme + " of type " + std::to_string(tok.type) + " on line " + std::to_string(tok.lineNo) + ", column " + std::to_string(tok.columnNo));
+  }
+  const char *what() const noexcept override {
+    return message.c_str();
+    // return "our error class caught the parsing error";
+  }
+};
 
 // std::vector<std::string> find_sentence_first(sentence &sentence);
 // bool sentencenullable(sentence &sentence);
