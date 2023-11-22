@@ -16,6 +16,16 @@ public:
   virtual std::string to_string() const {return "";};
 };
 
+class VarDeclASTnode : public ASTnode{
+public:
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
+class FunDeclASTnode : public ASTnode{
+public:
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
 class TypeSpecASTnode : public ASTnode{};
 
 class ParamsASTnode : public ASTnode{};
@@ -29,12 +39,21 @@ public:
                 std::string id,
                 std::unique_ptr<ParamsASTnode> ps
                 ) : typespec(std::move(ts)), ident(id), params(std::move(ps)){};
-  virtual llvm::Value *codegen() override {return nullptr;};
+  virtual llvm::Value *codegen() override {return nullptr;}
 };
+
+
 
 class DeclASTnode : public ASTnode{
 public:
-  virtual llvm::Value *codegen() override {return nullptr;};
+  bool isVar;
+  std::unique_ptr<VarDeclASTnode> vardecl;
+  std::unique_ptr<FunDeclASTnode> fundecl;
+  DeclASTnode(std::unique_ptr<VarDeclASTnode> vd
+             ) : isVar(true), vardecl(std::move(vd)){}
+  DeclASTnode(std::unique_ptr<FunDeclASTnode> fd
+             ) : isVar(false), fundecl(std::move(fd)){}
+  virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 class ExternListASTnode : public ASTnode{
@@ -45,7 +64,7 @@ public:
       externs.push_back(std::move(e.at(i)));
     }
   };
-  virtual llvm::Value *codegen() override {return nullptr;};
+  virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 class DeclListASTnode : public ASTnode{
@@ -56,7 +75,7 @@ public:
       decls.push_back(std::move(d.at(i)));
     }
   };
-  virtual llvm::Value *codegen() override {return nullptr;};
+  virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 class ProgramASTnode : public ASTnode{
@@ -76,9 +95,10 @@ public:
 
 
 
-class VarDeclASTnode : public DeclASTnode{};
-class FuncDeclASTnode : public DeclASTnode{};
+
 class ParamASTnode : public ASTnode{};
+class VarTypeASTnode : public ASTnode{};
+class ParamListASTnode : public ASTnode{};
 // class ArgASTnode : public ASTnode{};
 class BlockASTnode : public ASTnode{};
 class VarAssignASTnode : public ASTnode{};
@@ -95,7 +115,7 @@ public:
   TOKEN Tok;
   std::string Name;
   IntASTnode(TOKEN tok, int val) : Tok(tok), Val(val){}
-  virtual llvm::Value *codegen() override{return nullptr;};
+  virtual llvm::Value *codegen() override{return nullptr;}
   // virtual std::string to_string() const override {
   //   //return a sting representation of this AST node
   // };

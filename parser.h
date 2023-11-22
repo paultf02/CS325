@@ -47,6 +47,8 @@ std::unique_ptr<DeclASTnode> parse_decl();
 std::unique_ptr<DeclListASTnode> parse_decl_list1();
 std::unique_ptr<TypeSpecASTnode>parse_type_spec();
 std::unique_ptr<ParamsASTnode> parse_params();
+std::unique_ptr<VarDeclASTnode> parse_var_decl();
+std::unique_ptr<FunDeclASTnode> parse_fun_decl();
 
 class ParseError : public std::exception {
   TOKEN tok;

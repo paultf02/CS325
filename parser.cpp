@@ -207,6 +207,7 @@ std::unique_ptr<ProgramASTnode> parse_program(){
   // return std::move(ans);
   // return ans;
 }
+
 // extern_list -> extern extern_list1
 std::unique_ptr<ExternListASTnode> parse_extern_list(){
   std::vector<std::unique_ptr<ExternASTnode>> externs;
@@ -318,7 +319,6 @@ std::unique_ptr<DeclListASTnode> parse_decl_list(){
 
   sentence prod0 = rhslist[lhs_to_index("decl_list")][0];
   
-
   if (in_sentence_first(CurTok, prod0)){
     decl = parse_decl();
     decls.push_back(std::move(decl));
@@ -359,10 +359,12 @@ std::unique_ptr<DeclListASTnode> parse_decl_list1(){
     return nullptr;
   }
 }
+
 // decl -> var_decl | fun_decl
 std::unique_ptr<DeclASTnode> parse_decl(){
   sentence prod0 = rhslist[lhs_to_index("decl")][0];
   sentence prod1 = rhslist[lhs_to_index("decl")][1];
+
   TOKEN tempcur = CurTok;
   if ( !in_sentence_first(tempcur, prod0) && !in_sentence_first(tempcur, prod1)){
     throw ParseError(CurTok, "could not parse decl");
@@ -376,56 +378,95 @@ std::unique_ptr<DeclASTnode> parse_decl(){
   getNextToken();
   TOKEN temp2 = CurTok;
   if (temp2.type == LPAR){
-    fundecl = parse_fun_decl();
+    putBackToken(temp2);
+    putBackToken(temp1);
+    putBackToken(tempcur);
+    getNextToken(); // CurTok is now back to what it was (same value as tempcur)
+    std::unique_ptr<FunDeclASTnode> fundecl = parse_fun_decl();
+    return std::make_unique<DeclASTnode>(std::move(fundecl));
   } else if (temp2.type == SC){
-    
+    putBackToken(temp2);
+    putBackToken(temp1);
+    putBackToken(tempcur);
+    getNextToken(); // CurTok is now back to what it was (same value as tempcur)
+    std::unique_ptr<VarDeclASTnode> vardecl = parse_var_decl();
+    return std::make_unique<DeclASTnode>(std::move(vardecl));
+  } else {
+    if (tempcur.type == VOID_TOK){
+      throw ParseError(temp2, "was expecting '(' but got " + temp2.lexeme);
+    } else {
+      throw ParseError(temp2, "was expecting '(' or ';' but got " + temp2.lexeme);
+    }
   }
+}
 
-
+// var_decl -> var_type IDENT ';'
+std::unique_ptr<VarDeclASTnode> parse_var_decl(){
   return nullptr;
 }
-// // var_decl -> var_type IDENT ';'
-// parse_var_decl(){}
+
 // type_spec -> 'void' | var_type
 std::unique_ptr<TypeSpecASTnode> parse_type_spec(){
   return nullptr;
-};
-// // var_type -> 'int' | 'float' | 'bool'
-// parse_var_type(){}
-// // fun_decl -> type_spec IDENT '(' params ')' block
-// parse_fun_decl(){}
+}
+// var_type -> 'int' | 'float' | 'bool'
+std::unique_ptr<VarTypeASTnode> parse_var_type(){
+  return nullptr;
+}
+
+// fun_decl -> type_spec IDENT '(' params ')' block
+std::unique_ptr<FunDeclASTnode> parse_fun_decl(){
+  return nullptr;
+}
+
 // params -> param_list | 'void' | epsilon
 std::unique_ptr<ParamsASTnode> parse_params(){
   return nullptr;
 }
-// // param_list -> param param_list1
-// parse_param_list(){}
+// param_list -> param param_list1
+std::unique_ptr<ParamListASTnode> parse_param_list(){
+  return nullptr;
+}
+
 // // param_list1 -> ',' param param_list1 | epsilon
 // parse_param_list1(){}
+
 // // param -> var_type IDENT
 // parse_param(){}
+
 // // block -> '{' local_decls stmt_list '}'
 // parse_block(){}
+
 // // local_decls -> local_decl local_decls | epsilon
 // parse_local_decls(){}
+
 // // local_decl -> var_type IDENT ';'
 // parse_local_decl(){}
+
 // // stmt_list -> stmt stmt_list | epsilon
 // parse_stmt_list(){}
+
 // // stmt -> expr_stmt | block | if_stmt | while_stmt | return_stmt
 // parse_stmt(){}
+
 // // expr_stmt -> expr ';' | ';'
 // parse_expr_stmt(){}
+
 // // while_stmt -> 'while' '(' expr ')' stmt
 // parse_while_stmt(){}
+
 // // if_stmt -> 'if' '(' expr ')' block else_stmt
 // parse_if_stmt(){}
+
 // // else_stmt -> 'else' block | epsilon
 // parse_else_stmt(){}
+
 // // return_stmt -> 'return' ';' | 'return' expr ';'
 // parse_return_stmt(){}
+
 // // expr -> IDENT '=' expr | rval
 // parse_expr(){}
+
 // // rval -> rval1 '||' rval | rval1
 // parse_rval(){}
 // // rval1 -> rval2 '&&' rval1 | rval2
@@ -442,10 +483,13 @@ std::unique_ptr<ParamsASTnode> parse_params(){
 // parse_rval6(){}
 // // rval7 -> '(' expr ')' | IDENT | IDENT '(' args ')' | INT_LIT | FLOAT_LIT | BOOL_LIT
 // parse_rval7(){}
+
 // // args -> arg_list | epsilon
 // parse_args(){}
+
 // // arg_list -> expr arg_list1
 // parse_args_list(){}
+
 // // arg_list1 -> ',' expr arg_list1 | epsilon
 // parse_args_list1(){}
 
