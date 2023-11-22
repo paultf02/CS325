@@ -16,8 +16,19 @@ public:
   virtual std::string to_string() const {return "";};
 };
 
+class TypeSpecASTnode : public ASTnode{};
+
+class ParamsASTnode : public ASTnode{};
+
 class ExternASTnode : public ASTnode{
 public:
+  std::unique_ptr<TypeSpecASTnode> typespec;
+  std::string ident;
+  std::unique_ptr<ParamsASTnode> params;
+  ExternASTnode(std::unique_ptr<TypeSpecASTnode> ts,
+                std::string id,
+                std::unique_ptr<ParamsASTnode> ps
+                ) : typespec(std::move(ts)), ident(id), params(std::move(ps)){};
   virtual llvm::Value *codegen() override {return nullptr;};
 };
 
@@ -48,7 +59,6 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;};
 };
 
-
 class ProgramASTnode : public ASTnode{
 public:
   // std::vector<std::unique_ptr<ExternASTnode>> externs;
@@ -61,6 +71,10 @@ public:
 
   virtual llvm::Value *codegen() override {return nullptr;}
 };
+
+
+
+
 
 class VarDeclASTnode : public DeclASTnode{};
 class FuncDeclASTnode : public DeclASTnode{};

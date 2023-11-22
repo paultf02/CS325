@@ -1,5 +1,6 @@
 #include "lexer.h"
 #include <string>
+#include <iostream>
 
 
 
@@ -252,7 +253,7 @@ TOKEN getNextToken() {
 
   TOKEN temp = tok_buffer.front();
   tok_buffer.pop_front();
-
+  std::cout << "CurTok is now " << temp.lexeme << '\n';
   return CurTok = temp;
 }
 

@@ -163,11 +163,9 @@ std::unique_ptr<ProgramASTnode> parser(){
 // we will only need look ahead if we are parsing a lhs term and curtok as mentioned
 // in ./grammars/needlookaheadg9
 // decl, return_stmt, expr, rval, rval1, rval2, rval3, rval4, rval5, rval7
-
 // apart from the above exceptions, CurTok will be in exactly one of the first sets of the 
 // possible production options
 // if not then there is a syntax error
-
 // for a nonterminal that is nullable, we need to check if it has returned a nullptr
 
 // do you need to fill the below in so that we can eat the EOF?
@@ -188,7 +186,8 @@ std::unique_ptr<ProgramASTnode> parse_program(){
 
   if (in_sentence_first(CurTok, prod0)){
     // program -> extern_list decl_list
-    externlist = parse_extern_list();
+    externlist = parse_extern_list(); // not nullable
+    decllist = parse_decl_list(); // not nullable
     // decls = parse_decl_list();
     // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
     // ans = std::make_unique<ProgramASTnode>(externs, decls);
@@ -197,7 +196,7 @@ std::unique_ptr<ProgramASTnode> parse_program(){
 
   } else if (in_sentence_first(CurTok, prod1)){
     // program -> decl_list
-    decllist = parse_decl_list();
+    decllist = parse_decl_list(); // not nullable
     // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
     // ans = std::make_unique<ProgramASTnode>(externs, decls);
     // ans = std::make_unique<ProgramASTnode>();
@@ -219,9 +218,9 @@ std::unique_ptr<ExternListASTnode> parse_extern_list(){
   sentence prod0 = rhslist[lhs_to_index("extern_list")][0];
 
   if (in_sentence_first(CurTok, prod0)){
-    ext = parse_extern();
+    ext = parse_extern(); // not nullable
     externs.push_back(std::move(ext));
-    externlist1 = parse_extern_list1(); // this can be nullptr
+    externlist1 = parse_extern_list1(); // is nullable
     if (externlist1){
       for (int i=0; i<externlist1->externs.size(); i++){
         externs.push_back(std::move(externlist1->externs.at(i)));
@@ -246,9 +245,9 @@ std::unique_ptr<ExternListASTnode> parse_extern_list1(){
   sentence prod1_eps = rhslist[lhs_to_index("extern_list1")][1]; // this is epsilon
   
   if (in_sentence_first(CurTok, prod0)){
-    ext = parse_extern();
+    ext = parse_extern(); // not nullable
     externs.push_back(std::move(ext));
-    externlist1 = parse_extern_list1(); // this could be nullptr
+    externlist1 = parse_extern_list1(); // is nullable
     if (externlist1){
       for (int i=0; i<externlist1->externs.size(); i++){
         externs.push_back(std::move(externlist1->externs.at(i)));
@@ -262,7 +261,51 @@ std::unique_ptr<ExternListASTnode> parse_extern_list1(){
 
 // extern -> 'extern' type_spec IDENT '(' params ')' ';'
 std::unique_ptr<ExternASTnode> parse_extern(){
-  return nullptr;
+  std::string ident;
+
+  // 0
+  if (CurTok.type == EXTERN){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting literal 'extern' but got " + CurTok.lexeme);
+  }
+
+  // 1
+  std::unique_ptr<TypeSpecASTnode> typespec = parse_type_spec(); // not nullable
+
+  // 2
+  if (CurTok.type == IDENT){
+    ident = CurTok.lexeme;
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
+  }
+
+  // 3
+  if (CurTok.type == LPAR){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting '(' but got " + CurTok.lexeme);
+  }
+
+  // 4
+  std::unique_ptr<ParamsASTnode> params = parse_params(); // is nullable
+
+  // 5
+  if (CurTok.type == RPAR){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting ')' but got " + CurTok.lexeme);
+  }
+
+  //6
+  if (CurTok.type == SC){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
+  }
+
+  return std::make_unique<ExternASTnode>(std::move(typespec), std::move(ident), std::move(params));
 }
 
 // decl_list -> decl decl_list1
@@ -318,18 +361,43 @@ std::unique_ptr<DeclListASTnode> parse_decl_list1(){
 }
 // decl -> var_decl | fun_decl
 std::unique_ptr<DeclASTnode> parse_decl(){
+  sentence prod0 = rhslist[lhs_to_index("decl")][0];
+  sentence prod1 = rhslist[lhs_to_index("decl")][1];
+  TOKEN tempcur = CurTok;
+  if ( !in_sentence_first(tempcur, prod0) && !in_sentence_first(tempcur, prod1)){
+    throw ParseError(CurTok, "could not parse decl");
+  }
+  getNextToken();
+  TOKEN temp1 = CurTok;
+  if (temp1.type != IDENT){
+    throw ParseError(temp1, "was expecting IDENT but got " + temp1.lexeme);
+  }
+
+  getNextToken();
+  TOKEN temp2 = CurTok;
+  if (temp2.type == LPAR){
+    fundecl = parse_fun_decl();
+  } else if (temp2.type == SC){
+    
+  }
+
+
   return nullptr;
 }
 // // var_decl -> var_type IDENT ';'
 // parse_var_decl(){}
-// // type_spec -> 'void' | var_type
-// parse_type_spec(){}
+// type_spec -> 'void' | var_type
+std::unique_ptr<TypeSpecASTnode> parse_type_spec(){
+  return nullptr;
+};
 // // var_type -> 'int' | 'float' | 'bool'
 // parse_var_type(){}
 // // fun_decl -> type_spec IDENT '(' params ')' block
 // parse_fun_decl(){}
-// // params -> param_list | 'void' | epsilon
-// parse_params(){}
+// params -> param_list | 'void' | epsilon
+std::unique_ptr<ParamsASTnode> parse_params(){
+  return nullptr;
+}
 // // param_list -> param param_list1
 // parse_param_list(){}
 // // param_list1 -> ',' param param_list1 | epsilon
