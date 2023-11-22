@@ -29,17 +29,22 @@ public:
 class ExternListASTnode : public ASTnode{
 public:
   std::vector<std::unique_ptr<ExternASTnode>> externs;
-  virtual llvm::Value *codegen() override {return nullptr;};
   ExternListASTnode(std::vector<std::unique_ptr<ExternASTnode>> &e){
     for(int i=0; i<e.size(); i++){
       externs.push_back(std::move(e.at(i)));
     }
   };
+  virtual llvm::Value *codegen() override {return nullptr;};
 };
 
 class DeclListASTnode : public ASTnode{
 public:
   std::vector<std::unique_ptr<DeclASTnode>> decls;
+  DeclListASTnode(std::vector<std::unique_ptr<DeclASTnode>> &d){
+    for(int i=0; i<d.size(); i++){
+      decls.push_back(std::move(d.at(i)));
+    }
+  };
   virtual llvm::Value *codegen() override {return nullptr;};
 };
 

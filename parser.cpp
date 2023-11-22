@@ -243,13 +243,36 @@ std::unique_ptr<ExternASTnode> parse_extern(){
 
 // decl_list -> decl decl_list1
 std::unique_ptr<DeclListASTnode> parse_decl_list(){
-  return nullptr;
+  std::vector<std::unique_ptr<DeclASTnode>> decls;
+  std::unique_ptr<DeclListASTnode> decllist1;
+  // std::vector<std::unique_ptr<ExternASTnode>> externlist1;
+  std::unique_ptr<DeclASTnode> decl;
+  std::unique_ptr<DeclListASTnode> ans;
+
+  sentence prod0 = rhslist[lhs_to_index("decl_list")][0];
+
+  if (in_sentence_first(CurTok, prod0)){
+    decl = parse_decl();
+    decls.push_back(std::move(decl));
+    decllist1 = parse_decl_list1();
+    for (int i=0; i<decllist1->decls.size(); i++){
+      decls.push_back(std::move(decllist1->decls.at(i)));
+    }
+    ans = std::make_unique<DeclListASTnode>(decls);
+  } else {
+    throw ParseError(CurTok, "could not parse decl_list");
+  }
+  return ans;
 }
 
-// // decl_list1 -> decl decl_list1 | epsilon
-// parse_decl_list1(){}
-// // decl -> var_decl | fun_decl
-// parse_decl(){}
+// decl_list1 -> decl decl_list1 | epsilon
+std::unique_ptr<DeclListASTnode> parse_decl_list1(){
+  return nullptr;
+}
+// decl -> var_decl | fun_decl
+std::unique_ptr<DeclASTnode> parse_decl(){
+  return nullptr;
+}
 // // var_decl -> var_type IDENT ';'
 // parse_var_decl(){}
 // // type_spec -> 'void' | var_type
