@@ -854,7 +854,10 @@ unique_ptr<ReturnASTnode> parse_return_stmt(){
 
 // expr -> IDENT '=' expr | rval
 unique_ptr<ExprASTnode> parse_expr(){
+  // if we parse the first production only if current token
+  // is IDENT and the next token is '='
   sentence prod1 = rhslist[lhs_to_index("expr")][1];
+  unique_ptr<ExprASTnode> ans;
   unique_ptr<ExprASTnode> expr;
   if (CurTok.type == IDENT){
     TOKEN tempcur = CurTok;
@@ -863,13 +866,15 @@ unique_ptr<ExprASTnode> parse_expr(){
     if (temp1.type == ASSIGN){
       getNextToken();
       expr = parse_expr();
-      return std::move(expr);
+      //ans = make_unique<ExprASTnode>();
+      return std::move(ans);
     } else {
       putBackToken(temp1);
       putBackToken(tempcur);
       getNextToken(); // CurTok now has the same value as tempcur
       //expr = parse_rval();
-      return std::move(expr);
+      //ans = make_unique<ExprASTnode>();
+      return std::move(ans);
     }
   } else if (in_sentence_first(CurTok, prod1)){
     //expr = parse_rval();

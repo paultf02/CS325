@@ -24,6 +24,72 @@ class BlockASTnode;
 class DeclListASTnode;
 class StmtASTnode;
 class ExprASTnode;
+class AssignASTnode;
+class ArgListASTnode;
+
+class BinOpASTnode : public ASTnode{};
+class UnOpASTnode : public ASTnode{};
+
+class IntASTnode : public ASTnode {
+public:
+  /// IntASTnode - Class for integer literals like 1, 2, 10,
+  int val;
+  TOKEN tok;
+  string name;
+  IntASTnode(TOKEN t, int v) : val(v), tok(t){};
+  virtual llvm::Value *codegen() override{return nullptr;}
+  virtual string to_string() const override {
+    return "";
+  };
+};
+
+class BoolASTnode : public ASTnode{
+public:
+  bool val;
+  TOKEN tok;
+  string name;
+  BoolASTnode(TOKEN t, bool v) : val(v), tok(t){};
+  virtual llvm::Value *codegen() override{return nullptr;}
+  virtual string to_string() const override {
+    return "";
+  };
+};
+
+class FloatASTnode : public ASTnode{
+public:
+  float val;
+  TOKEN tok;
+  string name;
+  FloatASTnode(TOKEN t, float v) : val(v), tok(t){};
+  virtual llvm::Value *codegen() override{return nullptr;}
+  virtual string to_string() const override {
+    return "";
+  };
+};
+
+class IdentASTnode :public ASTnode{
+public:
+  TOKEN tok;
+  string name;
+  IdentASTnode(TOKEN t) : tok(t), name(t.lexeme){};
+  virtual llvm::Value *codegen() override{return nullptr;}
+  virtual string to_string() const override {
+    return "";
+  };
+};
+
+class FunCallASTnode : public ASTnode{
+public:
+  unique_ptr<IdentASTnode> ident;
+  unique_ptr<ArgListASTnode> arglist;
+  FunCallASTnode(unique_ptr<IdentASTnode> i,
+                 unique_ptr<ArgListASTnode> a
+                 ) : ident(std::move(i)), arglist(std::move(a)){};
+  virtual llvm::Value *codegen() override{return nullptr;}
+  virtual string to_string() const override {
+    return "";
+  };
+};
 
 class ArgListASTnode: public ASTnode{
 public:
@@ -72,8 +138,33 @@ public:
 
 class ExprASTnode : public ASTnode{
 public:
-  ExprASTnode(){};
+  std::string type; // assign, binop, unop, ident, funcall, intlit, floatlit, boollit
+  unique_ptr<AssignASTnode> assign;
+  unique_ptr<BinOpASTnode> binop;
+  unique_ptr<UnOpASTnode> unop;
+  unique_ptr<IdentASTnode> ident;
+  unique_ptr<FunCallASTnode> funcall;
+  unique_ptr<IntASTnode> intlit;
+  unique_ptr<FloatASTnode> floatlit;
+  unique_ptr<BoolASTnode> boollit;
+  ExprASTnode(unique_ptr<AssignASTnode> a) : type("assign"), assign(std::move(a)){};
+  ExprASTnode(unique_ptr<BinOpASTnode> b) : type("binop"), binop(std::move(b)){};
+  ExprASTnode(unique_ptr<UnOpASTnode> u) : type("unop"), unop(std::move(u)){};
+  ExprASTnode(unique_ptr<IdentASTnode> i) : type("ident"), ident(std::move(i)){};
+  ExprASTnode(unique_ptr<FunCallASTnode> f) : type("funcall"), funcall(std::move(f)){};
+  ExprASTnode(unique_ptr<IntASTnode> in) : type("intlit"), intlit(std::move(in)){};
+  ExprASTnode(unique_ptr<FloatASTnode> fl) : type("floatlit"), floatlit(std::move(fl)){};
+  ExprASTnode(unique_ptr<BoolASTnode> bo) : type("boollit"), boollit(std::move(bo)){};
   virtual llvm::Value *codegen() override {return nullptr;}
+};
+
+class AssignASTnode : public ASTnode{
+public:
+  unique_ptr<IdentASTnode> ident;
+  unique_ptr<ExprASTnode> rhs;
+  AssignASTnode(unique_ptr<IdentASTnode> i,
+                unique_ptr<ExprASTnode> r
+                ) : ident(std::move(i)) , rhs(std::move(r)){};
 };
 
 class WhileASTnode : public ASTnode{
@@ -253,31 +344,6 @@ public:
 
   virtual llvm::Value *codegen() override {return nullptr;}
 };
-
-
-
-
-
-class BinOpASTnode : public ASTnode{};
-class UnOpASTnode : public ASTnode{};
-
-class IntASTnode : public ASTnode {
-public:
-  /// IntASTnode - Class for integer literals like 1, 2, 10,
-  int Val;
-  TOKEN Tok;
-  string Name;
-  IntASTnode(TOKEN tok, int val) : Tok(tok), Val(val){}
-  virtual llvm::Value *codegen() override{return nullptr;}
-  // virtual string to_string() const override {
-  //   //return a sting representation of this AST node
-  // };
-};
-class BoolASTnode : public ASTnode{};
-class FloatASTnode : public ASTnode{};
-class IdentASTnode :public ASTnode{};
-
-class FunCallASTnode : public ASTnode{};
 
 
 /* add other AST nodes as nessasary */
