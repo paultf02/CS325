@@ -577,17 +577,37 @@ std::unique_ptr<ParamASTnode> parse_param(){
 
 // block -> '{' local_decls stmt_list '}'
 std::unique_ptr<BlockASTnode> parse_block(){
+  std::unique_ptr<LocalDeclListASTnode> localdecls;
+  std::unique_ptr<StmtListASTnode> stmtlist;
+  if (CurTok.type == LBRA){
+    getNextToken();
+    localdecls = parse_local_decls(); // is nullable
+    stmtlist = parse_stmt_list();
+    return std::make_unique<BlockASTnode>(std::move(localdecls), std::move(stmtlist));
+    if (CurTok.type == RBRA){
+      getNextToken();
+    } else {
+      throw ParseError(CurTok, "was expecting '}' but got " + CurTok.lexeme);
+    }
+  } else {
+    throw ParseError(CurTok, "was expecting '{' but got " + CurTok.lexeme);
+  }
+}
+
+// local_decls -> local_decl local_decls | epsilon
+std::unique_ptr<LocalDeclListASTnode> parse_local_decls(){
   return nullptr;
 }
 
-// // local_decls -> local_decl local_decls | epsilon
-// parse_local_decls(){}
+// local_decl -> var_type IDENT ';'
+std::unique_ptr<LocalDeclASTnode> parse_local_decl(){
+  return nullptr;
+}
 
-// // local_decl -> var_type IDENT ';'
-// parse_local_decl(){}
-
-// // stmt_list -> stmt stmt_list | epsilon
-// parse_stmt_list(){}
+// stmt_list -> stmt stmt_list | epsilon
+std::unique_ptr<StmtListASTnode> parse_stmt_list(){
+  return nullptr;
+}
 
 // // stmt -> expr_stmt | block | if_stmt | while_stmt | return_stmt
 // parse_stmt(){}

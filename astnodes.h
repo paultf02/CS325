@@ -23,6 +23,15 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
+class LocalDeclASTnode : public ASTnode{
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
+class LocalDeclListASTnode : public ASTnode{
+public:
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
 class ParamASTnode : public ASTnode{
 public:
   std::unique_ptr<VarTypeASTnode> vartype;
@@ -44,8 +53,23 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
+class StmtASTnode : public ASTnode{
+public:
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
+class StmtListASTnode : public ASTnode{
+public:
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
 class BlockASTnode : public ASTnode{
 public:
+  std::unique_ptr<LocalDeclListASTnode> localdecls;
+  std::unique_ptr<StmtListASTnode> stmtlist;
+  BlockASTnode(std::unique_ptr<LocalDeclListASTnode> ld,
+               std::unique_ptr<StmtListASTnode> sl
+               ) : localdecls(std::move(ld)), stmtlist(std::move(sl)){}; 
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
@@ -142,14 +166,9 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
-
-class VarAssignASTnode : public ASTnode{};
 class ExprASTnode : public ASTnode{};
 class BinOpASTnode : public ASTnode{};
 class UnOpASTnode : public ASTnode{};
-class LitASTnode : public ASTnode{};
-class IfThenElseASTnode : public ASTnode{};
-class WhileASTnode : public ASTnode{};
 class IntASTnode : public ASTnode {
 public:
   /// IntASTnode - Class for integer literals like 1, 2, 10,

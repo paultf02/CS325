@@ -9,8 +9,8 @@
 #include <memory>
 #include <exception>
 
-extern std::deque<TOKEN> program_tokens;
-extern int curTokIndex;
+// extern std::deque<TOKEN> program_tokens;
+// extern int curTokIndex;
 
 extern TOKEN CurTok;
 extern std::deque<TOKEN> tok_buffer;
@@ -54,6 +54,9 @@ std::unique_ptr<BlockASTnode> parse_block();
 std::unique_ptr<ParamListASTnode> parse_param_list();
 std::unique_ptr<ParamASTnode> parse_param();
 std::unique_ptr<ParamListASTnode> parse_param_list1();
+std::unique_ptr<LocalDeclListASTnode> parse_local_decls();
+std::unique_ptr<LocalDeclASTnode> parse_local_decl();
+std::unique_ptr<StmtListASTnode> parse_stmt_list();
 
 class ParseError : public std::exception {
   TOKEN tok;
