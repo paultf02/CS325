@@ -15,6 +15,7 @@
 using std::unique_ptr;
 using std::make_unique;
 using std::vector;
+using std::string; 
 
 /*
 Recursive descent predictive parsing
@@ -32,19 +33,19 @@ void A(){
 }
 */
 
-int lhs_to_index(std::string lhs){
+int lhs_to_index(string lhs){
   int ans;
   auto it = std::find(nonterminals.begin(), nonterminals.end(), lhs);
   if (it != nonterminals.end()){
     ans = it - nonterminals.begin();
     return ans;
   } else{
-    std::string err_msg = "the name " + lhs + " is not in the lhs of the grammar";
+    string err_msg = "the name " + lhs + " is not in the lhs of the grammar";
     throw std::runtime_error(err_msg);
   }
 }
 
-enum TOKEN_TYPE word_to_type(std::string word){
+enum TOKEN_TYPE word_to_type(string word){
   TOKEN_TYPE type = INVALID;
   if (word=="IDENT"){
     type = IDENT;
@@ -120,7 +121,7 @@ enum TOKEN_TYPE word_to_type(std::string word){
   return type;
 }
 
-vector<TOKEN_TYPE> terminals_to_type(vector<std::string> list_of_terminals){
+vector<TOKEN_TYPE> terminals_to_type(vector<string> list_of_terminals){
   vector<enum TOKEN_TYPE> tokvector(list_of_terminals.size());
   for (int i=0; i<list_of_terminals.size();i++){
     tokvector[i] = word_to_type(list_of_terminals[i]);
@@ -128,12 +129,12 @@ vector<TOKEN_TYPE> terminals_to_type(vector<std::string> list_of_terminals){
   return tokvector;
 }
 
-vector<std::string> find_sentence_first(sentence &sentence){
+vector<string> find_sentence_first(sentence &sentence){
   // NOTE: THIS WILL CONTAIN DUPLICATES
   // error: this will include an epsilon even when it is not 
-  vector<std::string> sentence_first;
+  vector<string> sentence_first;
   for (auto &word : sentence){
-    vector<std::string> thisfirst = first[word];
+    vector<string> thisfirst = first[word];
     sentence_first.insert(sentence_first.end(), thisfirst.begin(), thisfirst.end());
     if (nullable[word] == false){
       break;
@@ -143,7 +144,7 @@ vector<std::string> find_sentence_first(sentence &sentence){
 }
 
 bool in_sentence_first(TOKEN &tok, sentence &prod){
-  vector<std::string> sentencefirstraw = find_sentence_first(prod);
+  vector<string> sentencefirstraw = find_sentence_first(prod);
   vector<TOKEN_TYPE> sentencefirst = terminals_to_type(sentencefirstraw);
 
   if (std::find(sentencefirst.begin(), sentencefirst.end(), tok.type) != sentencefirst.end()){
@@ -155,7 +156,7 @@ bool in_sentence_first(TOKEN &tok, sentence &prod){
 }
 
 unique_ptr<ProgramASTnode> parser(){
-  // std::string name = "arg_list2";
+  // string name = "arg_list2";
   // std::cout << "name=" + name + " index=" << lhs_to_index(name) << '\n';
   // return std::move(make_unique<ProgramASTnode>());
 
@@ -206,7 +207,7 @@ unique_ptr<ProgramASTnode> parse_program(){
     // ans = make_unique<ProgramASTnode>();
     return make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
   } else {
-    throw ParseError(CurTok, "could not parse program");
+    throw ParseError(CurTok, "could not find production for program");
   }
   // return std::move(ans);
   // return ans;
@@ -233,7 +234,7 @@ unique_ptr<ExternListASTnode> parse_extern_list(){
   //   }
   //   return make_unique<ExternListASTnode>(externs);
   // } else {
-  //   throw ParseError(CurTok, "could not parse extern_list");
+  //   throw ParseError(CurTok, "could not find production for extern_list");
   // }
     ext = parse_extern(); // not nullable
     externs.push_back(std::move(ext));
@@ -273,7 +274,7 @@ unique_ptr<ExternListASTnode> parse_extern_list1(){
 
 // extern -> 'extern' type_spec IDENT '(' params ')' ';'
 unique_ptr<ExternASTnode> parse_extern(){
-  std::string ident;
+  string ident;
 
   // 0
   if (CurTok.type == EXTERN){
@@ -342,7 +343,7 @@ unique_ptr<DeclListASTnode> parse_decl_list(){
 
   //   return make_unique<DeclListASTnode>(decls);
   // } else {
-  //   throw ParseError(CurTok, "could not parse decl_list");
+  //   throw ParseError(CurTok, "could not find production for decl_list");
   // }
 
   decl = parse_decl();
@@ -389,7 +390,7 @@ unique_ptr<DeclASTnode> parse_decl(){
 
   TOKEN tempcur = CurTok;
   if ( !in_sentence_first(tempcur, prod0) && !in_sentence_first(tempcur, prod1)){
-    throw ParseError(CurTok, "could not parse decl");
+    throw ParseError(CurTok, "could not find production for decl");
   }
   getNextToken();
   TOKEN temp1 = CurTok;
@@ -429,7 +430,7 @@ unique_ptr<VarDeclASTnode> parse_var_decl(){
   // if (in_sentence_first(CurTok, prod0)){
   //   unique_ptr<VarTypeASTnode> vt = parse_var_type();
   // } else {
-  //   throw ParseError(CurTok, "could not parse var_decl");
+  //   throw ParseError(CurTok, "could not find production for var_decl");
   // }
   vt = parse_var_type();
   if (CurTok.type != IDENT){
@@ -455,7 +456,7 @@ unique_ptr<TypeSpecASTnode> parse_type_spec(){
     unique_ptr<VarTypeASTnode> vartypeptr = parse_var_type();
     return make_unique<TypeSpecASTnode>(std::move(vartypeptr));
   } else {
-    throw ParseError(CurTok, "could not parse type_spec");
+    throw ParseError(CurTok, "could not find production for type_spec");
   }
 }
 
@@ -479,7 +480,7 @@ unique_ptr<VarTypeASTnode> parse_var_type(){
 unique_ptr<FunDeclASTnode> parse_fun_decl(){
   sentence prod0 = rhslist[lhs_to_index("fun_decl")][0];
   unique_ptr<TypeSpecASTnode> typespec;
-  std::string ident;
+  string ident;
   unique_ptr<ParamListASTnode> params;
   unique_ptr<BlockASTnode> block;
 
@@ -487,7 +488,7 @@ unique_ptr<FunDeclASTnode> parse_fun_decl(){
   // if (in_sentence_first(CurTok, prod0)){
   //   typespec = parse_type_spec(); // not nullable
   // } else {
-  //   throw ParseError(CurTok, "could not parse fun_decl");
+  //   throw ParseError(CurTok, "could not find production for fun_decl");
   // }
   typespec = parse_type_spec(); // not nullable
 
@@ -555,7 +556,7 @@ unique_ptr<ParamListASTnode> parse_param_list(){
   //   }
   //   return make_unique<ParamListASTnode>(paramlist);
   // } else {
-  //   throw ParseError(CurTok, "could not parse param_list");
+  //   throw ParseError(CurTok, "could not find production for param_list");
   // }
 
   param = parse_param(); // not nullable
@@ -594,7 +595,7 @@ unique_ptr<ParamListASTnode> parse_param_list1(){
 unique_ptr<ParamASTnode> parse_param(){
   sentence prod0 = rhslist[lhs_to_index("param")][0];
   unique_ptr<VarTypeASTnode> vartype;
-  std::string ident;
+  string ident;
   // if (in_sentence_first(CurTok, prod0)){
   //   vartype = parse_var_type();
   //   if (CurTok.type == IDENT){
@@ -605,7 +606,7 @@ unique_ptr<ParamASTnode> parse_param(){
   //     throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
   //   }
   // } else {
-  //   throw ParseError(CurTok, "could not parse param");
+  //   throw ParseError(CurTok, "could not find production for param");
   // }
   vartype = parse_var_type();
   if (CurTok.type == IDENT){
@@ -662,7 +663,7 @@ unique_ptr<LocalDeclListASTnode> parse_local_decls(){
 unique_ptr<VarDeclASTnode> parse_local_decl(){
   sentence prod0 = rhslist[lhs_to_index("local_decl")][0];
   unique_ptr<VarTypeASTnode> vartype;
-  std::string ident;
+  string ident;
   vartype = parse_var_type();
   if (CurTok.type == IDENT){
     ident = CurTok.lexeme;
@@ -701,26 +702,48 @@ unique_ptr<StmtListASTnode> parse_stmt_list(){
 
 // stmt -> expr_stmt | block | if_stmt | while_stmt | return_stmt
 unique_ptr<StmtASTnode> parse_stmt(){
-  return nullptr;
+  sentence prod0 = rhslist[lhs_to_index("stmt")][0];
+  sentence prod1 = rhslist[lhs_to_index("stmt")][1];
+  sentence prod2 = rhslist[lhs_to_index("stmt")][2];
+  sentence prod3 = rhslist[lhs_to_index("stmt")][3];
+  sentence prod4 = rhslist[lhs_to_index("stmt")][4];
+  if (in_sentence_first(CurTok, prod0)){
+    unique_ptr<ExprASTnode> expr_stmt = parse_expr_stmt();
+    return make_unique<StmtASTnode>(std::move(expr_stmt));
+  } else if (in_sentence_first(CurTok, prod1)){
+    // unique_ptr<BlockASTnode> block = parse_block();
+    // return make_unique<StmtASTnode>(std::move(block));
+  } else if (in_sentence_first(CurTok, prod2)){
+    unique_ptr<IfASTnode> if_stmt = parse_if_stmt();
+    return make_unique<StmtASTnode>(std::move(if_stmt));
+  } else if (in_sentence_first(CurTok, prod3)){
+    unique_ptr<WhileASTnode> while_stmt = parse_while_stmt();
+    return make_unique<StmtASTnode>(std::move(while_stmt));
+  } else if (in_sentence_first(CurTok, prod4)){
+    unique_ptr<ReturnASTnode> return_stmt = parse_return_stmt();
+    return make_unique<StmtASTnode>(std::move(return_stmt));
+  } else {
+    throw ParseError(CurTok, "could not find production for stmt");
+  }
 }
 
-// // expr_stmt -> expr ';' | ';'
-// parse_expr_stmt(){}
+// expr_stmt -> expr ';' | ';'
+unique_ptr<ExprASTnode> parse_expr_stmt(){}
 
-// // while_stmt -> 'while' '(' expr ')' stmt
-// parse_while_stmt(){}
+// while_stmt -> 'while' '(' expr ')' stmt
+unique_ptr<WhileASTnode> parse_while_stmt(){}
 
-// // if_stmt -> 'if' '(' expr ')' block else_stmt
-// parse_if_stmt(){}
+// if_stmt -> 'if' '(' expr ')' block else_stmt
+unique_ptr<IfASTnode> parse_if_stmt(){}
 
-// // else_stmt -> 'else' block | epsilon
-// parse_else_stmt(){}
+// else_stmt -> 'else' block | epsilon
+unique_ptr<ElseASTnode> parse_else_stmt(){}
 
-// // return_stmt -> 'return' ';' | 'return' expr ';'
-// parse_return_stmt(){}
+// return_stmt -> 'return' ';' | 'return' expr ';'
+unique_ptr<ReturnASTnode> parse_return_stmt(){}
 
-// // expr -> IDENT '=' expr | rval
-// parse_expr(){}
+// expr -> IDENT '=' expr | rval
+unique_ptr<ExprASTnode> parse_expr(){}
 
 // // rval -> rval1 '||' rval | rval1
 // parse_rval(){}

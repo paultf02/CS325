@@ -9,6 +9,8 @@
 #include <memory>
 #include <exception>
 
+using std::unique_ptr;
+
 // extern std::deque<TOKEN> program_tokens;
 // extern int curTokIndex;
 
@@ -28,7 +30,7 @@ extern std::map<std::string, bool> nullable;
 extern std::map<std::string, std::vector<std::string>> first;
 extern std::map<std::string, std::vector<std::string>> follow;
 
-extern std::unique_ptr<ProgramASTnode> programrootnode;
+extern unique_ptr<ProgramASTnode> programrootnode;
 
 TOKEN getNextToken();
 void putBackToken(TOKEN tok);
@@ -37,27 +39,35 @@ void putBackToken(TOKEN tok);
 enum TOKEN_TYPE word_to_type(std::string word);
 std::vector<int> terminals_to_int(std::vector<std::string> terminals);
 
-std::unique_ptr<ProgramASTnode> parser();
-std::unique_ptr<ProgramASTnode> parse_program();
-std::unique_ptr<ExternListASTnode> parse_extern_list();
-std::unique_ptr<DeclListASTnode> parse_decl_list();
-std::unique_ptr<ExternASTnode> parse_extern();
-std::unique_ptr<ExternListASTnode> parse_extern_list1();
-std::unique_ptr<DeclASTnode> parse_decl();
-std::unique_ptr<DeclListASTnode> parse_decl_list1();
-std::unique_ptr<TypeSpecASTnode>parse_type_spec();
-std::unique_ptr<ParamListASTnode> parse_params();
-std::unique_ptr<VarDeclASTnode> parse_var_decl();
-std::unique_ptr<FunDeclASTnode> parse_fun_decl();
-std::unique_ptr<VarTypeASTnode> parse_var_type();
-std::unique_ptr<BlockASTnode> parse_block();
-std::unique_ptr<ParamListASTnode> parse_param_list();
-std::unique_ptr<ParamASTnode> parse_param();
-std::unique_ptr<ParamListASTnode> parse_param_list1();
-std::unique_ptr<LocalDeclListASTnode> parse_local_decls();
-std::unique_ptr<VarDeclASTnode> parse_local_decl();
-std::unique_ptr<StmtListASTnode> parse_stmt_list();
-std::unique_ptr<StmtASTnode> parse_stmt();
+unique_ptr<ProgramASTnode> parser();
+unique_ptr<ProgramASTnode> parse_program();
+unique_ptr<ExternListASTnode> parse_extern_list();
+unique_ptr<DeclListASTnode> parse_decl_list();
+unique_ptr<ExternASTnode> parse_extern();
+unique_ptr<ExternListASTnode> parse_extern_list1();
+unique_ptr<DeclASTnode> parse_decl();
+unique_ptr<DeclListASTnode> parse_decl_list1();
+unique_ptr<TypeSpecASTnode>parse_type_spec();
+unique_ptr<ParamListASTnode> parse_params();
+unique_ptr<VarDeclASTnode> parse_var_decl();
+unique_ptr<FunDeclASTnode> parse_fun_decl();
+unique_ptr<VarTypeASTnode> parse_var_type();
+unique_ptr<BlockASTnode> parse_block();
+unique_ptr<ParamListASTnode> parse_param_list();
+unique_ptr<ParamASTnode> parse_param();
+unique_ptr<ParamListASTnode> parse_param_list1();
+unique_ptr<LocalDeclListASTnode> parse_local_decls();
+unique_ptr<VarDeclASTnode> parse_local_decl();
+unique_ptr<StmtListASTnode> parse_stmt_list();
+unique_ptr<StmtASTnode> parse_stmt();
+unique_ptr<ExprASTnode> parse_expr_stmt();
+unique_ptr<WhileASTnode> parse_while_stmt();
+unique_ptr<IfASTnode> parse_if_stmt();
+unique_ptr<ElseASTnode> parse_else_stmt();
+unique_ptr<ReturnASTnode> parse_return_stmt();
+unique_ptr<ExprASTnode> parse_expr();
+
+
 
 class ParseError : public std::exception {
   TOKEN tok;
