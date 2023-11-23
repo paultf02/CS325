@@ -596,12 +596,44 @@ std::unique_ptr<BlockASTnode> parse_block(){
 
 // local_decls -> local_decl local_decls | epsilon
 std::unique_ptr<LocalDeclListASTnode> parse_local_decls(){
-  return nullptr;
+  sentence prod0 = rhslist[lhs_to_index("local_decls")][0];
+  std::vector<std::unique_ptr<LocalDeclASTnode>> localdecllist;
+  std::unique_ptr<LocalDeclListASTnode> localdecllist1;
+  std::unique_ptr<LocalDeclASTnode> localdecl;
+
+  if (in_sentence_first(CurTok, prod0)){
+    localdecl = parse_local_decl();
+    localdecllist.push_back(std::move(localdecl));
+    localdecllist1 = parse_local_decls(); // is nullable
+    if (localdecllist1){
+      for (int i=0; i<localdecllist1->localdecllist.size(); i++){
+        localdecllist.push_back(std::move(localdecllist1->localdecllist.at(i)));
+      }
+    }
+    return std::make_unique<LocalDeclListASTnode>(localdecllist);    
+  } else {
+    return nullptr;
+  }
 }
 
 // local_decl -> var_type IDENT ';'
 std::unique_ptr<LocalDeclASTnode> parse_local_decl(){
-  return nullptr;
+  sentence prod0 = rhslist[lhs_to_index("local_decl")][0];
+  std::unique_ptr<VarTypeASTnode> vartype;
+  std::string ident;
+  vartype = parse_var_type();
+  if (CurTok.type == IDENT){
+    ident = CurTok.lexeme;
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
+  }
+  if (CurTok.type == SC){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
+  }
+  return std::make_unique<LocalDeclASTnode>(std::move(vartype), ident);
 }
 
 // stmt_list -> stmt stmt_list | epsilon
