@@ -274,7 +274,8 @@ unique_ptr<ExternListASTnode> parse_extern_list1(){
 
 // extern -> 'extern' type_spec IDENT '(' params ')' ';'
 unique_ptr<ExternASTnode> parse_extern(){
-  string ident;
+  // string ident;
+  unique_ptr<IdentASTnode> ident;
 
   // 0
   if (CurTok.type == EXTERN){
@@ -288,7 +289,8 @@ unique_ptr<ExternASTnode> parse_extern(){
 
   // 2
   if (CurTok.type == IDENT){
-    ident = CurTok.lexeme;
+    // ident = CurTok.lexeme;
+    ident = make_unique<IdentASTnode>(CurTok);
     getNextToken();
   } else {
     throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
@@ -427,6 +429,7 @@ unique_ptr<DeclASTnode> parse_decl(){
 unique_ptr<VarDeclASTnode> parse_var_decl(){
   sentence prod0 = rhslist[lhs_to_index("var_decl")][0];
   unique_ptr<VarTypeASTnode> vt;
+  unique_ptr<IdentASTnode> ident;
   // if (in_sentence_first(CurTok, prod0)){
   //   unique_ptr<VarTypeASTnode> vt = parse_var_type();
   // } else {
@@ -436,12 +439,12 @@ unique_ptr<VarDeclASTnode> parse_var_decl(){
   if (CurTok.type != IDENT){
     throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
   }
-  TOKEN idtok = CurTok;
+  ident = make_unique<IdentASTnode>(CurTok);
   getNextToken();
   if (CurTok.type != SC){
     throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
   }
-  return make_unique<VarDeclASTnode>(std::move(vt), CurTok.lexeme);
+  return make_unique<VarDeclASTnode>(std::move(vt), std::move(ident));
 }
 
 // type_spec -> 'void' | var_type
@@ -480,7 +483,9 @@ unique_ptr<VarTypeASTnode> parse_var_type(){
 unique_ptr<FunDeclASTnode> parse_fun_decl(){
   sentence prod0 = rhslist[lhs_to_index("fun_decl")][0];
   unique_ptr<TypeSpecASTnode> typespec;
-  string ident;
+  // string ident;
+  unique_ptr<IdentASTnode> ident;
+  
   unique_ptr<ParamListASTnode> params;
   unique_ptr<BlockASTnode> block;
 
@@ -494,7 +499,8 @@ unique_ptr<FunDeclASTnode> parse_fun_decl(){
 
   // 1
   if (CurTok.type == IDENT){
-    ident = CurTok.lexeme;
+    // ident = CurTok.lexeme;
+    ident = make_unique<IdentASTnode>(CurTok);
     getNextToken();
   } else {
     throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
@@ -519,7 +525,7 @@ unique_ptr<FunDeclASTnode> parse_fun_decl(){
   // 5
   block = parse_block();
 
-  return make_unique<FunDeclASTnode>(std::move(typespec), ident, std::move(params), std::move(block));
+  return make_unique<FunDeclASTnode>(std::move(typespec), std::move(ident), std::move(params), std::move(block));
 }
 
 // params -> param_list | 'void' | epsilon
@@ -595,7 +601,8 @@ unique_ptr<ParamListASTnode> parse_param_list1(){
 unique_ptr<ParamASTnode> parse_param(){
   sentence prod0 = rhslist[lhs_to_index("param")][0];
   unique_ptr<VarTypeASTnode> vartype;
-  string ident;
+  // string ident;
+  unique_ptr<IdentASTnode> ident;
   // if (in_sentence_first(CurTok, prod0)){
   //   vartype = parse_var_type();
   //   if (CurTok.type == IDENT){
@@ -610,9 +617,10 @@ unique_ptr<ParamASTnode> parse_param(){
   // }
   vartype = parse_var_type();
   if (CurTok.type == IDENT){
-    ident = CurTok.lexeme;
+    // ident = CurTok.lexeme;
+    ident = make_unique<IdentASTnode>(CurTok);
     getNextToken();
-    return make_unique<ParamASTnode>(std::move(vartype), ident);
+    return make_unique<ParamASTnode>(std::move(vartype), std::move(ident));
   } else {
       throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
     }
@@ -663,10 +671,12 @@ unique_ptr<DeclListASTnode> parse_local_decls(){
 unique_ptr<DeclASTnode> parse_local_decl(){
   sentence prod0 = rhslist[lhs_to_index("local_decl")][0];
   unique_ptr<VarTypeASTnode> vartype;
-  string ident;
+  // string ident;
+  unique_ptr<IdentASTnode> ident;
   vartype = parse_var_type();
   if (CurTok.type == IDENT){
-    ident = CurTok.lexeme;
+    // ident = CurTok.lexeme;
+    ident = make_unique<IdentASTnode>(CurTok);
     getNextToken();
   } else {
     throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
@@ -676,7 +686,7 @@ unique_ptr<DeclASTnode> parse_local_decl(){
   } else {
     throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
   }
-  unique_ptr<VarDeclASTnode> vardecl = make_unique<VarDeclASTnode>(std::move(vartype), ident);
+  unique_ptr<VarDeclASTnode> vardecl = make_unique<VarDeclASTnode>(std::move(vartype), std::move(ident));
 
   return make_unique<DeclASTnode>(std::move(vardecl));
 }

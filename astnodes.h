@@ -13,12 +13,7 @@ using std::string;
 //===----------------------------------------------------------------------===//
 // 
 /// ASTnode - Base class for all AST nodes.
-class ASTnode {
-public:
-  virtual ~ASTnode() {};
-  virtual llvm::Value *codegen() = 0;
-  virtual string to_string() const {return "";};
-};
+
 
 class BlockASTnode;
 class DeclListASTnode;
@@ -27,8 +22,28 @@ class ExprASTnode;
 class AssignASTnode;
 class ArgListASTnode;
 
-class BinOpASTnode : public ASTnode{};
-class UnOpASTnode : public ASTnode{};
+class ASTnode {
+public:
+  virtual ~ASTnode() {};
+  virtual llvm::Value *codegen() = 0;
+  virtual string to_string() const {return "";};
+};
+
+class BinOpASTnode : public ASTnode{
+public:
+  virtual llvm::Value *codegen() override{return nullptr;}
+  virtual string to_string() const override {
+    return "";
+  };
+};
+
+class UnOpASTnode : public ASTnode{
+public:
+  virtual llvm::Value *codegen() override{return nullptr;}
+  virtual string to_string() const override {
+    return "";
+  };
+};
 
 class IntASTnode : public ASTnode {
 public:
@@ -112,8 +127,11 @@ public:
 class VarDeclASTnode : public ASTnode{
 public:
   unique_ptr<VarTypeASTnode> vartype;
-  string name;
-  VarDeclASTnode(unique_ptr<VarTypeASTnode> vt, string n) : vartype(std::move(vt)), name(n){};
+  unique_ptr<IdentASTnode> ident;
+  // string name;
+  VarDeclASTnode(unique_ptr<VarTypeASTnode> vt,
+                 unique_ptr<IdentASTnode> id
+                 ) : vartype(std::move(vt)), ident(std::move(id)){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
@@ -138,7 +156,7 @@ public:
 
 class ExprASTnode : public ASTnode{
 public:
-  std::string type; // assign, binop, unop, ident, funcall, intlit, floatlit, boollit
+  string type; // assign, binop, unop, ident, funcall, intlit, floatlit, boollit
   unique_ptr<AssignASTnode> assign;
   unique_ptr<BinOpASTnode> binop;
   unique_ptr<UnOpASTnode> unop;
@@ -203,7 +221,7 @@ public:
 
 class StmtASTnode : public ASTnode{
 public:
-  string whichtype;
+  string whichtype; // "expr_stmt" "block" "if_stmt" "while_stmt" "return_stmt"
   unique_ptr<ExprASTnode> expr_stmt;
   unique_ptr<BlockASTnode> block;
   unique_ptr<IfASTnode> if_stmt;
@@ -242,9 +260,11 @@ public:
 class ParamASTnode : public ASTnode{
 public:
   unique_ptr<VarTypeASTnode> vartype;
-  string ident;
+  unique_ptr<IdentASTnode> ident;
+  //string ident;
   ParamASTnode(unique_ptr<VarTypeASTnode> vt,
-              string id) : vartype(std::move(vt)), ident(id){};
+              unique_ptr<IdentASTnode> id
+              ) : vartype(std::move(vt)), ident(std::move(id)){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
@@ -272,15 +292,16 @@ public:
 class FunDeclASTnode : public ASTnode{
 public:
   unique_ptr<TypeSpecASTnode> typespec;
-  string ident;
+  //string ident;
+  unique_ptr<IdentASTnode> ident;
   unique_ptr<ParamListASTnode> params;
   unique_ptr<BlockASTnode> block;
   FunDeclASTnode( unique_ptr<TypeSpecASTnode> ts,
-                  string id,
+                  unique_ptr<IdentASTnode> id,
                   unique_ptr<ParamListASTnode> ps,
                   unique_ptr<BlockASTnode> b
                   ): typespec(std::move(ts)),
-                  ident(id),
+                  ident(std::move(id)),
                   params(std::move(ps)),
                   block(std::move(b)) {};
   virtual llvm::Value *codegen() override {return nullptr;}
@@ -289,12 +310,13 @@ public:
 class ExternASTnode : public ASTnode{
 public:
   unique_ptr<TypeSpecASTnode> typespec;
-  string ident;
+  unique_ptr<IdentASTnode> ident;
+  // string ident;
   unique_ptr<ParamListASTnode> params;
   ExternASTnode(unique_ptr<TypeSpecASTnode> ts,
-                string id,
+                unique_ptr<IdentASTnode> id,
                 unique_ptr<ParamListASTnode> ps
-                ) : typespec(std::move(ts)), ident(id), params(std::move(ps)){};
+                ) : typespec(std::move(ts)), ident(std::move(id)), params(std::move(ps)){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
