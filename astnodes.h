@@ -4,6 +4,9 @@
 #include <memory>
 #include <utility>
 
+using std::unique_ptr;
+using std::vector;
+
 //===----------------------------------------------------------------------===//
 // AST nodes
 //===----------------------------------------------------------------------===//
@@ -25,24 +28,24 @@ public:
 
 class VarDeclASTnode : public ASTnode{
 public:
-  std::unique_ptr<VarTypeASTnode> vartype;
+  unique_ptr<VarTypeASTnode> vartype;
   std::string name;
-  VarDeclASTnode(std::unique_ptr<VarTypeASTnode> vt, std::string n) : vartype(std::move(vt)), name(n){};
+  VarDeclASTnode(unique_ptr<VarTypeASTnode> vt, std::string n) : vartype(std::move(vt)), name(n){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 // class LocalDeclASTnode : public ASTnode{
 // public:
-//   std::unique_ptr<VarTypeASTnode> vartype;
+//   unique_ptr<VarTypeASTnode> vartype;
 //   std::string name;
-//   LocalDeclASTnode(std::unique_ptr<VarTypeASTnode> vt, std::string n) : vartype(std::move(vt)), name(n){};
+//   LocalDeclASTnode(unique_ptr<VarTypeASTnode> vt, std::string n) : vartype(std::move(vt)), name(n){};
 //   virtual llvm::Value *codegen() override {return nullptr;}
 // };
 
 class LocalDeclListASTnode : public ASTnode{
 public:
-  std::vector<std::unique_ptr<VarDeclASTnode>> localdecllist;
-  LocalDeclListASTnode(std::vector<std::unique_ptr<VarDeclASTnode>> &ld){
+  vector<unique_ptr<VarDeclASTnode>> localdecllist;
+  LocalDeclListASTnode(vector<unique_ptr<VarDeclASTnode>> &ld){
     for(int i=0; i<ld.size(); i++){
       localdecllist.push_back(std::move(ld.at(i)));
     }
@@ -52,17 +55,17 @@ public:
 
 class ParamASTnode : public ASTnode{
 public:
-  std::unique_ptr<VarTypeASTnode> vartype;
+  unique_ptr<VarTypeASTnode> vartype;
   std::string ident;
-  ParamASTnode(std::unique_ptr<VarTypeASTnode> vt,
+  ParamASTnode(unique_ptr<VarTypeASTnode> vt,
               std::string id) : vartype(std::move(vt)), ident(id){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 class ParamListASTnode : public ASTnode{
 public:
-  std::vector<std::unique_ptr<ParamASTnode>> paramlist;
-  ParamListASTnode(std::vector<std::unique_ptr<ParamASTnode>> &pl){
+  vector<unique_ptr<ParamASTnode>> paramlist;
+  ParamListASTnode(vector<unique_ptr<ParamASTnode>> &pl){
     for(int i=0; i<pl.size(); i++){
       paramlist.push_back(std::move(pl.at(i)));
     }
@@ -78,8 +81,8 @@ public:
 
 class StmtListASTnode : public ASTnode{
 public:
-  std::vector<std::unique_ptr<StmtASTnode>> stmtlist;
-  StmtListASTnode(std::vector<std::unique_ptr<StmtASTnode>> &sl){
+  vector<unique_ptr<StmtASTnode>> stmtlist;
+  StmtListASTnode(vector<unique_ptr<StmtASTnode>> &sl){
     for(int i=0; i<sl.size(); i++){
       stmtlist.push_back(std::move(sl.at(i)));
     }
@@ -90,10 +93,10 @@ public:
 
 class BlockASTnode : public ASTnode{
 public:
-  std::unique_ptr<LocalDeclListASTnode> localdecls;
-  std::unique_ptr<StmtListASTnode> stmtlist;
-  BlockASTnode(std::unique_ptr<LocalDeclListASTnode> ld,
-               std::unique_ptr<StmtListASTnode> sl
+  unique_ptr<LocalDeclListASTnode> localdecls;
+  unique_ptr<StmtListASTnode> stmtlist;
+  BlockASTnode(unique_ptr<LocalDeclListASTnode> ld,
+               unique_ptr<StmtListASTnode> sl
                ) : localdecls(std::move(ld)), stmtlist(std::move(sl)){}; 
   virtual llvm::Value *codegen() override {return nullptr;}
 };
@@ -101,22 +104,22 @@ public:
 class TypeSpecASTnode : public ASTnode{
 public:
   bool isVoid = false;
-  std::unique_ptr<VarTypeASTnode> vartype;
+  unique_ptr<VarTypeASTnode> vartype;
   TypeSpecASTnode(std::string v) : isVoid(true){};
-  TypeSpecASTnode(std::unique_ptr<VarTypeASTnode> vt) : vartype(std::move(vt)){};
+  TypeSpecASTnode(unique_ptr<VarTypeASTnode> vt) : vartype(std::move(vt)){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 class FunDeclASTnode : public ASTnode{
 public:
-  std::unique_ptr<TypeSpecASTnode> typespec;
+  unique_ptr<TypeSpecASTnode> typespec;
   std::string ident;
-  std::unique_ptr<ParamListASTnode> params;
-  std::unique_ptr<BlockASTnode> block;
-  FunDeclASTnode( std::unique_ptr<TypeSpecASTnode> ts,
+  unique_ptr<ParamListASTnode> params;
+  unique_ptr<BlockASTnode> block;
+  FunDeclASTnode( unique_ptr<TypeSpecASTnode> ts,
                   std::string id,
-                  std::unique_ptr<ParamListASTnode> ps,
-                  std::unique_ptr<BlockASTnode> b
+                  unique_ptr<ParamListASTnode> ps,
+                  unique_ptr<BlockASTnode> b
                   ): typespec(std::move(ts)),
                   ident(id),
                   params(std::move(ps)),
@@ -126,12 +129,12 @@ public:
 
 class ExternASTnode : public ASTnode{
 public:
-  std::unique_ptr<TypeSpecASTnode> typespec;
+  unique_ptr<TypeSpecASTnode> typespec;
   std::string ident;
-  std::unique_ptr<ParamListASTnode> params;
-  ExternASTnode(std::unique_ptr<TypeSpecASTnode> ts,
+  unique_ptr<ParamListASTnode> params;
+  ExternASTnode(unique_ptr<TypeSpecASTnode> ts,
                 std::string id,
-                std::unique_ptr<ParamListASTnode> ps
+                unique_ptr<ParamListASTnode> ps
                 ) : typespec(std::move(ts)), ident(id), params(std::move(ps)){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
@@ -139,19 +142,19 @@ public:
 class DeclASTnode : public ASTnode{
 public:
   bool isVar;
-  std::unique_ptr<VarDeclASTnode> vardecl;
-  std::unique_ptr<FunDeclASTnode> fundecl;
-  DeclASTnode(std::unique_ptr<VarDeclASTnode> vd
+  unique_ptr<VarDeclASTnode> vardecl;
+  unique_ptr<FunDeclASTnode> fundecl;
+  DeclASTnode(unique_ptr<VarDeclASTnode> vd
              ) : isVar(true), vardecl(std::move(vd)){}
-  DeclASTnode(std::unique_ptr<FunDeclASTnode> fd
+  DeclASTnode(unique_ptr<FunDeclASTnode> fd
              ) : isVar(false), fundecl(std::move(fd)){}
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 class ExternListASTnode : public ASTnode{
 public:
-  std::vector<std::unique_ptr<ExternASTnode>> externs;
-  ExternListASTnode(std::vector<std::unique_ptr<ExternASTnode>> &e){
+  vector<unique_ptr<ExternASTnode>> externs;
+  ExternListASTnode(vector<unique_ptr<ExternASTnode>> &e){
     for(int i=0; i<e.size(); i++){
       externs.push_back(std::move(e.at(i)));
     }
@@ -161,8 +164,8 @@ public:
 
 class DeclListASTnode : public ASTnode{
 public:
-  std::vector<std::unique_ptr<DeclASTnode>> decls;
-  DeclListASTnode(std::vector<std::unique_ptr<DeclASTnode>> &d){
+  vector<unique_ptr<DeclASTnode>> decls;
+  DeclListASTnode(vector<unique_ptr<DeclASTnode>> &d){
     for(int i=0; i<d.size(); i++){
       decls.push_back(std::move(d.at(i)));
     }
@@ -172,13 +175,13 @@ public:
 
 class ProgramASTnode : public ASTnode{
 public:
-  // std::vector<std::unique_ptr<ExternASTnode>> externs;
-  // std::vector<std::unique_ptr<DeclASTnode>> decls;
-  std::unique_ptr<ExternListASTnode> externlist;
-  std::unique_ptr<DeclListASTnode> decllist;
+  // vector<unique_ptr<ExternASTnode>> externs;
+  // vector<unique_ptr<DeclASTnode>> decls;
+  unique_ptr<ExternListASTnode> externlist;
+  unique_ptr<DeclListASTnode> decllist;
   std::string s = "hi";
-  ProgramASTnode(std::unique_ptr<ExternListASTnode> el, 
-                 std::unique_ptr<DeclListASTnode> dl) : externlist(std::move(el)), decllist(std::move(dl)){}
+  ProgramASTnode(unique_ptr<ExternListASTnode> el, 
+                 unique_ptr<DeclListASTnode> dl) : externlist(std::move(el)), decllist(std::move(dl)){}
 
   virtual llvm::Value *codegen() override {return nullptr;}
 };

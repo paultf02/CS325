@@ -12,6 +12,10 @@
 #include <utility> // for std::move
 #include <stdexcept>
 
+using std::unique_ptr;
+using std::make_unique;
+using std::vector;
+
 /*
 Recursive descent predictive parsing
 void A(){
@@ -116,20 +120,20 @@ enum TOKEN_TYPE word_to_type(std::string word){
   return type;
 }
 
-std::vector<TOKEN_TYPE> terminals_to_type(std::vector<std::string> list_of_terminals){
-  std::vector<enum TOKEN_TYPE> tokvector(list_of_terminals.size());
+vector<TOKEN_TYPE> terminals_to_type(vector<std::string> list_of_terminals){
+  vector<enum TOKEN_TYPE> tokvector(list_of_terminals.size());
   for (int i=0; i<list_of_terminals.size();i++){
     tokvector[i] = word_to_type(list_of_terminals[i]);
   }
   return tokvector;
 }
 
-std::vector<std::string> find_sentence_first(sentence &sentence){
+vector<std::string> find_sentence_first(sentence &sentence){
   // NOTE: THIS WILL CONTAIN DUPLICATES
   // error: this will include an epsilon even when it is not 
-  std::vector<std::string> sentence_first;
+  vector<std::string> sentence_first;
   for (auto &word : sentence){
-    std::vector<std::string> thisfirst = first[word];
+    vector<std::string> thisfirst = first[word];
     sentence_first.insert(sentence_first.end(), thisfirst.begin(), thisfirst.end());
     if (nullable[word] == false){
       break;
@@ -139,8 +143,8 @@ std::vector<std::string> find_sentence_first(sentence &sentence){
 }
 
 bool in_sentence_first(TOKEN &tok, sentence &prod){
-  std::vector<std::string> sentencefirstraw = find_sentence_first(prod);
-  std::vector<TOKEN_TYPE> sentencefirst = terminals_to_type(sentencefirstraw);
+  vector<std::string> sentencefirstraw = find_sentence_first(prod);
+  vector<TOKEN_TYPE> sentencefirst = terminals_to_type(sentencefirstraw);
 
   if (std::find(sentencefirst.begin(), sentencefirst.end(), tok.type) != sentencefirst.end()){
     return true;
@@ -150,10 +154,10 @@ bool in_sentence_first(TOKEN &tok, sentence &prod){
 
 }
 
-std::unique_ptr<ProgramASTnode> parser(){
+unique_ptr<ProgramASTnode> parser(){
   // std::string name = "arg_list2";
   // std::cout << "name=" + name + " index=" << lhs_to_index(name) << '\n';
-  // return std::move(std::make_unique<ProgramASTnode>());
+  // return std::move(make_unique<ProgramASTnode>());
 
   auto root = parse_program();
   std::cout << root->s << '\n';
@@ -173,13 +177,13 @@ std::unique_ptr<ProgramASTnode> parser(){
 // parse_start(){}
 
 // program -> extern_list decl_list | decl_list
-std::unique_ptr<ProgramASTnode> parse_program(){
-  // std::vector<std::unique_ptr<ExternASTnode>> externs; // these default to empty vector
-  // std::vector<std::unique_ptr<DeclASTnode>> decls;
-  std::unique_ptr<ExternListASTnode> externlist = nullptr;
-  std::unique_ptr<DeclListASTnode> decllist = nullptr;
-  // std::unique_ptr<ProgramASTnode> ans;
-  // ans = std::make_unique<ProgramASTnode>();
+unique_ptr<ProgramASTnode> parse_program(){
+  // vector<unique_ptr<ExternASTnode>> externs; // these default to empty vector
+  // vector<unique_ptr<DeclASTnode>> decls;
+  unique_ptr<ExternListASTnode> externlist = nullptr;
+  unique_ptr<DeclListASTnode> decllist = nullptr;
+  // unique_ptr<ProgramASTnode> ans;
+  // ans = make_unique<ProgramASTnode>();
 
   sentence prod0 = rhslist[lhs_to_index("program")][0];
   sentence prod1 = rhslist[lhs_to_index("program")][1];
@@ -189,18 +193,18 @@ std::unique_ptr<ProgramASTnode> parse_program(){
     externlist = parse_extern_list(); // not nullable
     decllist = parse_decl_list(); // not nullable
     // decls = parse_decl_list();
-    // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
-    // ans = std::make_unique<ProgramASTnode>(externs, decls);
-    // ans = std::make_unique<ProgramASTnode>();
-    return std::make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
+    // ans = make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
+    // ans = make_unique<ProgramASTnode>(externs, decls);
+    // ans = make_unique<ProgramASTnode>();
+    return make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
 
   } else if (in_sentence_first(CurTok, prod1)){
     // program -> decl_list
     decllist = parse_decl_list(); // not nullable
-    // ans = std::make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
-    // ans = std::make_unique<ProgramASTnode>(externs, decls);
-    // ans = std::make_unique<ProgramASTnode>();
-    return std::make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
+    // ans = make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
+    // ans = make_unique<ProgramASTnode>(externs, decls);
+    // ans = make_unique<ProgramASTnode>();
+    return make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
   } else {
     throw ParseError(CurTok, "could not parse program");
   }
@@ -209,12 +213,12 @@ std::unique_ptr<ProgramASTnode> parse_program(){
 }
 
 // extern_list -> extern extern_list1
-std::unique_ptr<ExternListASTnode> parse_extern_list(){
-  std::vector<std::unique_ptr<ExternASTnode>> externs;
-  std::unique_ptr<ExternListASTnode> externlist1;
-  // std::vector<std::unique_ptr<ExternASTnode>> externlist1;
-  std::unique_ptr<ExternASTnode> ext;
-  // std::unique_ptr<ExternListASTnode> ans;
+unique_ptr<ExternListASTnode> parse_extern_list(){
+  vector<unique_ptr<ExternASTnode>> externs;
+  unique_ptr<ExternListASTnode> externlist1;
+  // vector<unique_ptr<ExternASTnode>> externlist1;
+  unique_ptr<ExternASTnode> ext;
+  // unique_ptr<ExternListASTnode> ans;
 
   sentence prod0 = rhslist[lhs_to_index("extern_list")][0];
 
@@ -227,7 +231,7 @@ std::unique_ptr<ExternListASTnode> parse_extern_list(){
   //       externs.push_back(std::move(externlist1->externs.at(i)));
   //     }
   //   }
-  //   return std::make_unique<ExternListASTnode>(externs);
+  //   return make_unique<ExternListASTnode>(externs);
   // } else {
   //   throw ParseError(CurTok, "could not parse extern_list");
   // }
@@ -239,15 +243,15 @@ std::unique_ptr<ExternListASTnode> parse_extern_list(){
         externs.push_back(std::move(externlist1->externs.at(i)));
       }
     }
-    return std::make_unique<ExternListASTnode>(externs);
+    return make_unique<ExternListASTnode>(externs);
 }
 
 // extern_list1 -> extern extern_list1 | epsilon
-std::unique_ptr<ExternListASTnode> parse_extern_list1(){
-  std::vector<std::unique_ptr<ExternASTnode>> externs;
-  std::unique_ptr<ExternListASTnode> externlist1;
-  std::unique_ptr<ExternASTnode> ext;
-  // std::unique_ptr<ExternListASTnode> ans;
+unique_ptr<ExternListASTnode> parse_extern_list1(){
+  vector<unique_ptr<ExternASTnode>> externs;
+  unique_ptr<ExternListASTnode> externlist1;
+  unique_ptr<ExternASTnode> ext;
+  // unique_ptr<ExternListASTnode> ans;
 
   sentence prod0 = rhslist[lhs_to_index("extern_list1")][0];
   sentence prod1_eps = rhslist[lhs_to_index("extern_list1")][1]; // this is epsilon
@@ -261,14 +265,14 @@ std::unique_ptr<ExternListASTnode> parse_extern_list1(){
         externs.push_back(std::move(externlist1->externs.at(i)));
       }
     }
-    return std::make_unique<ExternListASTnode>(externs);
+    return make_unique<ExternListASTnode>(externs);
   } else {
     return nullptr;
   }
 }
 
 // extern -> 'extern' type_spec IDENT '(' params ')' ';'
-std::unique_ptr<ExternASTnode> parse_extern(){
+unique_ptr<ExternASTnode> parse_extern(){
   std::string ident;
 
   // 0
@@ -279,7 +283,7 @@ std::unique_ptr<ExternASTnode> parse_extern(){
   }
 
   // 1
-  std::unique_ptr<TypeSpecASTnode> typespec = parse_type_spec(); // not nullable
+  unique_ptr<TypeSpecASTnode> typespec = parse_type_spec(); // not nullable
 
   // 2
   if (CurTok.type == IDENT){
@@ -297,7 +301,7 @@ std::unique_ptr<ExternASTnode> parse_extern(){
   }
 
   // 4
-  std::unique_ptr<ParamListASTnode> params = parse_params(); // is nullable
+  unique_ptr<ParamListASTnode> params = parse_params(); // is nullable
 
   // 5
   if (CurTok.type == RPAR){
@@ -313,16 +317,16 @@ std::unique_ptr<ExternASTnode> parse_extern(){
     throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
   }
 
-  return std::make_unique<ExternASTnode>(std::move(typespec), std::move(ident), std::move(params));
+  return make_unique<ExternASTnode>(std::move(typespec), std::move(ident), std::move(params));
 }
 
 // decl_list -> decl decl_list1
-std::unique_ptr<DeclListASTnode> parse_decl_list(){
-  std::vector<std::unique_ptr<DeclASTnode>> decls;
-  std::unique_ptr<DeclListASTnode> decllist1;
-  // std::vector<std::unique_ptr<ExternASTnode>> externlist1;
-  std::unique_ptr<DeclASTnode> decl;
-  // std::unique_ptr<DeclListASTnode> ans;
+unique_ptr<DeclListASTnode> parse_decl_list(){
+  vector<unique_ptr<DeclASTnode>> decls;
+  unique_ptr<DeclListASTnode> decllist1;
+  // vector<unique_ptr<ExternASTnode>> externlist1;
+  unique_ptr<DeclASTnode> decl;
+  // unique_ptr<DeclListASTnode> ans;
 
   sentence prod0 = rhslist[lhs_to_index("decl_list")][0];
   
@@ -336,7 +340,7 @@ std::unique_ptr<DeclListASTnode> parse_decl_list(){
   //     }
   //   }
 
-  //   return std::make_unique<DeclListASTnode>(decls);
+  //   return make_unique<DeclListASTnode>(decls);
   // } else {
   //   throw ParseError(CurTok, "could not parse decl_list");
   // }
@@ -350,16 +354,16 @@ std::unique_ptr<DeclListASTnode> parse_decl_list(){
     }
   }
 
-  return std::make_unique<DeclListASTnode>(decls);
+  return make_unique<DeclListASTnode>(decls);
 }
 
 // decl_list1 -> decl decl_list1 | epsilon
-std::unique_ptr<DeclListASTnode> parse_decl_list1(){
-  std::vector<std::unique_ptr<DeclASTnode>> decls;
-  std::unique_ptr<DeclListASTnode> decllist1;
-  // std::vector<std::unique_ptr<ExternASTnode>> externlist1;
-  std::unique_ptr<DeclASTnode> decl;
-  // std::unique_ptr<DeclListASTnode> ans;
+unique_ptr<DeclListASTnode> parse_decl_list1(){
+  vector<unique_ptr<DeclASTnode>> decls;
+  unique_ptr<DeclListASTnode> decllist1;
+  // vector<unique_ptr<ExternASTnode>> externlist1;
+  unique_ptr<DeclASTnode> decl;
+  // unique_ptr<DeclListASTnode> ans;
 
   sentence prod0 = rhslist[lhs_to_index("decl_list1")][0];
   sentence prod1_eps = rhslist[lhs_to_index("extern_list1")][1]; // this is epsilon
@@ -372,14 +376,14 @@ std::unique_ptr<DeclListASTnode> parse_decl_list1(){
     for (int i=0; i<decllist1->decls.size(); i++){
       decls.push_back(std::move(decllist1->decls.at(i)));
     }
-    return std::make_unique<DeclListASTnode>(decls);
+    return make_unique<DeclListASTnode>(decls);
   } else {
     return nullptr;
   }
 }
 
 // decl -> var_decl | fun_decl
-std::unique_ptr<DeclASTnode> parse_decl(){
+unique_ptr<DeclASTnode> parse_decl(){
   sentence prod0 = rhslist[lhs_to_index("decl")][0];
   sentence prod1 = rhslist[lhs_to_index("decl")][1];
 
@@ -400,15 +404,15 @@ std::unique_ptr<DeclASTnode> parse_decl(){
     putBackToken(temp1);
     putBackToken(tempcur);
     getNextToken(); // CurTok is now back to what it was (same value as tempcur)
-    std::unique_ptr<FunDeclASTnode> fundecl = parse_fun_decl(); // not nullable
-    return std::make_unique<DeclASTnode>(std::move(fundecl));
+    unique_ptr<FunDeclASTnode> fundecl = parse_fun_decl(); // not nullable
+    return make_unique<DeclASTnode>(std::move(fundecl));
   } else if (temp2.type == SC){
     putBackToken(temp2);
     putBackToken(temp1);
     putBackToken(tempcur);
     getNextToken(); // CurTok is now back to what it was (same value as tempcur)
-    std::unique_ptr<VarDeclASTnode> vardecl = parse_var_decl(); // not nullable
-    return std::make_unique<DeclASTnode>(std::move(vardecl));
+    unique_ptr<VarDeclASTnode> vardecl = parse_var_decl(); // not nullable
+    return make_unique<DeclASTnode>(std::move(vardecl));
   } else {
     if (tempcur.type == VOID_TOK){
       throw ParseError(temp2, "was expecting '(' but got " + temp2.lexeme);
@@ -419,11 +423,11 @@ std::unique_ptr<DeclASTnode> parse_decl(){
 }
 
 // var_decl -> var_type IDENT ';'
-std::unique_ptr<VarDeclASTnode> parse_var_decl(){
+unique_ptr<VarDeclASTnode> parse_var_decl(){
   sentence prod0 = rhslist[lhs_to_index("var_decl")][0];
-  std::unique_ptr<VarTypeASTnode> vt;
+  unique_ptr<VarTypeASTnode> vt;
   // if (in_sentence_first(CurTok, prod0)){
-  //   std::unique_ptr<VarTypeASTnode> vt = parse_var_type();
+  //   unique_ptr<VarTypeASTnode> vt = parse_var_type();
   // } else {
   //   throw ParseError(CurTok, "could not parse var_decl");
   // }
@@ -436,48 +440,48 @@ std::unique_ptr<VarDeclASTnode> parse_var_decl(){
   if (CurTok.type != SC){
     throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
   }
-  return std::make_unique<VarDeclASTnode>(std::move(vt), CurTok.lexeme);
+  return make_unique<VarDeclASTnode>(std::move(vt), CurTok.lexeme);
 }
 
 // type_spec -> 'void' | var_type
-std::unique_ptr<TypeSpecASTnode> parse_type_spec(){
+unique_ptr<TypeSpecASTnode> parse_type_spec(){
   // sentence prod0 = rhslist[lhs_to_index("type_spec")][0];
   sentence prod1 = rhslist[lhs_to_index("type_spec")][1];
 
   if (CurTok.type == VOID_TOK){
     getNextToken();
-    return std::make_unique<TypeSpecASTnode>("void");
+    return make_unique<TypeSpecASTnode>("void");
   } else if (in_sentence_first(CurTok, prod1)) {
-    std::unique_ptr<VarTypeASTnode> vartypeptr = parse_var_type();
-    return std::make_unique<TypeSpecASTnode>(std::move(vartypeptr));
+    unique_ptr<VarTypeASTnode> vartypeptr = parse_var_type();
+    return make_unique<TypeSpecASTnode>(std::move(vartypeptr));
   } else {
     throw ParseError(CurTok, "could not parse type_spec");
   }
 }
 
 // var_type -> 'int' | 'float' | 'bool'
-std::unique_ptr<VarTypeASTnode> parse_var_type(){
+unique_ptr<VarTypeASTnode> parse_var_type(){
   if (CurTok.type == INT_TOK){
     getNextToken();
-    return std::make_unique<VarTypeASTnode>("int");
+    return make_unique<VarTypeASTnode>("int");
   } else if (CurTok.type == FLOAT_TOK){
     getNextToken();
-    return std::make_unique<VarTypeASTnode>("float");
+    return make_unique<VarTypeASTnode>("float");
   } else if (CurTok.type == BOOL_TOK){
     getNextToken();
-    return std::make_unique<VarTypeASTnode>("bool");
+    return make_unique<VarTypeASTnode>("bool");
   } else {
     throw ParseError(CurTok, "was expecting 'int', 'float' or 'bool' but got " + CurTok.lexeme);
   }
 }
 
 // fun_decl -> type_spec IDENT '(' params ')' block
-std::unique_ptr<FunDeclASTnode> parse_fun_decl(){
+unique_ptr<FunDeclASTnode> parse_fun_decl(){
   sentence prod0 = rhslist[lhs_to_index("fun_decl")][0];
-  std::unique_ptr<TypeSpecASTnode> typespec;
+  unique_ptr<TypeSpecASTnode> typespec;
   std::string ident;
-  std::unique_ptr<ParamListASTnode> params;
-  std::unique_ptr<BlockASTnode> block;
+  unique_ptr<ParamListASTnode> params;
+  unique_ptr<BlockASTnode> block;
 
   // 0
   // if (in_sentence_first(CurTok, prod0)){
@@ -514,29 +518,29 @@ std::unique_ptr<FunDeclASTnode> parse_fun_decl(){
   // 5
   block = parse_block();
 
-  return std::make_unique<FunDeclASTnode>(std::move(typespec), ident, std::move(params), std::move(block));
+  return make_unique<FunDeclASTnode>(std::move(typespec), ident, std::move(params), std::move(block));
 }
 
 // params -> param_list | 'void' | epsilon
-std::unique_ptr<ParamListASTnode> parse_params(){
+unique_ptr<ParamListASTnode> parse_params(){
   sentence prod0 = rhslist[lhs_to_index("params")][0];
-  std::unique_ptr<ParamListASTnode> paramlist;
+  unique_ptr<ParamListASTnode> paramlist;
   if (in_sentence_first(CurTok, prod0)){
     paramlist = parse_param_list();
     return std::move(paramlist);
   } else if (CurTok.type == VOID_TOK) {
     getNextToken();
-    return std::make_unique<ParamListASTnode>();
+    return make_unique<ParamListASTnode>();
   } else {
-    return std::make_unique<ParamListASTnode>();
+    return make_unique<ParamListASTnode>();
   }
 }
 
 // param_list -> param param_list1
-std::unique_ptr<ParamListASTnode> parse_param_list(){
-  std::vector<std::unique_ptr<ParamASTnode>> paramlist;
-  std::unique_ptr<ParamListASTnode> paramlist1;
-  std::unique_ptr<ParamASTnode> param;
+unique_ptr<ParamListASTnode> parse_param_list(){
+  vector<unique_ptr<ParamASTnode>> paramlist;
+  unique_ptr<ParamListASTnode> paramlist1;
+  unique_ptr<ParamASTnode> param;
 
   sentence prod0 = rhslist[lhs_to_index("param_list")][0];
 
@@ -549,7 +553,7 @@ std::unique_ptr<ParamListASTnode> parse_param_list(){
   //       paramlist.push_back(std::move(paramlist1->paramlist.at(i)));
   //     }
   //   }
-  //   return std::make_unique<ParamListASTnode>(paramlist);
+  //   return make_unique<ParamListASTnode>(paramlist);
   // } else {
   //   throw ParseError(CurTok, "could not parse param_list");
   // }
@@ -562,14 +566,14 @@ std::unique_ptr<ParamListASTnode> parse_param_list(){
       paramlist.push_back(std::move(paramlist1->paramlist.at(i)));
     }
   }
-  return std::make_unique<ParamListASTnode>(paramlist);
+  return make_unique<ParamListASTnode>(paramlist);
 }
 
 // param_list1 -> ',' param param_list1 | epsilon
-std::unique_ptr<ParamListASTnode> parse_param_list1(){
-  std::vector<std::unique_ptr<ParamASTnode>> paramlist;
-  std::unique_ptr<ParamASTnode> param;
-  std::unique_ptr<ParamListASTnode> paramlist1;
+unique_ptr<ParamListASTnode> parse_param_list1(){
+  vector<unique_ptr<ParamASTnode>> paramlist;
+  unique_ptr<ParamASTnode> param;
+  unique_ptr<ParamListASTnode> paramlist1;
   if (CurTok.type == COMMA){
     getNextToken();
     param = parse_param(); // not nullable
@@ -580,23 +584,23 @@ std::unique_ptr<ParamListASTnode> parse_param_list1(){
         paramlist.push_back(std::move(paramlist1->paramlist.at(i)));
       }
     }
-    return std::make_unique<ParamListASTnode>(paramlist);
+    return make_unique<ParamListASTnode>(paramlist);
   } else {
     return nullptr;
   }
 }
 
 // param -> var_type IDENT
-std::unique_ptr<ParamASTnode> parse_param(){
+unique_ptr<ParamASTnode> parse_param(){
   sentence prod0 = rhslist[lhs_to_index("param")][0];
-  std::unique_ptr<VarTypeASTnode> vartype;
+  unique_ptr<VarTypeASTnode> vartype;
   std::string ident;
   // if (in_sentence_first(CurTok, prod0)){
   //   vartype = parse_var_type();
   //   if (CurTok.type == IDENT){
   //     ident = CurTok.lexeme;
   //     getNextToken();
-  //     return std::make_unique<ParamASTnode>(std::move(vartype), ident);
+  //     return make_unique<ParamASTnode>(std::move(vartype), ident);
   //   } else {
   //     throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
   //   }
@@ -607,21 +611,21 @@ std::unique_ptr<ParamASTnode> parse_param(){
   if (CurTok.type == IDENT){
     ident = CurTok.lexeme;
     getNextToken();
-    return std::make_unique<ParamASTnode>(std::move(vartype), ident);
+    return make_unique<ParamASTnode>(std::move(vartype), ident);
   } else {
       throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
     }
 }
 
 // block -> '{' local_decls stmt_list '}'
-std::unique_ptr<BlockASTnode> parse_block(){
-  std::unique_ptr<LocalDeclListASTnode> localdecls;
-  std::unique_ptr<StmtListASTnode> stmtlist;
+unique_ptr<BlockASTnode> parse_block(){
+  unique_ptr<LocalDeclListASTnode> localdecls;
+  unique_ptr<StmtListASTnode> stmtlist;
   if (CurTok.type == LBRA){
     getNextToken();
     localdecls = parse_local_decls(); // is nullable
     stmtlist = parse_stmt_list();
-    return std::make_unique<BlockASTnode>(std::move(localdecls), std::move(stmtlist));
+    return make_unique<BlockASTnode>(std::move(localdecls), std::move(stmtlist));
     if (CurTok.type == RBRA){
       getNextToken();
     } else {
@@ -633,11 +637,11 @@ std::unique_ptr<BlockASTnode> parse_block(){
 }
 
 // local_decls -> local_decl local_decls | epsilon
-std::unique_ptr<LocalDeclListASTnode> parse_local_decls(){
+unique_ptr<LocalDeclListASTnode> parse_local_decls(){
   sentence prod0 = rhslist[lhs_to_index("local_decls")][0];
-  std::vector<std::unique_ptr<VarDeclASTnode>> localdecllist;
-  std::unique_ptr<LocalDeclListASTnode> localdecllist1;
-  std::unique_ptr<VarDeclASTnode> localdecl;
+  vector<unique_ptr<VarDeclASTnode>> localdecllist;
+  unique_ptr<LocalDeclListASTnode> localdecllist1;
+  unique_ptr<VarDeclASTnode> localdecl;
 
   if (in_sentence_first(CurTok, prod0)){
     localdecl = parse_local_decl();
@@ -648,16 +652,16 @@ std::unique_ptr<LocalDeclListASTnode> parse_local_decls(){
         localdecllist.push_back(std::move(localdecllist1->localdecllist.at(i)));
       }
     }
-    return std::make_unique<LocalDeclListASTnode>(localdecllist);    
+    return make_unique<LocalDeclListASTnode>(localdecllist);    
   } else {
     return nullptr;
   }
 }
 
 // local_decl -> var_type IDENT ';'
-std::unique_ptr<VarDeclASTnode> parse_local_decl(){
+unique_ptr<VarDeclASTnode> parse_local_decl(){
   sentence prod0 = rhslist[lhs_to_index("local_decl")][0];
-  std::unique_ptr<VarTypeASTnode> vartype;
+  unique_ptr<VarTypeASTnode> vartype;
   std::string ident;
   vartype = parse_var_type();
   if (CurTok.type == IDENT){
@@ -671,15 +675,15 @@ std::unique_ptr<VarDeclASTnode> parse_local_decl(){
   } else {
     throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
   }
-  return std::make_unique<VarDeclASTnode>(std::move(vartype), ident);
+  return make_unique<VarDeclASTnode>(std::move(vartype), ident);
 }
 
 // stmt_list -> stmt stmt_list | epsilon
-std::unique_ptr<StmtListASTnode> parse_stmt_list(){
+unique_ptr<StmtListASTnode> parse_stmt_list(){
   sentence prod0 = rhslist[lhs_to_index("stmt_list")][0];
-  std::unique_ptr<StmtASTnode> stmt;
-  std::vector<std::unique_ptr<StmtASTnode>> stmtlist;
-  std::unique_ptr<StmtListASTnode> stmtlist1;
+  unique_ptr<StmtASTnode> stmt;
+  vector<unique_ptr<StmtASTnode>> stmtlist;
+  unique_ptr<StmtListASTnode> stmtlist1;
   if (in_sentence_first(CurTok, prod0)){
     stmt = parse_stmt();
     stmtlist.push_back(std::move(stmt));
@@ -689,14 +693,14 @@ std::unique_ptr<StmtListASTnode> parse_stmt_list(){
         stmtlist.push_back(std::move(stmtlist1->stmtlist.at(i)));
       }
     }
-    return std::make_unique<StmtListASTnode>(stmtlist);
+    return make_unique<StmtListASTnode>(stmtlist);
   } else {
     return nullptr;
   }
 }
 
 // stmt -> expr_stmt | block | if_stmt | while_stmt | return_stmt
-std::unique_ptr<StmtASTnode> parse_stmt(){
+unique_ptr<StmtASTnode> parse_stmt(){
   return nullptr;
 }
 
