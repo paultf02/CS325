@@ -57,6 +57,8 @@ public:
 
 class BlockASTnode;
 
+class DeclListASTnode;
+
 
 class ExprASTnode : public ASTnode{
 public:
@@ -113,9 +115,9 @@ public:
 
 class BlockASTnode : public ASTnode{
 public:
-  unique_ptr<LocalDeclListASTnode> localdecls;
+  unique_ptr<DeclListASTnode> localdecls;
   unique_ptr<StmtListASTnode> stmtlist;
-  BlockASTnode(unique_ptr<LocalDeclListASTnode> ld,
+  BlockASTnode(unique_ptr<DeclListASTnode> ld,
                unique_ptr<StmtListASTnode> sl
                ) : localdecls(std::move(ld)), stmtlist(std::move(sl)){}; 
   virtual llvm::Value *codegen() override {return nullptr;}

@@ -30,6 +30,7 @@ Check that we are not returning nullptr when not supposed to
 Check not accidentally eating tokens after calling another parse function
   Should only eat a token after matching with a terminal
 Note that a LocalDecl is always a VarDeclASTnode
+Should you remove LocalDeclList ?
 
 For single production lhs, make sure you do the error inside the first nonterminal of the only sentence
 /*

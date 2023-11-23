@@ -620,7 +620,7 @@ unique_ptr<ParamASTnode> parse_param(){
 
 // block -> '{' local_decls stmt_list '}'
 unique_ptr<BlockASTnode> parse_block(){
-  unique_ptr<LocalDeclListASTnode> localdecls;
+  unique_ptr<DeclListASTnode> localdecls;
   unique_ptr<StmtListASTnode> stmtlist;
   if (CurTok.type == LBRA){
     getNextToken();
@@ -638,29 +638,29 @@ unique_ptr<BlockASTnode> parse_block(){
 }
 
 // local_decls -> local_decl local_decls | epsilon
-unique_ptr<LocalDeclListASTnode> parse_local_decls(){
+unique_ptr<DeclListASTnode> parse_local_decls(){
   sentence prod0 = rhslist[lhs_to_index("local_decls")][0];
-  vector<unique_ptr<VarDeclASTnode>> localdecllist;
-  unique_ptr<LocalDeclListASTnode> localdecllist1;
-  unique_ptr<VarDeclASTnode> localdecl;
+  vector<unique_ptr<DeclASTnode>> localdecllist;
+  unique_ptr<DeclListASTnode> localdecllist1;
+  unique_ptr<DeclASTnode> localdecl;
 
   if (in_sentence_first(CurTok, prod0)){
     localdecl = parse_local_decl();
     localdecllist.push_back(std::move(localdecl));
     localdecllist1 = parse_local_decls(); // is nullable
     if (localdecllist1){
-      for (int i=0; i<localdecllist1->localdecllist.size(); i++){
-        localdecllist.push_back(std::move(localdecllist1->localdecllist.at(i)));
+      for (int i=0; i<localdecllist1->decls.size(); i++){
+        localdecllist.push_back(std::move(localdecllist1->decls.at(i)));
       }
     }
-    return make_unique<LocalDeclListASTnode>(localdecllist);    
+    return make_unique<DeclListASTnode>(localdecllist);    
   } else {
     return nullptr;
   }
 }
 
 // local_decl -> var_type IDENT ';'
-unique_ptr<VarDeclASTnode> parse_local_decl(){
+unique_ptr<DeclASTnode> parse_local_decl(){
   sentence prod0 = rhslist[lhs_to_index("local_decl")][0];
   unique_ptr<VarTypeASTnode> vartype;
   string ident;
@@ -676,7 +676,9 @@ unique_ptr<VarDeclASTnode> parse_local_decl(){
   } else {
     throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
   }
-  return make_unique<VarDeclASTnode>(std::move(vartype), ident);
+  unique_ptr<VarDeclASTnode> vardecl = make_unique<VarDeclASTnode>(std::move(vartype), ident);
+
+  return make_unique<DeclASTnode>(std::move(vardecl));
 }
 
 // stmt_list -> stmt stmt_list | epsilon
