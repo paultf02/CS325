@@ -232,7 +232,6 @@ std::unique_ptr<ExternListASTnode> parse_extern_list(){
   } else {
     throw ParseError(CurTok, "could not parse extern_list");
   }
-  // return ans;
 }
 
 // extern_list1 -> extern extern_list1 | epsilon
@@ -290,7 +289,7 @@ std::unique_ptr<ExternASTnode> parse_extern(){
   }
 
   // 4
-  std::unique_ptr<ParamsASTnode> params = parse_params(); // is nullable
+  std::unique_ptr<ParamListASTnode> params = parse_params(); // is nullable
 
   // 5
   if (CurTok.type == RPAR){
@@ -455,27 +454,131 @@ std::unique_ptr<VarTypeASTnode> parse_var_type(){
 
 // fun_decl -> type_spec IDENT '(' params ')' block
 std::unique_ptr<FunDeclASTnode> parse_fun_decl(){
-  return nullptr;
+  sentence prod0 = rhslist[lhs_to_index("fun_decl")][0];
+  std::unique_ptr<TypeSpecASTnode> typespec;
+  std::string ident;
+  std::unique_ptr<ParamListASTnode> params;
+  std::unique_ptr<BlockASTnode> block;
+
+  // 0
+  if (in_sentence_first(CurTok, prod0)){
+    typespec = parse_type_spec(); // not nullable
+  } else {
+    throw ParseError(CurTok, "could not parse fun_decl");
+  }
+
+  // 1
+  if (CurTok.type == IDENT){
+    ident = CurTok.lexeme;
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
+  }
+  // 2
+  if (CurTok.type != LPAR){
+    throw ParseError(CurTok, "was expecting '(' but got " + CurTok.lexeme);
+  } else {
+    getNextToken();
+  }
+
+  // 3
+  params = parse_params(); // is nullable, will return pointer to empty list if no params
+  
+  // 4
+  if (CurTok.type != RPAR){
+    throw ParseError(CurTok, "was expecting ')' but got " + CurTok.lexeme);
+  } else {
+    getNextToken();
+  }
+
+  // 5
+  block = parse_block();
+
+  return std::make_unique<FunDeclASTnode>(std::move(typespec), ident, std::move(params), std::move(block));
 }
 
 // params -> param_list | 'void' | epsilon
-std::unique_ptr<ParamsASTnode> parse_params(){
-  return nullptr;
+std::unique_ptr<ParamListASTnode> parse_params(){
+  sentence prod0 = rhslist[lhs_to_index("params")][0];
+  std::unique_ptr<ParamListASTnode> paramlist;
+  if (in_sentence_first(CurTok, prod0)){
+    paramlist = parse_param_list();
+    return std::move(paramlist);
+  } else if (CurTok.type == VOID_TOK) {
+    getNextToken();
+    return std::make_unique<ParamListASTnode>();
+  } else {
+    return std::make_unique<ParamListASTnode>();
+  }
 }
 
 // param_list -> param param_list1
 std::unique_ptr<ParamListASTnode> parse_param_list(){
-  return nullptr;
+  std::vector<std::unique_ptr<ParamASTnode>> paramlist;
+  std::unique_ptr<ParamListASTnode> paramlist1;
+  std::unique_ptr<ParamASTnode> param;
+
+  sentence prod0 = rhslist[lhs_to_index("param_list")][0];
+
+  if (in_sentence_first(CurTok, prod0)){
+    param = parse_param(); // not nullable
+    paramlist.push_back(std::move(param));
+    paramlist1 = parse_param_list1(); // is nullable
+    if (paramlist1){
+      for (int i=0; i<paramlist1->paramlist.size(); i++){
+        paramlist.push_back(std::move(paramlist1->paramlist.at(i)));
+      }
+    }
+    return std::make_unique<ParamListASTnode>(paramlist);
+  } else {
+    throw ParseError(CurTok, "could not parse param_list");
+  }
 }
 
-// // param_list1 -> ',' param param_list1 | epsilon
-// parse_param_list1(){}
+// param_list1 -> ',' param param_list1 | epsilon
+std::unique_ptr<ParamListASTnode> parse_param_list1(){
+  std::vector<std::unique_ptr<ParamASTnode>> paramlist;
+  std::unique_ptr<ParamASTnode> param;
+  std::unique_ptr<ParamListASTnode> paramlist1;
+  if (CurTok.type == COMMA){
+    getNextToken();
+    param = parse_param(); // not nullable
+    paramlist.push_back(std::move(param));
+    paramlist1 = parse_param_list1(); // is nullable
+    if (paramlist1){
+      for (int i=0; i<paramlist1->paramlist.size(); i++){
+        paramlist.push_back(std::move(paramlist1->paramlist.at(i)));
+      }
+    }
+    return std::make_unique<ParamListASTnode>(paramlist);
+  } else {
+    return nullptr;
+  }
+}
 
-// // param -> var_type IDENT
-// parse_param(){}
+// param -> var_type IDENT
+std::unique_ptr<ParamASTnode> parse_param(){
+  sentence prod0 = rhslist[lhs_to_index("param")][0];
+  std::unique_ptr<VarTypeASTnode> vartype;
+  std::string ident;
+  if (in_sentence_first(CurTok, prod0)){
+    vartype = parse_var_type();
+    if (CurTok.type == IDENT){
+      ident = CurTok.lexeme;
+      getNextToken();
+      return std::make_unique<ParamASTnode>(std::move(vartype), ident);
+    } else {
+      throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
+    }
+  } else {
+    throw ParseError(CurTok, "could not parse param");
+  }
+}
 
-// // block -> '{' local_decls stmt_list '}'
-// parse_block(){}
+// block -> '{' local_decls stmt_list '}'
+std::unique_ptr<BlockASTnode> parse_block(){
+  return nullptr;
+}
 
 // // local_decls -> local_decl local_decls | epsilon
 // parse_local_decls(){}

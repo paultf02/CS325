@@ -23,15 +23,28 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
-class VarDeclASTnode : public ASTnode{
+class ParamASTnode : public ASTnode{
 public:
   std::unique_ptr<VarTypeASTnode> vartype;
-  std::string name;
-  VarDeclASTnode(std::unique_ptr<VarTypeASTnode> vt, std::string n) : vartype(std::move(vt)), name(n){};
+  std::string ident;
+  ParamASTnode(std::unique_ptr<VarTypeASTnode> vt,
+              std::string id) : vartype(std::move(vt)), ident(id){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
-class FunDeclASTnode : public ASTnode{
+class ParamListASTnode : public ASTnode{
+public:
+  std::vector<std::unique_ptr<ParamASTnode>> paramlist;
+  ParamListASTnode(std::vector<std::unique_ptr<ParamASTnode>> &pl){
+    for(int i=0; i<pl.size(); i++){
+      paramlist.push_back(std::move(pl.at(i)));
+    }
+  };
+  ParamListASTnode(){};
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
+class BlockASTnode : public ASTnode{
 public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
@@ -45,21 +58,42 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
-class ParamsASTnode : public ASTnode{};
+class VarDeclASTnode : public ASTnode{
+public:
+  std::unique_ptr<VarTypeASTnode> vartype;
+  std::string name;
+  VarDeclASTnode(std::unique_ptr<VarTypeASTnode> vt, std::string n) : vartype(std::move(vt)), name(n){};
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
+
+class FunDeclASTnode : public ASTnode{
+public:
+  std::unique_ptr<TypeSpecASTnode> typespec;
+  std::string ident;
+  std::unique_ptr<ParamListASTnode> params;
+  std::unique_ptr<BlockASTnode> block;
+  FunDeclASTnode( std::unique_ptr<TypeSpecASTnode> ts,
+                  std::string id,
+                  std::unique_ptr<ParamListASTnode> ps,
+                  std::unique_ptr<BlockASTnode> b
+                  ): typespec(std::move(ts)),
+                  ident(id),
+                  params(std::move(ps)),
+                  block(std::move(b)) {};
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
 
 class ExternASTnode : public ASTnode{
 public:
   std::unique_ptr<TypeSpecASTnode> typespec;
   std::string ident;
-  std::unique_ptr<ParamsASTnode> params;
+  std::unique_ptr<ParamListASTnode> params;
   ExternASTnode(std::unique_ptr<TypeSpecASTnode> ts,
                 std::string id,
-                std::unique_ptr<ParamsASTnode> ps
+                std::unique_ptr<ParamListASTnode> ps
                 ) : typespec(std::move(ts)), ident(id), params(std::move(ps)){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
-
-
 
 class DeclASTnode : public ASTnode{
 public:
@@ -109,16 +143,6 @@ public:
 };
 
 
-
-
-
-
-
-class ParamASTnode : public ASTnode{};
-
-class ParamListASTnode : public ASTnode{};
-// class ArgASTnode : public ASTnode{};
-class BlockASTnode : public ASTnode{};
 class VarAssignASTnode : public ASTnode{};
 class ExprASTnode : public ASTnode{};
 class BinOpASTnode : public ASTnode{};
@@ -141,7 +165,7 @@ public:
 class BoolASTnode : public ASTnode{};
 class FloatASTnode : public ASTnode{};
 class IdentASTnode : public ASTnode{};
-class FuncCallASTnode : public ASTnode{};
+class FunCallASTnode : public ASTnode{};
 
 
 /* add other AST nodes as nessasary */

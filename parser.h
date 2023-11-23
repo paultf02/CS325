@@ -46,10 +46,14 @@ std::unique_ptr<ExternListASTnode> parse_extern_list1();
 std::unique_ptr<DeclASTnode> parse_decl();
 std::unique_ptr<DeclListASTnode> parse_decl_list1();
 std::unique_ptr<TypeSpecASTnode>parse_type_spec();
-std::unique_ptr<ParamsASTnode> parse_params();
+std::unique_ptr<ParamListASTnode> parse_params();
 std::unique_ptr<VarDeclASTnode> parse_var_decl();
 std::unique_ptr<FunDeclASTnode> parse_fun_decl();
 std::unique_ptr<VarTypeASTnode> parse_var_type();
+std::unique_ptr<BlockASTnode> parse_block();
+std::unique_ptr<ParamListASTnode> parse_param_list();
+std::unique_ptr<ParamASTnode> parse_param();
+std::unique_ptr<ParamListASTnode> parse_param_list1();
 
 class ParseError : public std::exception {
   TOKEN tok;

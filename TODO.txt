@@ -25,6 +25,8 @@ Make sure to eat a token after matching with a terminal
 Add an error if we are in the middle of a lookahead and run out of tokens
 Check that we handle the nullable case for nullable nonterminals
 Check that we are not returning nullptr when not supposed to
+Check not accidentally eating tokens after calling another parse function
+  Should only eat a token after matching with a terminal
 
 /*
 Recursive descent predictive parsing

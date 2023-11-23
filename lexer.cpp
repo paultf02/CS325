@@ -258,5 +258,6 @@ TOKEN getNextToken() {
 }
 
 void putBackToken(TOKEN tok) {
+  std::cout << "Pushing front " << tok.lexeme << '\n';
   tok_buffer.push_front(tok);
 }
