@@ -20,6 +20,12 @@ public:
   virtual string to_string() const {return "";};
 };
 
+class BlockASTnode;
+
+class DeclListASTnode;
+
+class StmtASTnode;
+
 class VarTypeASTnode : public ASTnode{
 public:
   string vartype;
@@ -43,45 +49,54 @@ public:
 //   virtual llvm::Value *codegen() override {return nullptr;}
 // };
 
-class LocalDeclListASTnode : public ASTnode{
-public:
-  vector<unique_ptr<VarDeclASTnode>> localdecllist;
-  LocalDeclListASTnode(vector<unique_ptr<VarDeclASTnode>> &ld){
-    for(int i=0; i<ld.size(); i++){
-      localdecllist.push_back(std::move(ld.at(i)));
-    }
-  };
-  virtual llvm::Value *codegen() override {return nullptr;}
-};
-
-
-class BlockASTnode;
-
-class DeclListASTnode;
-
+// class LocalDeclListASTnode : public ASTnode{
+// public:
+//   vector<unique_ptr<VarDeclASTnode>> localdecllist;
+//   LocalDeclListASTnode(vector<unique_ptr<VarDeclASTnode>> &ld){
+//     for(int i=0; i<ld.size(); i++){
+//       localdecllist.push_back(std::move(ld.at(i)));
+//     }
+//   };
+//   virtual llvm::Value *codegen() override {return nullptr;}
+// };
 
 class ExprASTnode : public ASTnode{
 public:
+  ExprASTnode();
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 class WhileASTnode : public ASTnode{
 public:
+  unique_ptr<ExprASTnode> expr;
+  unique_ptr<StmtASTnode> stmt;
+  WhileASTnode(unique_ptr<ExprASTnode> e,
+               unique_ptr<StmtASTnode> s) : expr(std::move(e)) , stmt(std::move(s)){}
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 class ReturnASTnode : public ASTnode{
 public:
+  unique_ptr<ExprASTnode> expr;
+  ReturnASTnode(unique_ptr<ExprASTnode> e) : expr(std::move(e)){};
+  ReturnASTnode(){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
-class ElseASTnode : public ASTnode{
-public:
-  virtual llvm::Value *codegen() override {return nullptr;}
-};
+// class ElseASTnode : public ASTnode{
+// public:
+//   virtual llvm::Value *codegen() override {return nullptr;}
+// };
 
 class IfASTnode : public ASTnode{
 public:
+  unique_ptr<ExprASTnode> expr;
+  unique_ptr<BlockASTnode> block;
+  unique_ptr<BlockASTnode> else_stmt; //nullptr if no else
+  IfASTnode(unique_ptr<ExprASTnode> e,
+            unique_ptr<BlockASTnode> b,
+            unique_ptr<BlockASTnode> e_stmt
+            ) : expr(std::move(e)) , block(std::move(b)), else_stmt(std::move(e_stmt)){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 

@@ -63,7 +63,7 @@ unique_ptr<StmtASTnode> parse_stmt();
 unique_ptr<ExprASTnode> parse_expr_stmt();
 unique_ptr<WhileASTnode> parse_while_stmt();
 unique_ptr<IfASTnode> parse_if_stmt();
-unique_ptr<ElseASTnode> parse_else_stmt();
+unique_ptr<BlockASTnode> parse_else_stmt();
 unique_ptr<ReturnASTnode> parse_return_stmt();
 unique_ptr<ExprASTnode> parse_expr();
 

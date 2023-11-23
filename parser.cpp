@@ -730,22 +730,154 @@ unique_ptr<StmtASTnode> parse_stmt(){
 }
 
 // expr_stmt -> expr ';' | ';'
-unique_ptr<ExprASTnode> parse_expr_stmt(){}
+unique_ptr<ExprASTnode> parse_expr_stmt(){
+  sentence prod0 = rhslist[lhs_to_index("expr_stmt")][0];
+  unique_ptr<ExprASTnode> expr;
+  if (in_sentence_first(CurTok, prod0)){
+    expr = parse_expr();
+    if (CurTok.type == SC){
+      getNextToken();
+    } else {
+      throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
+    }
+    return std::move(expr);
+  } else if (CurTok.type == ';'){
+    getNextToken();
+    // return make_unique<ExprASTnode>();
+    return nullptr;
+  } else {
+    throw ParseError(CurTok, "could not find production for expr");
+  }
+}
 
 // while_stmt -> 'while' '(' expr ')' stmt
-unique_ptr<WhileASTnode> parse_while_stmt(){}
+unique_ptr<WhileASTnode> parse_while_stmt(){
+  // 0
+  if (CurTok.type == WHILE){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting 'while' but got " + CurTok.lexeme);
+  }
+
+  // 1
+  if (CurTok.type == LPAR){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting '(' but got " + CurTok.lexeme);
+  }
+
+  // 2
+  unique_ptr<ExprASTnode> expr = parse_expr();
+
+  // 3
+  if (CurTok.type == RPAR){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting ')' but got " + CurTok.lexeme);
+  }
+
+  // 4
+  unique_ptr<StmtASTnode> stmt = parse_stmt();
+
+  return make_unique<WhileASTnode>(std::move(expr), std::move(stmt));
+}
 
 // if_stmt -> 'if' '(' expr ')' block else_stmt
-unique_ptr<IfASTnode> parse_if_stmt(){}
+unique_ptr<IfASTnode> parse_if_stmt(){
+  // 0
+  if (CurTok.type == IF){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting 'if' but got " + CurTok.lexeme);
+  }
+
+  // 1
+  if (CurTok.type == LPAR){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting '(' but got " + CurTok.lexeme);
+  }
+
+  // 2
+  unique_ptr<ExprASTnode> expr = parse_expr();
+
+  // 3
+  if (CurTok.type == RPAR){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting ')' but got " + CurTok.lexeme);
+  }
+
+  // 4
+  unique_ptr<BlockASTnode> block = parse_block();
+
+  // 5
+  unique_ptr<BlockASTnode> else_stmt = parse_else_stmt();
+
+  return make_unique<IfASTnode>(std::move(expr), std::move(block), std::move(else_stmt));  
+}
 
 // else_stmt -> 'else' block | epsilon
-unique_ptr<ElseASTnode> parse_else_stmt(){}
+unique_ptr<BlockASTnode> parse_else_stmt(){
+  if (CurTok.type == ELSE){
+    getNextToken();
+    unique_ptr<BlockASTnode> block = parse_block();
+    return std::move(block);
+  } else {
+    return nullptr;
+  }
+}
 
 // return_stmt -> 'return' ';' | 'return' expr ';'
-unique_ptr<ReturnASTnode> parse_return_stmt(){}
+unique_ptr<ReturnASTnode> parse_return_stmt(){
+  TOKEN tempcur = CurTok;
+  if (CurTok.type == RETURN){
+    getNextToken();
+  } else {
+    throw ParseError(CurTok, "was expecting 'return' but got " + CurTok.lexeme);
+  }
+  
+  TOKEN temp1 = CurTok;
+  if (temp1.type == SC){
+    getNextToken();
+    return make_unique<ReturnASTnode>();
+  } else {
+    unique_ptr<ExprASTnode> expr = parse_expr();
+    if (CurTok.type == SC){
+      getNextToken();
+    } else {
+      throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
+    }
+    return make_unique<ReturnASTnode>(std::move(expr));
+  }
+}
 
 // expr -> IDENT '=' expr | rval
-unique_ptr<ExprASTnode> parse_expr(){}
+unique_ptr<ExprASTnode> parse_expr(){
+  sentence prod1 = rhslist[lhs_to_index("expr")][1];
+  unique_ptr<ExprASTnode> expr;
+  if (CurTok.type == IDENT){
+    TOKEN tempcur = CurTok;
+    getNextToken();
+    TOKEN temp1 = CurTok;
+    if (temp1.type == ASSIGN){
+      getNextToken();
+      expr = parse_expr();
+      return std::move(expr);
+    } else {
+      putBackToken(temp1);
+      putBackToken(tempcur);
+      getNextToken(); // CurTok now has the same value as tempcur
+      //expr = parse_rval();
+      return std::move(expr);
+    }
+  } else if (in_sentence_first(CurTok, prod1)){
+    //expr = parse_rval();
+    return std::move(expr);
+  } else {
+    throw ParseError(CurTok, "could not find production for expr");
+  }
+}
 
 // // rval -> rval1 '||' rval | rval1
 // parse_rval(){}
