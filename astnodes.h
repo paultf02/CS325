@@ -55,7 +55,7 @@ public:
 };
 
 
-
+class BlockASTnode;
 
 
 class ExprASTnode : public ASTnode{
@@ -87,12 +87,12 @@ class StmtASTnode : public ASTnode{
 public:
   string whichtype;
   unique_ptr<ExprASTnode> expr_stmt;
-  //unique_ptr<BlockASTnode> block;
+  unique_ptr<BlockASTnode> block;
   unique_ptr<IfASTnode> if_stmt;
   unique_ptr<WhileASTnode> while_stmt;
   unique_ptr<ReturnASTnode> return_stmt;
   StmtASTnode(unique_ptr<ExprASTnode> e) : whichtype("expr_stmt"), expr_stmt(std::move(e)) {};
-  //StmtASTnode(unique_ptr<BlockASTnode> b) : whichtype("block"), block(std::move(b)) {}; 
+  StmtASTnode(unique_ptr<BlockASTnode> b) : whichtype("block"), block(std::move(b)) {}; 
   StmtASTnode(unique_ptr<IfASTnode> i) : whichtype("if_stmt"), if_stmt(std::move(i)) {}; 
   StmtASTnode(unique_ptr<WhileASTnode> w) : whichtype("while_stmt"), while_stmt(std::move(w)) {}; 
   StmtASTnode(unique_ptr<ReturnASTnode> r) : whichtype("return_stmt"), return_stmt(std::move(r)) {};  

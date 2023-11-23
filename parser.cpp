@@ -711,8 +711,8 @@ unique_ptr<StmtASTnode> parse_stmt(){
     unique_ptr<ExprASTnode> expr_stmt = parse_expr_stmt();
     return make_unique<StmtASTnode>(std::move(expr_stmt));
   } else if (in_sentence_first(CurTok, prod1)){
-    // unique_ptr<BlockASTnode> block = parse_block();
-    // return make_unique<StmtASTnode>(std::move(block));
+    unique_ptr<BlockASTnode> block = parse_block();
+    return make_unique<StmtASTnode>(std::move(block));
   } else if (in_sentence_first(CurTok, prod2)){
     unique_ptr<IfASTnode> if_stmt = parse_if_stmt();
     return make_unique<StmtASTnode>(std::move(if_stmt));
