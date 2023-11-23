@@ -78,6 +78,13 @@ public:
 
 class StmtListASTnode : public ASTnode{
 public:
+  std::vector<std::unique_ptr<StmtASTnode>> stmtlist;
+  StmtListASTnode(std::vector<std::unique_ptr<StmtASTnode>> &sl){
+    for(int i=0; i<sl.size(); i++){
+      stmtlist.push_back(std::move(sl.at(i)));
+    }
+  };
+
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 

@@ -57,6 +57,7 @@ std::unique_ptr<ParamListASTnode> parse_param_list1();
 std::unique_ptr<LocalDeclListASTnode> parse_local_decls();
 std::unique_ptr<VarDeclASTnode> parse_local_decl();
 std::unique_ptr<StmtListASTnode> parse_stmt_list();
+std::unique_ptr<StmtASTnode> parse_stmt();
 
 class ParseError : public std::exception {
   TOKEN tok;
