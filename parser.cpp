@@ -896,8 +896,11 @@ unique_ptr<ExprASTnode> parse_expr(){
 // // rval7 -> '(' expr ')' | IDENT | IDENT '(' args ')' | INT_LIT | FLOAT_LIT | BOOL_LIT
 // parse_rval7(){}
 
-// // args -> arg_list | epsilon
-// parse_args(){}
+// args -> arg_list | epsilon
+unique_ptr<ArgListASTnode> parse_args(){
+  sentence prod0 = rhslist[lhs_to_index("args")][0];
+  return nullptr;
+}
 
 // // arg_list -> expr arg_list1
 // parse_args_list(){}

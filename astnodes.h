@@ -21,10 +21,20 @@ public:
 };
 
 class BlockASTnode;
-
 class DeclListASTnode;
-
 class StmtASTnode;
+class ExprASTnode;
+
+class ArgListASTnode: public ASTnode{
+public:
+  vector<unique_ptr<ExprASTnode>> arglist;
+  ArgListASTnode(vector<unique_ptr<ExprASTnode>> &args){
+    for(int i=0; i<args.size(); i++){
+      arglist.push_back(std::move(args.at(i)));
+    }
+  }
+  virtual llvm::Value *codegen() override {return nullptr;}
+};
 
 class VarTypeASTnode : public ASTnode{
 public:
@@ -62,7 +72,7 @@ public:
 
 class ExprASTnode : public ASTnode{
 public:
-  ExprASTnode();
+  ExprASTnode(){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
