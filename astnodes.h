@@ -31,18 +31,18 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
-class LocalDeclASTnode : public ASTnode{
-public:
-  std::unique_ptr<VarTypeASTnode> vartype;
-  std::string name;
-  LocalDeclASTnode(std::unique_ptr<VarTypeASTnode> vt, std::string n) : vartype(std::move(vt)), name(n){};
-  virtual llvm::Value *codegen() override {return nullptr;}
-};
+// class LocalDeclASTnode : public ASTnode{
+// public:
+//   std::unique_ptr<VarTypeASTnode> vartype;
+//   std::string name;
+//   LocalDeclASTnode(std::unique_ptr<VarTypeASTnode> vt, std::string n) : vartype(std::move(vt)), name(n){};
+//   virtual llvm::Value *codegen() override {return nullptr;}
+// };
 
 class LocalDeclListASTnode : public ASTnode{
 public:
-  std::vector<std::unique_ptr<LocalDeclASTnode>> localdecllist;
-  LocalDeclListASTnode(std::vector<std::unique_ptr<LocalDeclASTnode>> &ld){
+  std::vector<std::unique_ptr<VarDeclASTnode>> localdecllist;
+  LocalDeclListASTnode(std::vector<std::unique_ptr<VarDeclASTnode>> &ld){
     for(int i=0; i<ld.size(); i++){
       localdecllist.push_back(std::move(ld.at(i)));
     }

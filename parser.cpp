@@ -403,12 +403,12 @@ std::unique_ptr<DeclASTnode> parse_decl(){
 std::unique_ptr<VarDeclASTnode> parse_var_decl(){
   sentence prod0 = rhslist[lhs_to_index("var_decl")][0];
   std::unique_ptr<VarTypeASTnode> vt;
-  if (in_sentence_first(CurTok, prod0)){
-    std::unique_ptr<VarTypeASTnode> vt = parse_var_type();
-  } else {
-    throw ParseError(CurTok, "could not parse var_decl");
-  }
-  getNextToken();
+  // if (in_sentence_first(CurTok, prod0)){
+  //   std::unique_ptr<VarTypeASTnode> vt = parse_var_type();
+  // } else {
+  //   throw ParseError(CurTok, "could not parse var_decl");
+  // }
+  vt = parse_var_type();
   if (CurTok.type != IDENT){
     throw ParseError(CurTok, "was expecting IDENT but got " + CurTok.lexeme);
   }
@@ -597,9 +597,9 @@ std::unique_ptr<BlockASTnode> parse_block(){
 // local_decls -> local_decl local_decls | epsilon
 std::unique_ptr<LocalDeclListASTnode> parse_local_decls(){
   sentence prod0 = rhslist[lhs_to_index("local_decls")][0];
-  std::vector<std::unique_ptr<LocalDeclASTnode>> localdecllist;
+  std::vector<std::unique_ptr<VarDeclASTnode>> localdecllist;
   std::unique_ptr<LocalDeclListASTnode> localdecllist1;
-  std::unique_ptr<LocalDeclASTnode> localdecl;
+  std::unique_ptr<VarDeclASTnode> localdecl;
 
   if (in_sentence_first(CurTok, prod0)){
     localdecl = parse_local_decl();
@@ -617,7 +617,7 @@ std::unique_ptr<LocalDeclListASTnode> parse_local_decls(){
 }
 
 // local_decl -> var_type IDENT ';'
-std::unique_ptr<LocalDeclASTnode> parse_local_decl(){
+std::unique_ptr<VarDeclASTnode> parse_local_decl(){
   sentence prod0 = rhslist[lhs_to_index("local_decl")][0];
   std::unique_ptr<VarTypeASTnode> vartype;
   std::string ident;
@@ -633,7 +633,7 @@ std::unique_ptr<LocalDeclASTnode> parse_local_decl(){
   } else {
     throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
   }
-  return std::make_unique<LocalDeclASTnode>(std::move(vartype), ident);
+  return std::make_unique<VarDeclASTnode>(std::move(vartype), ident);
 }
 
 // stmt_list -> stmt stmt_list | epsilon

@@ -13,6 +13,8 @@ Pretty print abstract syntax tree (see clang AST output and model it on that) by
 Make error message exception class
 Turn abstract syntax tree into LLVM IR by running recursive codegen() method
     This will require type checking and variable scope (any other semantic checks?)
+A local_decl is exactly the same as var_decl;
+
 Add meaningful error messages to lexer, parser, semantic checker and codegen
 Fix error in find_sentence_first (will include epsilon erroneously) DONE
 Failed cosine, pi, recurse, rfact, unary  
@@ -27,7 +29,9 @@ Check that we handle the nullable case for nullable nonterminals
 Check that we are not returning nullptr when not supposed to
 Check not accidentally eating tokens after calling another parse function
   Should only eat a token after matching with a terminal
+Note that a LocalDecl is always a VarDeclASTnode
 
+For single production lhs, make sure you do the error inside the first nonterminal of the only sentence
 /*
 Recursive descent predictive parsing
 void A(){
