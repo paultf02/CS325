@@ -1,11 +1,14 @@
 # we have 3 categories of term
 # nonterminal, terminal, epsilon
 
-inputgrammarfile = "./grammars/transformedgrammar9.txt"
-inputterminalsfile = "./grammars/terminals2.txt"
-outputcsvfile = "./firstfollow/firstfollowg9sep.csv"
-outputlookaheadfile = "./grammars/needlookaheadg9.txt"
+grammarversion = "8"
+
+inputgrammarfile = f"./grammars/transformedgrammar{grammarversion}.txt"
+outputcsvfile = f"./firstfollow/firstfollowg{grammarversion}sep.csv"
+outputlookaheadfile = f"./grammars/needlookaheadg{grammarversion}.txt"
 sep = "?"
+
+inputterminalsfile = "./grammars/terminals2.txt"
 
 with open(inputterminalsfile, "r") as fin:
     terminals = [line.rstrip() for line in fin.readlines()]

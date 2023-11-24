@@ -54,11 +54,15 @@ float FloatVal;            // Filled in if FLOAT_LIT
 std::string StringVal;     // Filled in if String Literal
 int lineNo, columnNo; // not static because used in mccomp.cpp
 
-std::deque<TOKEN> program_tokens;
-int curTokIndex = 0;
+// std::deque<TOKEN> program_tokens;
+// int curTokIndex = 0;
 
 TOKEN CurTok;
 std::deque<TOKEN> tok_buffer;
+
+std::string csvfilename = "./firstfollow/firstfollowg9sep.csv";
+std::string terminalfilename = "./grammars/terminals2.txt";
+std::string grammarfilename = "./grammars/transformedgrammar9.txt";
 
 std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
 std::vector<production_options> rhslist;

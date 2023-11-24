@@ -11,6 +11,10 @@
 typedef std::vector<std::string> sentence;
 typedef std::vector<sentence> production_options;
 
+extern std::string csvfilename;
+extern std::string terminalfilename;
+extern std::string grammarfilename;
+
 extern std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
 extern std::vector<production_options> rhslist;
 extern std::vector<std::string> terminals;

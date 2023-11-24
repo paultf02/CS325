@@ -898,7 +898,15 @@ unique_ptr<ExprASTnode> parse_expr(){
 }
 
 // rval -> rval1 '||' rval | rval1
-unique_ptr<ExprASTnode> parse_rval(){}
+unique_ptr<ExprASTnode> parse_rval(){
+  sentence prod0 = rhslist[lhs_to_index("rval")][0]; // this is not nullable
+  // LPAR, MINUS, NOT, BOOL_LIT, INT_LIT, FLOAT_LIT
+  if (in_sentence_first(CurTok, prod0)) {
+
+  } else {
+    throw ParseError(CurTok, "could not find production for rval");
+  }
+}
 
 // rval1 -> rval2 '&&' rval1 | rval2
 unique_ptr<ExprASTnode> parse_rval1(){}
