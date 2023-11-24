@@ -60,7 +60,7 @@ int lineNo, columnNo; // not static because used in mccomp.cpp
 TOKEN CurTok;
 std::deque<TOKEN> tok_buffer;
 
-std::string grammarversion = "8"
+std::string grammarversion = "8";
 std::string csvfilename = "./firstfollow/firstfollowg"+grammarversion+"sep.csv";
 std::string grammarfilename = "./grammars/transformedgrammar"+grammarversion+".txt";
 std::string terminalfilename = "./grammars/terminals2.txt";
