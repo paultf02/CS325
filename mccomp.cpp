@@ -60,9 +60,11 @@ int lineNo, columnNo; // not static because used in mccomp.cpp
 TOKEN CurTok;
 std::deque<TOKEN> tok_buffer;
 
-std::string csvfilename = "./firstfollow/firstfollowg9sep.csv";
+std::string grammarversion = "8"
+std::string csvfilename = "./firstfollow/firstfollowg"+grammarversion+"sep.csv";
+std::string grammarfilename = "./grammars/transformedgrammar"+grammarversion+".txt";
 std::string terminalfilename = "./grammars/terminals2.txt";
-std::string grammarfilename = "./grammars/transformedgrammar9.txt";
+
 
 std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
 std::vector<production_options> rhslist;
