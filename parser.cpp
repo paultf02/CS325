@@ -867,24 +867,27 @@ unique_ptr<ExprASTnode> parse_expr(){
   // if we parse the first production only if current token
   // is IDENT and the next token is '='
   sentence prod1 = rhslist[lhs_to_index("expr")][1];
-  unique_ptr<ExprASTnode> ans;
+  //unique_ptr<ExprASTnode> ans;
   unique_ptr<ExprASTnode> expr;
+  unique_ptr<IdentASTnode> ident;
   if (CurTok.type == IDENT){
     TOKEN tempcur = CurTok;
+    ident = make_unique<IdentASTnode>(CurTok);
     getNextToken();
     TOKEN temp1 = CurTok;
     if (temp1.type == ASSIGN){
       getNextToken();
       expr = parse_expr();
       //ans = make_unique<ExprASTnode>();
-      return std::move(ans);
+      unique_ptr<AssignASTnode> assignast = make_unique<AssignASTnode>(std::move(ident), std::move(expr));
+      return make_unique<ExprASTnode>(std::move(assignast));
     } else {
       putBackToken(temp1);
       putBackToken(tempcur);
       getNextToken(); // CurTok now has the same value as tempcur
-      //expr = parse_rval();
+      expr = parse_rval();
       //ans = make_unique<ExprASTnode>();
-      return std::move(ans);
+      return std::move(expr);
     }
   } else if (in_sentence_first(CurTok, prod1)){
     //expr = parse_rval();
@@ -894,34 +897,75 @@ unique_ptr<ExprASTnode> parse_expr(){
   }
 }
 
-// // rval -> rval1 '||' rval | rval1
-// parse_rval(){}
-// // rval1 -> rval2 '&&' rval1 | rval2
-// parse_rval1(){}
-// // rval2 -> rval3 '==' rval2 | rval3 '!=' rval2 | rval3
-// parse_rval2(){}
-// // rval3 -> rval4 '<=' rval3 | rval4 '<' rval3 | rval4 '>=' rval3 | rval4 '>' rval3 | rval4
-// parse_rval3(){}
-// // rval4 -> rval5 '+' rval4 | rval5 '-' rval4 | rval5
-// parse_rval4(){}
-// // rval5 -> rval6 '*' rval5 | rval6 '/' rval5 | rval6 '%' rval5 | rval6
-// parse_rval5(){}
-// // rval6 -> '-' rval6 | '!' rval6 | rval7
-// parse_rval6(){}
-// // rval7 -> '(' expr ')' | IDENT | IDENT '(' args ')' | INT_LIT | FLOAT_LIT | BOOL_LIT
-// parse_rval7(){}
+// rval -> rval1 '||' rval | rval1
+unique_ptr<ExprASTnode> parse_rval(){}
+
+// rval1 -> rval2 '&&' rval1 | rval2
+unique_ptr<ExprASTnode> parse_rval1(){}
+
+// rval2 -> rval3 '==' rval2 | rval3 '!=' rval2 | rval3
+unique_ptr<ExprASTnode> parse_rval2(){}
+
+// rval3 -> rval4 '<=' rval3 | rval4 '<' rval3 | rval4 '>=' rval3 | rval4 '>' rval3 | rval4
+unique_ptr<ExprASTnode> parse_rval3(){}
+
+// rval4 -> rval5 '+' rval4 | rval5 '-' rval4 | rval5
+unique_ptr<ExprASTnode> parse_rval4(){}
+
+// rval5 -> rval6 '*' rval5 | rval6 '/' rval5 | rval6 '%' rval5 | rval6
+unique_ptr<ExprASTnode> parse_rval5(){}
+
+// rval6 -> '-' rval6 | '!' rval6 | rval7
+unique_ptr<ExprASTnode> parse_rval6(){}
+
+// rval7 -> '(' expr ')' | IDENT | IDENT '(' args ')' | INT_LIT | FLOAT_LIT | BOOL_LIT
+unique_ptr<ExprASTnode> parse_rval7(){}
 
 // args -> arg_list | epsilon
 unique_ptr<ArgListASTnode> parse_args(){
   sentence prod0 = rhslist[lhs_to_index("args")][0];
-  return nullptr;
+  unique_ptr<ArgListASTnode> arglist;
+  if (in_sentence_first(CurTok, prod0)){
+    arglist = parse_arg_list();
+    return std::move(arglist);
+  } else {
+    return nullptr;
+  }
 }
 
-// // arg_list -> expr arg_list1
-// parse_args_list(){}
+// arg_list -> expr arg_list1
+unique_ptr<ArgListASTnode> parse_arg_list(){
+  unique_ptr<ExprASTnode> expr;
+  vector<unique_ptr<ExprASTnode>> arglist;
+  unique_ptr<ArgListASTnode> arglist1;
+  expr = parse_expr();
+  arglist.push_back(std::move(expr));
+  arglist1 = parse_arg_list1(); // is nullable
+  if (arglist1){
+    for (int i=0; i<arglist1->arglist.size(); i++){
+      arglist.push_back(std::move(arglist1->arglist.at(i)));
+    }
+  }
+  return make_unique<ArgListASTnode>(arglist);
+}
 
-// // arg_list1 -> ',' expr arg_list1 | epsilon
-// parse_args_list1(){}
-
-
-
+// arg_list1 -> ',' expr arg_list1 | epsilon
+unique_ptr<ArgListASTnode> parse_arg_list1(){
+  unique_ptr<ExprASTnode> expr;
+  vector<unique_ptr<ExprASTnode>> arglist;
+  unique_ptr<ArgListASTnode> arglist1;
+  if (CurTok.type == COMMA){
+    getNextToken();
+    expr = parse_expr();
+    arglist.push_back(std::move(expr));
+    arglist1 = parse_arg_list1(); // is nullable
+    if (arglist1){
+      for (int i=0; i<arglist1->arglist.size(); i++){
+        arglist.push_back(std::move(arglist1->arglist.at(i)));
+      }
+    }
+    return make_unique<ArgListASTnode>(arglist);
+  } else {
+    return nullptr;
+  }
+}

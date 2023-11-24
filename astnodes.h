@@ -30,6 +30,13 @@ public:
 };
 
 class BinOpASTnode : public ASTnode{
+  string binop;
+  unique_ptr<ExprASTnode> lhs;
+  unique_ptr<ExprASTnode> rhs;
+  BinOpASTnode(string o,
+               unique_ptr<ExprASTnode> l,
+               unique_ptr<ExprASTnode> r
+               ) : binop(o), lhs(std::move(l)), rhs(std::move(r)){};
 public:
   virtual llvm::Value *codegen() override{return nullptr;}
   virtual string to_string() const override {
@@ -38,6 +45,11 @@ public:
 };
 
 class UnOpASTnode : public ASTnode{
+  string unop;
+  unique_ptr<ExprASTnode> expr;
+  UnOpASTnode(string o,
+              unique_ptr<ExprASTnode> e
+              ) : unop(o), expr(std::move(e)){};
 public:
   virtual llvm::Value *codegen() override{return nullptr;}
   virtual string to_string() const override {
@@ -183,6 +195,7 @@ public:
   AssignASTnode(unique_ptr<IdentASTnode> i,
                 unique_ptr<ExprASTnode> r
                 ) : ident(std::move(i)) , rhs(std::move(r)){};
+  virtual llvm::Value *codegen() override {return nullptr;}
 };
 
 class WhileASTnode : public ASTnode{
