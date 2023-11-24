@@ -161,7 +161,7 @@ unique_ptr<ProgramASTnode> parser(){
   // return std::move(make_unique<ProgramASTnode>());
 
   auto root = parse_program();
-  std::cout << root->s << '\n';
+  // std::cout << root->s << '\n';
   return std::move(root);
 }
 
@@ -744,7 +744,9 @@ unique_ptr<ExprASTnode> parse_expr_stmt(){
   sentence prod0 = rhslist[lhs_to_index("expr_stmt")][0];
   unique_ptr<ExprASTnode> expr;
   if (in_sentence_first(CurTok, prod0)){
+    // std::cout << "Before parse_expr CurTok is " << CurTok.lexeme << "\n";
     expr = parse_expr();
+    // std::cout << "After parse_expr CurTok is " << CurTok.lexeme << "\n";
     if (CurTok.type == SC){
       getNextToken();
     } else {
@@ -880,6 +882,7 @@ unique_ptr<ExprASTnode> parse_expr(){
       expr = parse_expr();
       //ans = make_unique<ExprASTnode>();
       unique_ptr<AssignASTnode> assignast = make_unique<AssignASTnode>(std::move(ident), std::move(expr));
+      
       return make_unique<ExprASTnode>(std::move(assignast));
     } else {
       putBackToken(temp1);
@@ -890,7 +893,7 @@ unique_ptr<ExprASTnode> parse_expr(){
       return std::move(expr);
     }
   } else if (in_sentence_first(CurTok, prod1)){
-    //expr = parse_rval();
+    expr = parse_rval();
     return std::move(expr);
   } else {
     throw ParseError(CurTok, "could not find production for expr");
@@ -1104,6 +1107,7 @@ unique_ptr<ExprASTnode> parse_rval6(){
 // rval7 -> '(' expr ')' | IDENT | IDENT '(' args ')' | INT_LIT | FLOAT_LIT | BOOL_LIT
 unique_ptr<ExprASTnode> parse_rval7(){
   // '(' expr ')'
+  // std::cout << "in rval7\n";
   if (CurTok.type == LPAR){
     getNextToken();
     unique_ptr<ExprASTnode> expr = parse_expr();

@@ -373,7 +373,7 @@ public:
   // vector<unique_ptr<DeclASTnode>> decls;
   unique_ptr<ExternListASTnode> externlist;
   unique_ptr<DeclListASTnode> decllist;
-  string s = "hi";
+  // string s = "hi";
   ProgramASTnode(unique_ptr<ExternListASTnode> el, 
                  unique_ptr<DeclListASTnode> dl) : externlist(std::move(el)), decllist(std::move(dl)){}
 
