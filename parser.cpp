@@ -919,7 +919,49 @@ unique_ptr<ExprASTnode> parse_rval5(){}
 unique_ptr<ExprASTnode> parse_rval6(){}
 
 // rval7 -> '(' expr ')' | IDENT | IDENT '(' args ')' | INT_LIT | FLOAT_LIT | BOOL_LIT
-unique_ptr<ExprASTnode> parse_rval7(){}
+unique_ptr<ExprASTnode> parse_rval7(){
+  // '(' expr ')'
+  if (CurTok.type == LPAR){
+    getNextToken();
+    unique_ptr<ExprASTnode> expr = parse_expr();
+    if (CurTok.type == RPAR){
+      getNextToken();
+    } else {
+      throw ParseError(CurTok, "was expecting ')' but got " + CurTok.lexeme);
+    }
+    return std::move(expr);
+  } else if (CurTok.type == INT_LIT) { // INT_LIT
+    auto intlit = make_unique<IntASTnode>(CurTok);
+    getNextToken();
+    return make_unique<ExprASTnode>(std::move(intlit));
+  } else if (CurTok.type == FLOAT_LIT) { // FLOAT_LIT
+    auto floatlit = make_unique<FloatASTnode>(CurTok);
+    getNextToken();
+    return make_unique<ExprASTnode>(std::move(floatlit));
+  } else if (CurTok.type == BOOL_LIT) { // INT_LIT
+    auto boollit = make_unique<BoolASTnode>(CurTok);
+    getNextToken();
+    return make_unique<ExprASTnode>(std::move(boollit));
+  } else if (CurTok.type == IDENT){ // IDENT and IDENT '(' args ')'
+    auto ident = make_unique<IdentASTnode>(CurTok);
+    getNextToken();
+    if (CurTok.type != LPAR) {
+      return make_unique<ExprASTnode>(std::move(ident));
+    } else {
+      getNextToken();
+      auto args = parse_args();
+      if (CurTok.type == RPAR){
+        getNextToken();
+      } else {
+        throw ParseError(CurTok, "was expecting ')' but got " + CurTok.lexeme);
+      }
+      auto fc = make_unique<FunCallASTnode>(std::move(ident), std::move(args));
+      return make_unique<ExprASTnode>(std::move(fc));
+    }
+  } else {
+    throw ParseError(CurTok, "could not find production for rval7");
+  }
+}
 
 // args -> arg_list | epsilon
 unique_ptr<ArgListASTnode> parse_args(){

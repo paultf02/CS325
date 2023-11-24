@@ -93,5 +93,7 @@ extern std::deque<TOKEN> tok_buffer;
 TOKEN returnTok(std::string lexVal, int tok_type);
 TOKEN gettok();
 
+bool noerr_str_to_bool(std::string str);
+
 TOKEN getNextToken();
 void putBackToken(TOKEN tok);

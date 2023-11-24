@@ -63,19 +63,7 @@ public:
   int val;
   TOKEN tok;
   string name;
-  IntASTnode(TOKEN t, int v) : val(v), tok(t){};
-  virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string() const override {
-    return "";
-  };
-};
-
-class BoolASTnode : public ASTnode{
-public:
-  bool val;
-  TOKEN tok;
-  string name;
-  BoolASTnode(TOKEN t, bool v) : val(v), tok(t){};
+  IntASTnode(TOKEN t) : val(std::stoi(t.lexeme)), tok(t){};
   virtual llvm::Value *codegen() override{return nullptr;}
   virtual string to_string() const override {
     return "";
@@ -87,7 +75,19 @@ public:
   float val;
   TOKEN tok;
   string name;
-  FloatASTnode(TOKEN t, float v) : val(v), tok(t){};
+  FloatASTnode(TOKEN t) : val(std::stof(t.lexeme)), tok(t){};
+  virtual llvm::Value *codegen() override{return nullptr;}
+  virtual string to_string() const override {
+    return "";
+  };
+};
+
+class BoolASTnode : public ASTnode{
+public:
+  bool val;
+  TOKEN tok;
+  string name;
+  BoolASTnode(TOKEN t) : val(noerr_str_to_bool(t.lexeme)), tok(t) {};
   virtual llvm::Value *codegen() override{return nullptr;}
   virtual string to_string() const override {
     return "";

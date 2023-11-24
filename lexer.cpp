@@ -261,3 +261,15 @@ void putBackToken(TOKEN tok) {
   std::cout << "Pushing front " << tok.lexeme << '\n';
   tok_buffer.push_front(tok);
 }
+
+bool noerr_str_to_bool(std::string str){
+  if (str == "true") {
+    return true;
+  } else if (str == "false") {
+    return false;
+  } else if (str == "0") {
+    return false;
+  } else {
+    return true;
+  }
+}
