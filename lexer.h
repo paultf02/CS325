@@ -44,8 +44,10 @@ enum TOKEN_TYPE {
   ELSE = -8,    // "else"
   WHILE = -9,   // "while"
   RETURN = -10, // "return"
-  // TRUE   = -12,     // "true"
-  // FALSE   = -13,     // "false"
+
+  // dont use these because we have BOOL_LIT
+  // // // // // // // TRUE   = -12,     // "true"
+  // // // // // // // FALSE   = -13,     // "false"
 
   // literals
   INT_LIT = -14,   // [0-9]+

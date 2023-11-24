@@ -916,7 +916,25 @@ unique_ptr<ExprASTnode> parse_rval4(){}
 unique_ptr<ExprASTnode> parse_rval5(){}
 
 // rval6 -> '-' rval6 | '!' rval6 | rval7
-unique_ptr<ExprASTnode> parse_rval6(){}
+unique_ptr<ExprASTnode> parse_rval6(){
+  sentence prod2 = rhslist[lhs_to_index("rval6")][2];
+  if (CurTok.type == MINUS){
+    getNextToken();
+    auto expr = parse_rval6();
+    auto unop = make_unique<UnOpASTnode>(MINUS, std::move(expr));
+    return make_unique<ExprASTnode>(std::move(unop));
+  } else if (CurTok.type == NOT) {
+    getNextToken();
+    auto expr = parse_rval6();
+    auto unop = make_unique<UnOpASTnode>(NOT, std::move(expr));
+    return make_unique<ExprASTnode>(std::move(unop));
+  } else if (in_sentence_first(CurTok, prod2)){
+    auto expr = parse_rval7();
+    return std::move(expr);
+  } else {
+    throw ParseError(CurTok, "could not find production for rval6");
+  }
+}
 
 // rval7 -> '(' expr ')' | IDENT | IDENT '(' args ')' | INT_LIT | FLOAT_LIT | BOOL_LIT
 unique_ptr<ExprASTnode> parse_rval7(){
