@@ -147,6 +147,8 @@ int main(int argc, char **argv) {
   fprintf(stderr, "Parsing Finished\n");
   // std::cout << std::to_string(nonterminal_index("block"))<<'\n';
 
+  llvm::outs() << *programrootnode << "\n";
+
   //********************* Start printing final IR **************************
   // Print out all of the generated code into a file called output.ll
   auto Filename = "output.ll";

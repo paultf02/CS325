@@ -147,25 +147,6 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
-// class LocalDeclASTnode : public ASTnode{
-// public:
-//   unique_ptr<VarTypeASTnode> vartype;
-//   string name;
-//   LocalDeclASTnode(unique_ptr<VarTypeASTnode> vt, string n) : vartype(std::move(vt)), name(n){};
-//   virtual llvm::Value *codegen() override {return nullptr;}
-// };
-
-// class LocalDeclListASTnode : public ASTnode{
-// public:
-//   vector<unique_ptr<VarDeclASTnode>> localdecllist;
-//   LocalDeclListASTnode(vector<unique_ptr<VarDeclASTnode>> &ld){
-//     for(int i=0; i<ld.size(); i++){
-//       localdecllist.push_back(std::move(ld.at(i)));
-//     }
-//   };
-//   virtual llvm::Value *codegen() override {return nullptr;}
-// };
-
 class ExprASTnode : public ASTnode{
 public:
   string type; // assign, binop, unop, ident, funcall, intlit, floatlit, boollit
@@ -214,11 +195,6 @@ public:
   ReturnASTnode(){};
   virtual llvm::Value *codegen() override {return nullptr;}
 };
-
-// class ElseASTnode : public ASTnode{
-// public:
-//   virtual llvm::Value *codegen() override {return nullptr;}
-// };
 
 class IfASTnode : public ASTnode{
 public:
@@ -380,7 +356,26 @@ public:
   virtual llvm::Value *codegen() override {return nullptr;}
 };
 
+// class LocalDeclASTnode : public ASTnode{
+// public:
+//   unique_ptr<VarTypeASTnode> vartype;
+//   string name;
+//   LocalDeclASTnode(unique_ptr<VarTypeASTnode> vt, string n) : vartype(std::move(vt)), name(n){};
+//   virtual llvm::Value *codegen() override {return nullptr;}
+// };
 
-/* add other AST nodes as nessasary */
+// class LocalDeclListASTnode : public ASTnode{
+// public:
+//   vector<unique_ptr<VarDeclASTnode>> localdecllist;
+//   LocalDeclListASTnode(vector<unique_ptr<VarDeclASTnode>> &ld){
+//     for(int i=0; i<ld.size(); i++){
+//       localdecllist.push_back(std::move(ld.at(i)));
+//     }
+//   };
+//   virtual llvm::Value *codegen() override {return nullptr;}
+// };
 
-
+// class ElseASTnode : public ASTnode{
+// public:
+//   virtual llvm::Value *codegen() override {return nullptr;}
+// };
