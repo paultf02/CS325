@@ -897,31 +897,114 @@ unique_ptr<ExprASTnode> parse_expr(){
   }
 }
 
-// rval -> rval1 '||' rval | rval1
-unique_ptr<ExprASTnode> parse_rval(){
-  sentence prod0 = rhslist[lhs_to_index("rval")][0]; // this is not nullable
-  // LPAR, MINUS, NOT, BOOL_LIT, INT_LIT, FLOAT_LIT
-  if (in_sentence_first(CurTok, prod0)) {
 
+
+
+
+// // // rval -> rval1 '||' rval | rval1
+// // unique_ptr<ExprASTnode> parse_rval(){
+// //   sentence prod0 = rhslist[lhs_to_index("rval")][0]; // this is not nullable
+// //   // note the first set of sentence prod0 is: LPAR, MINUS, NOT, BOOL_LIT, INT_LIT, FLOAT_LIT
+// //   if (in_sentence_first(CurTok, prod0)) {
+// //     if (CurTok == LPAR || CurTok == MINUS)
+// //     // if LPAR, MINUS, NOT then do second production
+// //     // otherwise look ahead 1 step. if OR then do first production. otherwise do second production.
+// //   } else {
+// //     throw ParseError(CurTok, "could not find production for rval");
+// //   }
+// // }
+
+// rval -> rval1 rval_lf
+unique_ptr<ExprASTnode> parse_rval(){
+  auto expr = parse_rval1();
+  auto binop = parse_rval_lf();
+  if (binop) {
+    binop->lhs = std::move(expr);
+    return make_unique<ExprASTnode>(binop);
   } else {
-    throw ParseError(CurTok, "could not find production for rval");
+    return std::move(expr);
   }
 }
 
-// rval1 -> rval2 '&&' rval1 | rval2
-unique_ptr<ExprASTnode> parse_rval1(){}
+// rval_lf -> '||' rval | epsilon
+unique_ptr<BinOpASTnode> parse_rval_lf(){}
 
-// rval2 -> rval3 '==' rval2 | rval3 '!=' rval2 | rval3
-unique_ptr<ExprASTnode> parse_rval2(){}
+// rval1 -> rval2 rval1_lf
+unique_ptr<ExprASTnode> parse_rval1(){
+  auto expr = parse_rval2();
+  auto binop = parse_rval1_lf();
+  if (binop) {
+    binop->lhs = std::move(expr);
+    return make_unique<ExprASTnode>(binop);
+  } else {
+    return std::move(expr);
+  }
+}
 
-// rval3 -> rval4 '<=' rval3 | rval4 '<' rval3 | rval4 '>=' rval3 | rval4 '>' rval3 | rval4
-unique_ptr<ExprASTnode> parse_rval3(){}
+// rval1_lf -> '&&' rval1 | epsilon
+unique_ptr<BinOpASTnode> parse_rval1_lf(){}
 
-// rval4 -> rval5 '+' rval4 | rval5 '-' rval4 | rval5
-unique_ptr<ExprASTnode> parse_rval4(){}
+// rval2 -> rval3 rval2_lf
+unique_ptr<ExprASTnode> parse_rval2(){
+  auto expr = parse_rval3();
+  auto binop = parse_rval2_lf();
+  if (binop) {
+    binop->lhs = std::move(expr);
+    return make_unique<ExprASTnode>(binop);
+  } else {
+    return std::move(expr);
+  }
+}
 
-// rval5 -> rval6 '*' rval5 | rval6 '/' rval5 | rval6 '%' rval5 | rval6
-unique_ptr<ExprASTnode> parse_rval5(){}
+// rval2_lf -> '==' rval2 | '!=' rval2 | epsilon
+unique_ptr<BinOpASTnode> parse_rval2_lf(){}
+
+// rval3 -> rval4 rval3_lf
+unique_ptr<ExprASTnode> parse_rval3(){
+  auto expr = parse_rval4();
+  auto binop = parse_rval3_lf();
+  if (binop) {
+    binop->lhs = std::move(expr);
+    return make_unique<ExprASTnode>(binop);
+  } else {
+    return std::move(expr);
+  }
+}
+
+// rval3_lf -> '<=' rval3 | '<' rval3 | '>=' rval3 | '>' rval3 | epsilon
+unique_ptr<BinOpASTnode> parse_rval3_lf(){}
+
+// rval4 -> rval5 rval4_lf
+unique_ptr<ExprASTnode> parse_rval4(){
+  auto expr = parse_rval5();
+  auto binop = parse_rval4_lf();
+  if (binop) {
+    binop->lhs = std::move(expr);
+    return make_unique<ExprASTnode>(binop);
+  } else {
+    return std::move(expr);
+  }
+}
+
+// rval4_lf -> '+' rval4 | '-' rval4 | epsilon
+unique_ptr<BinOpASTnode> parse_rval4_lf(){}
+
+// rval5 -> rval6 rval5_lf
+unique_ptr<ExprASTnode> parse_rval5(){
+  auto expr = parse_rval6();
+  auto binop = parse_rval5_lf();
+  if (binop) {
+    binop->lhs = std::move(expr);
+    return make_unique<ExprASTnode>(binop);
+  } else {
+    return std::move(expr);
+  }
+}
+
+// rval5_lf -> '*' rval5 | '/' rval5 | '%' rval5 | epsilon
+unique_ptr<BinOpASTnode> parse_rval5_lf(){}
+
+
 
 // rval6 -> '-' rval6 | '!' rval6 | rval7
 unique_ptr<ExprASTnode> parse_rval6(){
