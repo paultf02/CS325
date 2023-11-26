@@ -41,10 +41,13 @@ std::vector<int> terminals_to_int(std::vector<std::string> terminals);
 
 unique_ptr<ProgramASTnode> parser();
 unique_ptr<ProgramASTnode> parse_program();
-unique_ptr<ExternListASTnode> parse_extern_list();
-unique_ptr<DeclListASTnode> parse_decl_list();
+// unique_ptr<ExternListASTnode> parse_extern_list();
+vector<unique_ptr<ExternASTnode>> parse_extern_list();
+// unique_ptr<DeclListASTnode> parse_decl_list();
+vector<unique_ptr<DeclASTnode>> parse_decl_list();
 unique_ptr<ExternASTnode> parse_extern();
-unique_ptr<ExternListASTnode> parse_extern_list1();
+//unique_ptr<ExternListASTnode> parse_extern_list1();
+vector<unique_ptr<ExternASTnode>> parse_extern_list1();
 unique_ptr<DeclASTnode> parse_decl();
 unique_ptr<DeclListASTnode> parse_decl_list1();
 unique_ptr<TypeSpecASTnode>parse_type_spec();

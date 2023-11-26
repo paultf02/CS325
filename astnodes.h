@@ -20,11 +20,11 @@ extern string nl;
 
 
 class BlockASTnode;
-class DeclListASTnode;
+// class DeclListASTnode;
 class StmtASTnode;
 class ExprASTnode;
 class AssignASTnode;
-class ArgListASTnode;
+//class ArgListASTnode;
 
 class ASTnode {
 public:
@@ -113,26 +113,35 @@ public:
 class FunCallASTnode : public ASTnode{
 public:
   unique_ptr<IdentASTnode> ident;
-  unique_ptr<ArgListASTnode> arglist;
+  // unique_ptr<ArgListASTnode> arglist;
+  vector<unique_ptr<ExprASTnode>> arglist;
+  // FunCallASTnode(unique_ptr<IdentASTnode> i,
+  //                unique_ptr<ArgListASTnode> a
+  //                ) : ident(std::move(i)), arglist(std::move(a)){};
+
   FunCallASTnode(unique_ptr<IdentASTnode> i,
-                 unique_ptr<ArgListASTnode> a
-                 ) : ident(std::move(i)), arglist(std::move(a)){};
+                 vector<unique_ptr<ExprASTnode>> &al){
+    for (auto &elem : al){
+      arglist.push_back(std::move(elem));
+    }
+  }
+
   virtual llvm::Value *codegen() override{return nullptr;}
   virtual string to_string(string pre) const override {
     return "";
   };
 };
 
-class ArgListASTnode: public ASTnode{
-public:
-  vector<unique_ptr<ExprASTnode>> arglist;
-  ArgListASTnode(vector<unique_ptr<ExprASTnode>> &args){
-    for(int i=0; i<args.size(); i++){
-      arglist.push_back(std::move(args.at(i)));
-    }
-  }
-  virtual llvm::Value *codegen() override {return nullptr;}
-};
+// class ArgListASTnode: public ASTnode{
+// public:
+//   vector<unique_ptr<ExprASTnode>> arglist;
+//   ArgListASTnode(vector<unique_ptr<ExprASTnode>> &args){
+//     for(int i=0; i<args.size(); i++){
+//       arglist.push_back(std::move(args.at(i)));
+//     }
+//   }
+//   virtual llvm::Value *codegen() override {return nullptr;}
+// };
 
 class VarTypeASTnode : public ASTnode{
 public:
@@ -241,25 +250,37 @@ public:
   };
 };
 
-class StmtListASTnode : public ASTnode{
-public:
-  vector<unique_ptr<StmtASTnode>> stmtlist;
-  StmtListASTnode(vector<unique_ptr<StmtASTnode>> &sl){
-    for(int i=0; i<sl.size(); i++){
-      stmtlist.push_back(std::move(sl.at(i)));
-    }
-  };
+// class StmtListASTnode : public ASTnode{
+// public:
+//   vector<unique_ptr<StmtASTnode>> stmtlist;
+//   StmtListASTnode(vector<unique_ptr<StmtASTnode>> &sl){
+//     for(int i=0; i<sl.size(); i++){
+//       stmtlist.push_back(std::move(sl.at(i)));
+//     }
+//   };
 
-  virtual llvm::Value *codegen() override {return nullptr;}
-};
+//   virtual llvm::Value *codegen() override {return nullptr;}
+// };
 
 class BlockASTnode : public ASTnode{
 public:
-  unique_ptr<DeclListASTnode> localdecls;
-  unique_ptr<StmtListASTnode> stmtlist;
-  BlockASTnode(unique_ptr<DeclListASTnode> ld,
-               unique_ptr<StmtListASTnode> sl
-               ) : localdecls(std::move(ld)), stmtlist(std::move(sl)){}; 
+  // unique_ptr<DeclListASTnode> localdecls;
+  vector<unique_ptr<DeclASTnode>> localdecls;
+  // unique_ptr<StmtListASTnode> stmtlist;
+  vector<unique_ptr<StmtASTnode>> stmtlist;
+  // BlockASTnode(unique_ptr<DeclListASTnode> ld,
+  //              unique_ptr<StmtListASTnode> sl
+  //              ) : localdecls(std::move(ld)), stmtlist(std::move(sl)){}; 
+  BlockASTnode(vector<unique_ptr<DeclASTnode>> &ld,
+               vector<unique_ptr<StmtASTnode>> &sl){
+    for (auto &elem : ld){
+      localdecls.push_back(std::move(elem));
+    }
+    for (auto &elem : sl){
+      stmtlist.push_back(std::move(elem));
+    }
+  }
+  
   virtual llvm::Value *codegen() override {return nullptr;}
   virtual string to_string(string pre) const override {
     string npre = pre + sp;
@@ -268,7 +289,7 @@ public:
     // for (auto &ld : localdecls->decls){
     //   ans += pre + ld->to_string(npre) + nl;
     // }
-    for (auto &stmt : stmtlist->stmtlist){
+    for (auto &stmt : stmtlist){
       ans += pre + stmt->to_string(npre) + nl;
     }
     ans.pop_back();
@@ -393,55 +414,64 @@ public:
   };
 };
 
-class ExternListASTnode : public ASTnode{
-public:
-  vector<unique_ptr<ExternASTnode>> externs;
-  ExternListASTnode(vector<unique_ptr<ExternASTnode>> &e){
-    for(int i=0; i<e.size(); i++){
-      externs.push_back(std::move(e.at(i)));
-    }
-  };
-  virtual llvm::Value *codegen() override {return nullptr;};
-  virtual string to_string(string pre) const override {
-    string npre = pre + sp;
-    string ans = "";
-    for (auto &e : externs){
-      ans += e->to_string(npre) + nl;
-    }
-    ans.pop_back();
-    return ans;
-  };
-};
+// class ExternListASTnode : public ASTnode{
+// public:
+//   vector<unique_ptr<ExternASTnode>> externs;
+//   ExternListASTnode(vector<unique_ptr<ExternASTnode>> &e){
+//     for(int i=0; i<e.size(); i++){
+//       externs.push_back(std::move(e.at(i)));
+//     }
+//   };
+//   virtual llvm::Value *codegen() override {return nullptr;};
+//   virtual string to_string(string pre) const override {
+//     string npre = pre + sp;
+//     string ans = "";
+//     for (auto &e : externs){
+//       ans += e->to_string(npre) + nl;
+//     }
+//     ans.pop_back();
+//     return ans;
+//   };
+// };
 
-class DeclListASTnode : public ASTnode{
-public:
-  vector<unique_ptr<DeclASTnode>> decls;
-  DeclListASTnode(vector<unique_ptr<DeclASTnode>> &d){
-    for(int i=0; i<d.size(); i++){
-      decls.push_back(std::move(d.at(i)));
-    }
-  };
-  virtual llvm::Value *codegen() override {return nullptr;}
-  virtual string to_string(string pre) const override {
-    string npre = pre + sp;
-    string ans = "";
-    for (auto &d : decls){
-      ans += pre + d->to_string(npre) + nl;
-    }
-    ans.pop_back();
-    return ans;
-  };
-};
+// class DeclListASTnode : public ASTnode{
+// public:
+//   vector<unique_ptr<DeclASTnode>> decls;
+//   DeclListASTnode(vector<unique_ptr<DeclASTnode>> &d){
+//     for(int i=0; i<d.size(); i++){
+//       decls.push_back(std::move(d.at(i)));
+//     }
+//   };
+//   virtual llvm::Value *codegen() override {return nullptr;}
+//   virtual string to_string(string pre) const override {
+//     string npre = pre + sp;
+//     string ans = "";
+//     for (auto &d : decls){
+//       ans += pre + d->to_string(npre) + nl;
+//     }
+//     ans.pop_back();
+//     return ans;
+//   };
+// };
 
 class ProgramASTnode : public ASTnode{
 public:
-  // vector<unique_ptr<ExternASTnode>> externs;
-  // vector<unique_ptr<DeclASTnode>> decls;
-  unique_ptr<ExternListASTnode> externlist;
-  unique_ptr<DeclListASTnode> decllist;
+  vector<unique_ptr<ExternASTnode>> externs;
+  vector<unique_ptr<DeclASTnode>> decls;
+  // unique_ptr<ExternListASTnode> externlist;
+  // unique_ptr<DeclListASTnode> decllist;
   // string s = "hi";
-  ProgramASTnode(unique_ptr<ExternListASTnode> el, 
-                 unique_ptr<DeclListASTnode> dl) : externlist(std::move(el)), decllist(std::move(dl)){}
+  // ProgramASTnode(unique_ptr<ExternListASTnode> el, 
+  //                unique_ptr<DeclListASTnode> dl) : externlist(std::move(el)), decllist(std::move(dl)){}
+  ProgramASTnode(vector<unique_ptr<ExternASTnode>> &el,
+                 vector<unique_ptr<DeclASTnode>> &dl){
+    for (auto &elem : el){
+      externs.push_back(std::move(elem));
+    }
+    for (auto &elem : dl){
+      decls.push_back(std::move(elem));
+    }
+  }
 
   virtual llvm::Value *codegen() override {
     return nullptr;
