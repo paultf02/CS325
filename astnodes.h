@@ -435,8 +435,10 @@ public:
     for (auto &dec : decls){
       ans += dec->to_string(npre);
     }
+    ans += "number of decls is " + std::to_string(decls.size()) + nl;
     // ans += pre + externlist->to_string(npre) + nl;
     // ans += pre + decllist->to_string(npre);
+    ans.pop_back(); // remove last newline
     return ans;
   };
 };

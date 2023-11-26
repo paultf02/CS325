@@ -421,9 +421,11 @@ void parse_decl_list(vector<unique_ptr<DeclASTnode>> &decls){
 
 // decl_list1 -> decl decl_list1 | epsilon
 void parse_decl_list1(vector<unique_ptr<DeclASTnode>> &decls){
+  // std::cout << "parse_decl_list1 called\n";
   unique_ptr<DeclASTnode> decl;
   sentence prod0 = rhslist[lhs_to_index("decl_list1")][0];
   if (in_sentence_first(CurTok, prod0)){
+    // std::cout << "inside parse_decl_list1 if statement\n";
     decl = parse_decl();
     decls.push_back(std::move(decl));
     parse_decl_list1(decls);
@@ -439,6 +441,7 @@ unique_ptr<DeclASTnode> parse_decl(){
   if ( !in_sentence_first(tempcur, prod0) && !in_sentence_first(tempcur, prod1)){
     throw ParseError(CurTok, "could not find production for decl");
   }
+
   getNextToken();
   TOKEN temp1 = CurTok;
   if (temp1.type != IDENT){
@@ -489,6 +492,7 @@ unique_ptr<VarDeclASTnode> parse_var_decl(){
   if (CurTok.type != SC){
     throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
   }
+  getNextToken();
   return make_unique<VarDeclASTnode>(std::move(vt), std::move(ident));
 }
 
