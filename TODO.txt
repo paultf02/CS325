@@ -1,3 +1,24 @@
+Refer to each other:
+BlockASTnode refers to StmtASTnode
+StmtASTnode refers to BlockASTnode
+
+DeclASTnode refers to FunDeclASTnode
+FunDeclASTnode refers to BlockASTnode
+BlockASTnode refers to DeclASTnode
+
+FunCallASTnode refers to ExprASTnode
+ExprASTnode refers to FunCallASTnode
+
+BinOpASTnode refers to ExprASTnode
+ExprASTnode refers to BinOpASTnode
+
+UnOpASTnode refers to ExprASTnode
+ExprASTnode refers to UnOpASTnode
+
+AssignASTnode refers to ExprASTnode
+ExprASTnode refers to AssignASTnode
+
+
 To do:
 Add grammar enforced operator precedence DONE, NEED TO TEST
 Remove left recursion, DONE

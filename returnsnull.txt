@@ -1,0 +1,2 @@
+things that can return nullptr
+parse_extern

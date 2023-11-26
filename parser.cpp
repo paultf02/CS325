@@ -256,7 +256,6 @@ unique_ptr<ProgramASTnode> parse_program(){
 
 // extern_list -> extern extern_list1
 void parse_extern_list(vector<unique_ptr<ExternASTnode>> &externs){
-  ;
   // unique_ptr<ExternListASTnode> externlist1;
   // vector<unique_ptr<ExternASTnode>> externlist1;
   //  ext;
@@ -300,8 +299,9 @@ void parse_extern_list(vector<unique_ptr<ExternASTnode>> &externs){
 
 // extern_list1 -> extern extern_list1 | epsilon
 void parse_extern_list1(vector<unique_ptr<ExternASTnode>> &externs){
-  unique_ptr<ExternASTnode> ext = parse_extern();
-  if (ext){
+  sentence prod0 = rhslist[lhs_to_index("extern_list1")][0];
+  if (in_sentence_first(CurTok, prod0)){
+    unique_ptr<ExternASTnode> ext = parse_extern();
     externs.push_back(std::move(ext));
     parse_extern_list1(externs);
   }
@@ -316,7 +316,7 @@ unique_ptr<ExternASTnode> parse_extern(){
   if (CurTok.type == EXTERN){
     getNextToken();
   } else {
-    throw ParseError(CurTok, "was expecting literal 'extern' but got " + CurTok.lexeme);
+    throw ParseError(CurTok, "was expecting 'extern' but got " + CurTok.lexeme);
   }
 
   // 1
