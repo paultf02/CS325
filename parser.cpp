@@ -179,10 +179,11 @@ unique_ptr<ProgramASTnode> parser(){
 
 // program -> extern_list decl_list | decl_list
 unique_ptr<ProgramASTnode> parse_program(){
-  // vector<unique_ptr<ExternASTnode>> externs; // these default to empty vector
-  // vector<unique_ptr<DeclASTnode>> decls;
-  unique_ptr<ExternListASTnode> externlist = nullptr;
-  unique_ptr<DeclListASTnode> decllist = nullptr;
+  vector<unique_ptr<ExternASTnode>> externs; // these default to empty vector
+  vector<unique_ptr<DeclASTnode>> decls;
+  // unique_ptr<ExternListASTnode> externlist = nullptr;
+  // unique_ptr<DeclListASTnode> decllist = nullptr;
+
   // unique_ptr<ProgramASTnode> ans;
   // ans = make_unique<ProgramASTnode>();
 
@@ -191,21 +192,29 @@ unique_ptr<ProgramASTnode> parse_program(){
 
   if (in_sentence_first(CurTok, prod0)){
     // program -> extern_list decl_list
-    externlist = parse_extern_list(); // not nullable
-    decllist = parse_decl_list(); // not nullable
+    // externlist = parse_extern_list(); // not nullable
+    // decllist = parse_decl_list(); // not nullable
+    
+    parse_extern_list(externs); //populate externs
+    parse_decl_list(decls); //populate decls
+
     // decls = parse_decl_list();
     // ans = make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
     // ans = make_unique<ProgramASTnode>(externs, decls);
     // ans = make_unique<ProgramASTnode>();
-    return make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
+    // return make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
+    return make_unique<ProgramASTnode>(externs, decls);
 
   } else if (in_sentence_first(CurTok, prod1)){
     // program -> decl_list
-    decllist = parse_decl_list(); // not nullable
+    // decllist = parse_decl_list(); // not nullable
+    parse_decl_list(decls);
     // ans = make_unique<ProgramASTnode>(std::move(externs), std::move(decls));
     // ans = make_unique<ProgramASTnode>(externs, decls);
     // ans = make_unique<ProgramASTnode>();
-    return make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
+    // return make_unique<ProgramASTnode>(std::move(externlist), std::move(decllist));
+    return make_unique<ProgramASTnode>(externs, decls);
+
   } else {
     throw ParseError(CurTok, "could not find production for program");
   }
@@ -214,37 +223,54 @@ unique_ptr<ProgramASTnode> parse_program(){
 }
 
 // extern_list -> extern extern_list1
-unique_ptr<ExternListASTnode> parse_extern_list(){
-  vector<unique_ptr<ExternASTnode>> externs;
-  unique_ptr<ExternListASTnode> externlist1;
+// unique_ptr<ExternListASTnode> parse_extern_list(){
+//   vector<unique_ptr<ExternASTnode>> externs;
+//   unique_ptr<ExternListASTnode> externlist1;
+//   // vector<unique_ptr<ExternASTnode>> externlist1;
+//   unique_ptr<ExternASTnode> ext;
+//   // unique_ptr<ExternListASTnode> ans;
+//   sentence prod0 = rhslist[lhs_to_index("extern_list")][0];
+
+//   // if (in_sentence_first(CurTok, prod0)){
+//   //   ext = parse_extern(); // not nullable
+//   //   externs.push_back(std::move(ext));
+//   //   externlist1 = parse_extern_list1(); // is nullable
+//   //   if (externlist1){
+//   //     for (int i=0; i<externlist1->externs.size(); i++){
+//   //       externs.push_back(std::move(externlist1->externs.at(i)));
+//   //     }
+//   //   }
+//   //   return make_unique<ExternListASTnode>(externs);
+//   // } else {
+//   //   throw ParseError(CurTok, "could not find production for extern_list");
+//   // }
+//     ext = parse_extern(); // not nullable
+//     externs.push_back(std::move(ext));
+//     externlist1 = parse_extern_list1(); // is nullable
+//     if (externlist1){
+//       for (int i=0; i<externlist1->externs.size(); i++){
+//         externs.push_back(std::move(externlist1->externs.at(i)));
+//       }
+//     }
+//     return make_unique<ExternListASTnode>(externs);
+// }
+
+void parse_extern_list(vector<unique_ptr<ExternASTnode>> &externs){
+  ;
+  // unique_ptr<ExternListASTnode> externlist1;
   // vector<unique_ptr<ExternASTnode>> externlist1;
-  unique_ptr<ExternASTnode> ext;
+  //  ext;
   // unique_ptr<ExternListASTnode> ans;
-
-  sentence prod0 = rhslist[lhs_to_index("extern_list")][0];
-
-  // if (in_sentence_first(CurTok, prod0)){
-  //   ext = parse_extern(); // not nullable
-  //   externs.push_back(std::move(ext));
-  //   externlist1 = parse_extern_list1(); // is nullable
-  //   if (externlist1){
-  //     for (int i=0; i<externlist1->externs.size(); i++){
-  //       externs.push_back(std::move(externlist1->externs.at(i)));
-  //     }
-  //   }
-  //   return make_unique<ExternListASTnode>(externs);
-  // } else {
-  //   throw ParseError(CurTok, "could not find production for extern_list");
-  // }
-    ext = parse_extern(); // not nullable
-    externs.push_back(std::move(ext));
-    externlist1 = parse_extern_list1(); // is nullable
-    if (externlist1){
-      for (int i=0; i<externlist1->externs.size(); i++){
-        externs.push_back(std::move(externlist1->externs.at(i)));
-      }
-    }
-    return make_unique<ExternListASTnode>(externs);
+  unique_ptr<ExternASTnode> ext = parse_extern(); // not nullable
+  externs.push_back(std::move(ext));
+  parse_extern_list1(externs);
+    // parse_extern_list1(externlist1); // is nullable
+    // if (externlist1){
+    //   for (int i=0; i<externlist1->externs.size(); i++){
+    //     externs.push_back(std::move(externlist1->externs.at(i)));
+    //   }
+    // }
+    //return make_unique<ExternListASTnode>(externs);
 }
 
 // extern_list1 -> extern extern_list1 | epsilon
