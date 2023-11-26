@@ -68,7 +68,8 @@ public:
   IntASTnode(TOKEN t) : val(std::stoi(t.lexeme)), tok(t){};
   virtual llvm::Value *codegen() override{return nullptr;}
   virtual string to_string(string pre) const override {
-    return "";
+    string ans = pre + "IntASTnode: " + tok.lexeme + nl;
+    return ans;
   };
 };
 
@@ -80,7 +81,8 @@ public:
   FloatASTnode(TOKEN t) : val(std::stof(t.lexeme)), tok(t){};
   virtual llvm::Value *codegen() override{return nullptr;}
   virtual string to_string(string pre) const override {
-    return "";
+    string ans = pre + "FloatASTnode: " + tok.lexeme + nl;
+    return ans;
   };
 };
 
@@ -92,7 +94,8 @@ public:
   BoolASTnode(TOKEN t) : val(noerr_str_to_bool(t.lexeme)), tok(t) {};
   virtual llvm::Value *codegen() override{return nullptr;}
   virtual string to_string(string pre) const override {
-    return "";
+    string ans = pre + "BoolASTnode: " + tok.lexeme + nl;
+    return ans;
   };
 };
 
@@ -103,7 +106,8 @@ public:
   IdentASTnode(TOKEN t) : tok(t), name(t.lexeme){};
   virtual llvm::Value *codegen() override{return nullptr;}
   virtual string to_string(string pre) const override {
-    return "";
+    string ans = pre + "IdentASTnode: " + tok.lexeme + nl;
+    return ans;
   };
 };
 
@@ -193,6 +197,7 @@ public:
   WhileASTnode(unique_ptr<ExprASTnode> e,
                unique_ptr<StmtASTnode> s) : expr(std::move(e)) , stmt(std::move(s)){}
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override;
 };
 
 class ReturnASTnode : public ASTnode{
@@ -201,6 +206,12 @@ public:
   ReturnASTnode(unique_ptr<ExprASTnode> e) : expr(std::move(e)){};
   ReturnASTnode(){};
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string ans = pre + "ReturnASTnode:" + nl;
+    string npre = pre + sp;
+    ans += expr->to_string(npre);
+    return ans;
+  };
 };
 
 class IfASTnode : public ASTnode{
@@ -213,6 +224,7 @@ public:
             unique_ptr<BlockASTnode> e_stmt
             ) : expr(std::move(e)) , block(std::move(b)), else_stmt(std::move(e_stmt)){};
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override;
 };
 
 class StmtASTnode : public ASTnode{

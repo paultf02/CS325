@@ -78,16 +78,50 @@ string FunCallASTnode::to_string(string pre) const {
 };
 
 string BinOpASTnode::to_string(string pre) const {
-  string ans;
+  string ans = pre + "BinOpASTnode:" + nl;
+  string npre = pre + sp;
+  string nnpre = npre + sp;
+  ans += npre + "Binary Operation: " + "enter binop here" + nl;
+  ans += npre + "LHS:" + nl;
+  ans += lhs->to_string(nnpre);
+  ans += npre + "RHS:" + nl;
+  ans += rhs->to_string(nnpre);
   return ans;
 };
 
 string UnOpASTnode::to_string(string pre) const {
-  string ans;
+  string ans = pre + "UnOpASTnode:" + nl;
+  string npre = pre + sp;
+  ans += npre + "Unary Operation: " + "enter unop here" + nl;
+  ans += expr->to_string(npre);
   return ans;
 }
 
 string AssignASTnode::to_string(string pre) const {
-  string ans;
+  string ans = pre + "AssignASTnode:" + nl;
+  string npre = pre + sp;
+  ans += ident->to_string(npre);
+  ans += rhs->to_string(npre);
+  return ans;
+}
+
+string IfASTnode::to_string(string pre) const {
+  string ans = pre + "IfASTnode:" + nl;
+  string npre = pre + sp;
+  string nnpre = npre + sp;
+  ans += expr->to_string(npre);
+  ans += block->to_string(npre);
+  if (else_stmt){
+    ans += npre + "ElseStmt:" + nl;
+    ans += else_stmt->to_string(nnpre);
+  }
+  return ans;
+};
+
+string WhileASTnode::to_string(string pre) const {
+  string ans = pre + "WhileASTnode:" + nl;
+  string npre = pre + sp;
+  ans += expr->to_string(npre);
+  ans += stmt->to_string(npre);
   return ans;
 }

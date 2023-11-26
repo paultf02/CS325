@@ -1,2 +1,3 @@
 things that can return nullptr
 parse_extern
+else_stmt is optional in IfASTNode and is nullptr by default.
