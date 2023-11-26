@@ -8,6 +8,10 @@ using std::unique_ptr;
 using std::vector;
 using std::string;
 
+extern string br;
+extern string sp;
+extern string nl;
+
 //===----------------------------------------------------------------------===//
 // AST nodes
 //===----------------------------------------------------------------------===//
@@ -26,7 +30,8 @@ class ASTnode {
 public:
   virtual ~ASTnode() {};
   virtual llvm::Value *codegen() = 0;
-  virtual string to_string() const {return "";};
+  virtual string to_string(string pre) const {
+    return "not done";};
 };
 
 class BinOpASTnode : public ASTnode{
@@ -39,7 +44,7 @@ public:
                unique_ptr<ExprASTnode> r
                ) : binop(o), lhs(std::move(l)), rhs(std::move(r)){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string() const override {
+  virtual string to_string(string pre) const override {
     return "";
   };
 };
@@ -52,7 +57,7 @@ public:
               unique_ptr<ExprASTnode> e
               ) : unop(o), expr(std::move(e)){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string() const override {
+  virtual string to_string(string pre) const override {
     return "";
   };
 };
@@ -65,7 +70,7 @@ public:
   string name;
   IntASTnode(TOKEN t) : val(std::stoi(t.lexeme)), tok(t){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string() const override {
+  virtual string to_string(string pre) const override {
     return "";
   };
 };
@@ -77,7 +82,7 @@ public:
   string name;
   FloatASTnode(TOKEN t) : val(std::stof(t.lexeme)), tok(t){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string() const override {
+  virtual string to_string(string pre) const override {
     return "";
   };
 };
@@ -89,18 +94,18 @@ public:
   string name;
   BoolASTnode(TOKEN t) : val(noerr_str_to_bool(t.lexeme)), tok(t) {};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string() const override {
+  virtual string to_string(string pre) const override {
     return "";
   };
 };
 
-class IdentASTnode :public ASTnode{
+class IdentASTnode : public ASTnode{
 public:
   TOKEN tok;
   string name;
   IdentASTnode(TOKEN t) : tok(t), name(t.lexeme){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string() const override {
+  virtual string to_string(string pre) const override {
     return "";
   };
 };
@@ -113,7 +118,7 @@ public:
                  unique_ptr<ArgListASTnode> a
                  ) : ident(std::move(i)), arglist(std::move(a)){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string() const override {
+  virtual string to_string(string pre) const override {
     return "";
   };
 };
@@ -145,6 +150,12 @@ public:
                  unique_ptr<IdentASTnode> id
                  ) : vartype(std::move(vt)), ident(std::move(id)){};
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = "";
+    ans += "VarDeclASTnode " + vartype->vartype + sp + ident-> name;
+    return ans;
+  };
 };
 
 class ExprASTnode : public ASTnode{
@@ -222,6 +233,12 @@ public:
   StmtASTnode(unique_ptr<WhileASTnode> w) : whichtype("while_stmt"), while_stmt(std::move(w)) {}; 
   StmtASTnode(unique_ptr<ReturnASTnode> r) : whichtype("return_stmt"), return_stmt(std::move(r)) {};  
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = pre + "StmtASTnode: " + whichtype;
+    
+    return ans;
+  };
 };
 
 class StmtListASTnode : public ASTnode{
@@ -244,6 +261,20 @@ public:
                unique_ptr<StmtListASTnode> sl
                ) : localdecls(std::move(ld)), stmtlist(std::move(sl)){}; 
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = pre + "BlockASTnode" + nl;
+    ans += "local decls here" + nl;
+    // for (auto &ld : localdecls->decls){
+    //   ans += pre + ld->to_string(npre) + nl;
+    // }
+    for (auto &stmt : stmtlist->stmtlist){
+      ans += pre + stmt->to_string(npre) + nl;
+    }
+    ans.pop_back();
+    
+    return ans;
+  };
 };
 
 class ParamASTnode : public ASTnode{
@@ -255,6 +286,13 @@ public:
               unique_ptr<IdentASTnode> id
               ) : vartype(std::move(vt)), ident(std::move(id)){};
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = pre + "ParamASTnode " + vartype->vartype + sp + ident->name;
+        
+    return ans;
+  };
+
 };
 
 class ParamListASTnode : public ASTnode{
@@ -267,6 +305,16 @@ public:
   };
   ParamListASTnode(){};
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = pre + "ParamListASTnode" + nl;
+    for (auto &p : paramlist){
+      ans += pre + p->to_string(npre) + nl;
+    }
+    ans.pop_back();
+    
+    return ans;
+  };
 };
 
 class TypeSpecASTnode : public ASTnode{
@@ -294,6 +342,13 @@ public:
                   params(std::move(ps)),
                   block(std::move(b)) {};
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = "";
+    ans += pre + "FunDeclASTnode " + ident->name + nl;
+    ans += pre + block->to_string(npre);
+    return ans;
+  };
 };
 
 class ExternASTnode : public ASTnode{
@@ -307,6 +362,13 @@ public:
                 unique_ptr<ParamListASTnode> ps
                 ) : typespec(std::move(ts)), ident(std::move(id)), params(std::move(ps)){};
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = "";
+    ans += pre + "ExternASTnode " + typespec->vartype->vartype + sp + ident->name;
+
+    return ans;
+  };
 };
 
 class DeclASTnode : public ASTnode{
@@ -319,6 +381,16 @@ public:
   DeclASTnode(unique_ptr<FunDeclASTnode> fd
              ) : isVar(false), fundecl(std::move(fd)){}
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = "";
+    if (isVar){
+      ans += vardecl->to_string(npre);
+    } else {
+      ans += fundecl->to_string(npre);
+    }
+    return ans;
+  };
 };
 
 class ExternListASTnode : public ASTnode{
@@ -329,7 +401,16 @@ public:
       externs.push_back(std::move(e.at(i)));
     }
   };
-  virtual llvm::Value *codegen() override {return nullptr;}
+  virtual llvm::Value *codegen() override {return nullptr;};
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = "";
+    for (auto &e : externs){
+      ans += e->to_string(npre) + nl;
+    }
+    ans.pop_back();
+    return ans;
+  };
 };
 
 class DeclListASTnode : public ASTnode{
@@ -341,6 +422,15 @@ public:
     }
   };
   virtual llvm::Value *codegen() override {return nullptr;}
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = "";
+    for (auto &d : decls){
+      ans += pre + d->to_string(npre) + nl;
+    }
+    ans.pop_back();
+    return ans;
+  };
 };
 
 class ProgramASTnode : public ASTnode{
@@ -353,7 +443,16 @@ public:
   ProgramASTnode(unique_ptr<ExternListASTnode> el, 
                  unique_ptr<DeclListASTnode> dl) : externlist(std::move(el)), decllist(std::move(dl)){}
 
-  virtual llvm::Value *codegen() override {return nullptr;}
+  virtual llvm::Value *codegen() override {
+    return nullptr;
+  };
+  virtual string to_string(string pre) const override {
+    string npre = pre + sp;
+    string ans = pre + "ProgramASTnode" + nl;
+    ans += pre + externlist->to_string(npre) + nl;
+    ans += pre + decllist->to_string(npre);
+    return ans;
+  };
 };
 
 // class LocalDeclASTnode : public ASTnode{

@@ -89,8 +89,11 @@ static std::unique_ptr<llvm::Module> TheModule;
 // AST Printer
 //===----------------------------------------------------------------------===//
 
+string br = "|-";
+string sp = " ";
+string nl = "\n";
 inline llvm::raw_ostream &operator<<(llvm::raw_ostream &os, const ASTnode &ast) {
-  os << ast.to_string();
+  os << ast.to_string("");
   return os;
 }
 
