@@ -121,6 +121,7 @@ public:
 
   FunCallASTnode(unique_ptr<IdentASTnode> i,
                  vector<unique_ptr<ExprASTnode>> &al){
+    ident = std::move(i);
     for (auto &elem : al){
       arglist.push_back(std::move(elem));
     }

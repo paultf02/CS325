@@ -64,7 +64,7 @@ unique_ptr<ParamListASTnode> parse_param_list1();
 void parse_local_decls(vector<unique_ptr<DeclASTnode>> &decllist);
 unique_ptr<DeclASTnode> parse_local_decl();
 // unique_ptr<StmtListASTnode> parse_stmt_list();
-void parse_stmt_list(vector<StmtASTnode> &stmtlist);
+void parse_stmt_list(vector<unique_ptr<StmtASTnode>> &stmtlist);
 unique_ptr<StmtASTnode> parse_stmt();
 unique_ptr<ExprASTnode> parse_expr_stmt();
 unique_ptr<WhileASTnode> parse_while_stmt();
