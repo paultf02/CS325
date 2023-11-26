@@ -3,6 +3,10 @@
 
 using std::string;
 
+extern string br;
+extern string sp;
+extern string nl;
+
 string StmtASTnode::to_string(string pre) const {
   int i = 1;
   string npre = pre;
@@ -35,3 +39,55 @@ string BlockASTnode::to_string(string pre) const {
   }    
   return ans;
 };
+
+string ExprASTnode::to_string(string pre) const {
+  string ans;
+  ans = pre + "ExprASTnode:" + nl;
+  string npre = pre + sp;
+  if (type == "assign"){
+    ans += assign->to_string(npre);
+  } else if (type == "binop"){
+    ans += binop->to_string(npre);
+  } else if (type == "unop"){
+    ans += unop->to_string(npre);
+  } else if (type == "ident"){
+    ans += ident->to_string(npre);
+  } else if (type == "funcall"){
+    ans += funcall->to_string(npre);
+  } else if (type == "intlit"){
+    ans += intlit->to_string(npre);
+  } else if (type == "floatlit"){
+    ans += floatlit->to_string(npre);
+  } else if (type == "boollit"){
+    ans += boollit->to_string(npre);
+  }
+  return ans;
+};
+
+string FunCallASTnode::to_string(string pre) const {
+  string ans;
+  ans = pre + "FunCallASTnode:" + nl;
+  string npre = pre + sp;
+  ans += ident->to_string(npre);
+  ans += npre + "Args:" + nl;
+  string nnpre = npre + sp;
+  for (auto &elem : arglist){
+    ans += elem->to_string(nnpre);
+  }
+  return ans;
+};
+
+string BinOpASTnode::to_string(string pre) const {
+  string ans;
+  return ans;
+};
+
+string UnOpASTnode::to_string(string pre) const {
+  string ans;
+  return ans;
+}
+
+string AssignASTnode::to_string(string pre) const {
+  string ans;
+  return ans;
+}

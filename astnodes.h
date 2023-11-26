@@ -45,9 +45,7 @@ public:
                unique_ptr<ExprASTnode> r
                ) : binop(o), lhs(std::move(l)), rhs(std::move(r)){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string(string pre) const override {
-    return "";
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class UnOpASTnode : public ASTnode{
@@ -58,9 +56,7 @@ public:
               unique_ptr<ExprASTnode> e
               ) : unop(o), expr(std::move(e)){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string(string pre) const override {
-    return "";
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class IntASTnode : public ASTnode {
@@ -129,9 +125,7 @@ public:
   }
 
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string(string pre) const override {
-    return "";
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class VarTypeASTnode : public ASTnode{
@@ -177,7 +171,8 @@ public:
   ExprASTnode(unique_ptr<IntASTnode> in) : type("intlit"), intlit(std::move(in)){};
   ExprASTnode(unique_ptr<FloatASTnode> fl) : type("floatlit"), floatlit(std::move(fl)){};
   ExprASTnode(unique_ptr<BoolASTnode> bo) : type("boollit"), boollit(std::move(bo)){};
-  virtual llvm::Value *codegen() override {return nullptr;}
+  virtual llvm::Value *codegen() override {return nullptr;};
+  virtual string to_string(string pre) const override; 
 };
 
 class AssignASTnode : public ASTnode{
@@ -187,7 +182,8 @@ public:
   AssignASTnode(unique_ptr<IdentASTnode> i,
                 unique_ptr<ExprASTnode> r
                 ) : ident(std::move(i)) , rhs(std::move(r)){};
-  virtual llvm::Value *codegen() override {return nullptr;}
+  virtual llvm::Value *codegen() override {return nullptr;};
+  virtual string to_string(string pre) const override;
 };
 
 class WhileASTnode : public ASTnode{
