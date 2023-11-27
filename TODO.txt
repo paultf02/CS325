@@ -1,7 +1,10 @@
 NEED TO DISPLAY THE BINOPS AND UNOPS
 Add line and column numbers to AST
-If we run out of errors come up with an error
-Come up with type checking errors
+If we run out of tokens come up with an error
+Make TypeError class
+Make ScopeError class
+
+
 
 After building ast, ast seems fine for:
 addition

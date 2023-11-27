@@ -11,45 +11,29 @@
 
 using std::unique_ptr;
 
-// extern std::deque<TOKEN> program_tokens;
-// extern int curTokIndex;
-
 extern TOKEN CurTok;
 extern std::deque<TOKEN> tok_buffer;
 
-// defined in loaddata.h
-// typedef std::vector<std::string> sentence;
-// typedef std::vector<sentence> production_options;
-
-extern std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
+// defined in mccomp.cpp
+extern std::vector<std::string> nonterminals;
 extern std::vector<production_options> rhslist;
 extern std::vector<std::string> terminals;
-
-//below are our dictionaries for first and follow sets
 extern std::map<std::string, bool> nullable;
 extern std::map<std::string, std::vector<std::string>> first;
 extern std::map<std::string, std::vector<std::string>> follow;
 
-extern unique_ptr<ProgramASTnode> programrootnode;
-
 TOKEN getNextToken();
 void putBackToken(TOKEN tok);
-
-// int word_to_type(std::string word);
 enum TOKEN_TYPE word_to_type(std::string word);
 std::vector<int> terminals_to_int(std::vector<std::string> terminals);
 
 unique_ptr<ProgramASTnode> parser();
 unique_ptr<ProgramASTnode> parse_program();
-// unique_ptr<ExternListASTnode> parse_extern_list();
 void parse_extern_list(vector<unique_ptr<ExternASTnode>> &externlist);
-// unique_ptr<DeclListASTnode> parse_decl_list();
 void parse_decl_list(vector<unique_ptr<DeclASTnode>> &decllist);
 unique_ptr<ExternASTnode> parse_extern();
-//unique_ptr<ExternListASTnode> parse_extern_list1();
 void parse_extern_list1(vector<unique_ptr<ExternASTnode>> &externlist);
 unique_ptr<DeclASTnode> parse_decl();
-// unique_ptr<DeclListASTnode> parse_decl_list1();
 void parse_decl_list1(vector<unique_ptr<DeclASTnode>> &decllist);
 unique_ptr<TypeSpecASTnode>parse_type_spec();
 unique_ptr<ParamListASTnode> parse_params();
@@ -60,10 +44,8 @@ unique_ptr<BlockASTnode> parse_block();
 unique_ptr<ParamListASTnode> parse_param_list();
 unique_ptr<ParamASTnode> parse_param();
 unique_ptr<ParamListASTnode> parse_param_list1();
-// unique_ptr<DeclListASTnode> parse_local_decls();
 void parse_local_decls(vector<unique_ptr<DeclASTnode>> &decllist);
 unique_ptr<DeclASTnode> parse_local_decl();
-// unique_ptr<StmtListASTnode> parse_stmt_list();
 void parse_stmt_list(vector<unique_ptr<StmtASTnode>> &stmtlist);
 unique_ptr<StmtASTnode> parse_stmt();
 unique_ptr<ExprASTnode> parse_expr_stmt();
@@ -86,15 +68,9 @@ unique_ptr<ExprASTnode> parse_rval5();
 unique_ptr<BinOpASTnode> parse_rval5_lf();
 unique_ptr<ExprASTnode> parse_rval6();
 unique_ptr<ExprASTnode> parse_rval7();
-// unique_ptr<ArgListASTnode> parse_args();
 void parse_args(vector<unique_ptr<ExprASTnode>> &arglist);
-// unique_ptr<ArgListASTnode> parse_arg_list();
 void parse_arg_list(vector<unique_ptr<ExprASTnode>> &arglist);
-// unique_ptr<ArgListASTnode> parse_arg_list1();
 void parse_arg_list1(vector<unique_ptr<ExprASTnode>> &arglist);
-
-
-
 
 class ParseError : public std::exception {
   TOKEN tok;

@@ -64,8 +64,6 @@ std::map<std::string, bool> nullable; //dictionaries for ifnullable, first and f
 std::map<std::string, std::vector<std::string>> first;
 std::map<std::string, std::vector<std::string>> follow;
 
-std::unique_ptr<ProgramASTnode> programrootnode;
-
 // AST Printer
 string br = "|-";
 string sp = " ";
@@ -76,9 +74,9 @@ inline llvm::raw_ostream &operator<<(llvm::raw_ostream &os, const ASTnode &ast) 
 }
 
 // Code Generation
-static llvm::LLVMContext TheContext;
-static llvm::IRBuilder<> Builder(TheContext);
-static std::unique_ptr<llvm::Module> TheModule;
+llvm::LLVMContext TheContext;
+std::unique_ptr<llvm::Module> TheModule;
+llvm::IRBuilder<> Builder(TheContext);
 
 // Main driver code.
 int main(int argc, char **argv) {
@@ -95,7 +93,7 @@ int main(int argc, char **argv) {
   columnNo = 1;
   load_data(); // load first and follow set from file, load list of terminals, load list of production lhs and rhs respectively
   getNextToken(); // get the first token
-  programrootnode = parser(); // Run the parser now.
+  std::unique_ptr<ProgramASTnode> programrootnode = parser(); // Run the parser now.
   fprintf(stderr, "Lexing and Parsing Finished\n");
   llvm::outs() << *programrootnode << "\n";
   fprintf(stderr, "Printing AST Finished\n");
