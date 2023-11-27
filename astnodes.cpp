@@ -8,6 +8,7 @@ extern string sp;
 extern string nl;
 
 string StmtASTnode::to_string(string pre) const {
+  std::cout << "in StmtASTnode\n";
   int i = 1;
   string npre = pre;
   // string ans = pre + "StmtASTnode: " + whichtype;
@@ -15,8 +16,10 @@ string StmtASTnode::to_string(string pre) const {
   if (whichtype=="expr_stmt"){
       ans = expr_stmt->to_string(npre);
   } else if (whichtype=="block"){
-      // ans = block->to_string(npre);
-      ans = npre + "block node" + nl;
+      std::cout<< "beginning of block in stmtast\n";
+      ans = block->to_string(npre);
+      // ans = npre + "block node" + nl;
+      std::cout<< "end of block in stmtast\n";
   } else if (whichtype=="if_stmt"){
       ans = if_stmt->to_string(npre);
   } else if (whichtype=="while_stmt"){
@@ -24,6 +27,7 @@ string StmtASTnode::to_string(string pre) const {
   } else if (whichtype=="return_stmt"){
       ans = return_stmt->to_string(npre);
   };
+  std::cout<< "end of stmtast\n";
   return ans;
 };
 
@@ -124,7 +128,9 @@ string WhileASTnode::to_string(string pre) const {
   std::cout << "in WhileASTnode\n";
   string ans = pre + "WhileASTnode:" + nl;
   string npre = pre + sp;
+  std::cout << "in while loop before printing expr\n";
   ans += expr->to_string(npre);
+  std::cout << "in while loop after printing expr and before printing stmt\n";
   ans += stmt->to_string(npre);
   return ans;
 }

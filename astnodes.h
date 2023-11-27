@@ -210,14 +210,20 @@ public:
 
 class ReturnASTnode : public ASTnode{
 public:
+  bool isVoid;
   unique_ptr<ExprASTnode> expr;
-  ReturnASTnode(unique_ptr<ExprASTnode> e) : expr(std::move(e)){};
-  ReturnASTnode(){};
+  ReturnASTnode(unique_ptr<ExprASTnode> e) : isVoid(false), expr(std::move(e)){};
+  ReturnASTnode() : isVoid(true){};
   virtual llvm::Value *codegen() override {return nullptr;}
   virtual string to_string(string pre) const override {
+    std::cout << "in ReturnASTnode\n";
     string ans = pre + "ReturnASTnode:" + nl;
     string npre = pre + sp;
-    ans += expr->to_string(npre);
+    if (isVoid){
+      ans += npre + "void" + nl;
+    } else {
+      ans += expr->to_string(npre);
+    }
     return ans;
   };
 };
