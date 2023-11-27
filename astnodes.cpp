@@ -41,6 +41,7 @@ string BlockASTnode::to_string(string pre) const {
 };
 
 string ExprASTnode::to_string(string pre) const {
+  std::cout << "in ExprASTnode with type " + type + "\n";
   string ans;
   ans = pre + "ExprASTnode:" + nl;
   string npre = pre + sp;
@@ -98,6 +99,7 @@ string UnOpASTnode::to_string(string pre) const {
 }
 
 string AssignASTnode::to_string(string pre) const {
+  std::cout << "In AssignASTnode\n";
   string ans = pre + "AssignASTnode:" + nl;
   string npre = pre + sp;
   ans += ident->to_string(npre);
@@ -119,6 +121,7 @@ string IfASTnode::to_string(string pre) const {
 };
 
 string WhileASTnode::to_string(string pre) const {
+  std::cout << "in WhileASTnode\n";
   string ans = pre + "WhileASTnode:" + nl;
   string npre = pre + sp;
   ans += expr->to_string(npre);

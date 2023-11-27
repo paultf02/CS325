@@ -579,6 +579,7 @@ unique_ptr<FunDeclASTnode> parse_fun_decl(){
 
 // params -> param_list | 'void' | epsilon
 unique_ptr<ParamListASTnode> parse_params(){
+  vector<unique_ptr<ParamASTnode>> empty;
   sentence prod0 = rhslist[lhs_to_index("params")][0];
   unique_ptr<ParamListASTnode> paramlist;
   if (in_sentence_first(CurTok, prod0)){
@@ -586,9 +587,9 @@ unique_ptr<ParamListASTnode> parse_params(){
     return std::move(paramlist);
   } else if (CurTok.type == VOID_TOK) {
     getNextToken();
-    return make_unique<ParamListASTnode>();
+    return make_unique<ParamListASTnode>(empty);
   } else {
-    return make_unique<ParamListASTnode>();
+    return make_unique<ParamListASTnode>(empty);
   }
 }
 

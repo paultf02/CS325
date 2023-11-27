@@ -1,3 +1,23 @@
+NEED TO DISPLAY THE BINOPS AND UNOPS
+
+After building ast, ast seems fine for:
+addition
+cosine
+factorial
+fibonacci
+palindrome
+pi
+recurse
+rfact
+unary
+void - segfault
+
+
+
+
+
+
+
 Refer to each other:
 BlockASTnode refers to StmtASTnode
 StmtASTnode refers to BlockASTnode
