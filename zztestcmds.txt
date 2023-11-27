@@ -1,0 +1,11 @@
+./mccomp ./tests/addition/addition.c
+./mccomp ./tests/cosine/cosine.c
+./mccomp ./tests/factorial/factorial.c
+./mccomp ./tests/fibonacci/fibonacci.c
+./mccomp ./tests/palindrome/palindrome.c
+./mccomp ./tests/pi/pi.c
+./mccomp ./tests/recurse/recurse.c
+./mccomp ./tests/rfact/rfact.c
+./mccomp ./tests/unary/unary.c
+./mccomp ./tests/void/void.c
+./mccomp ./tests/while/while.c
