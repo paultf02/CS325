@@ -1,5 +1,7 @@
 NEED TO DISPLAY THE BINOPS AND UNOPS
-Do to_string for the last remaining astnodes
+Add line and column numbers to AST
+If we run out of errors come up with an error
+Come up with type checking errors
 
 After building ast, ast seems fine for:
 addition
@@ -46,13 +48,13 @@ Remove left recursion, DONE
 Compute first and follow sets, DONE
 Use appropriate lookahead for certain cases to determine production to use, DONE (not for all grammars though)
 Make a predictive recursive descent parser. No backtracking. DONE
-Create abstract syntax tree
-    parse each expression
-    create appropriate ASTnode classes
-    figure out how to use std::move
+Create abstract syntax tree DONE
+    parse each expression DONE
+    create appropriate ASTnode classes DONE
+    figure out how to use std::move DONE
 If we run out of tokens then come up with an error
 Pretty print abstract syntax tree (see clang AST output and model it on that) by implementing to string method
-Make error message exception class
+Make error message exception class DONE
 Turn abstract syntax tree into LLVM IR by running recursive codegen() method
     This will require type checking and variable scope (any other semantic checks?)
 A local_decl is exactly the same as var_decl;

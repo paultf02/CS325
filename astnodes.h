@@ -29,8 +29,8 @@ class DeclASTnode;
 class ASTnode {
 public:
   virtual ~ASTnode() {};
-  // virtual llvm::Value *codegen() = 0;
-  virtual llvm::Value *codegen() {return nullptr;};
+  virtual llvm::Value *codegen() = 0;
+  // virtual llvm::Value *codegen() {return nullptr;};
   virtual string to_string(string pre) const {return pre + "not done" + nl;};
 };
 

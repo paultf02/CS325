@@ -286,50 +286,50 @@ string ProgramASTnode::to_string(string pre) const {
   return ans;
 };
 
-Value* BinOpASTnode::codegen(){return nullptr;};
+Value* BinOpASTnode::codegen(){};
 
-Value* UnOpASTnode::codegen(){return nullptr;};
+Value* UnOpASTnode::codegen(){};
 
-Value* IntASTnode::codegen(){return nullptr;};
+Value* IntASTnode::codegen(){};
 
-Value* FloatASTnode::codegen(){return nullptr;};
+Value* FloatASTnode::codegen(){};
 
-Value* BoolASTnode::codegen(){return nullptr;};
+Value* BoolASTnode::codegen(){};
 
-Value* IdentASTnode::codegen(){return nullptr;};
+Value* IdentASTnode::codegen(){};
 
-Value* FunCallASTnode::codegen(){return nullptr;};
+Value* FunCallASTnode::codegen(){};
 
-Value* VarTypeASTnode::codegen(){return nullptr;};
+Value* VarTypeASTnode::codegen(){};
 
-Value* VarDeclASTnode::codegen(){return nullptr;};
+Value* VarDeclASTnode::codegen(){};
 
-Value* ExprASTnode::codegen(){return nullptr;};
+Value* ExprASTnode::codegen(){};
 
-Value* AssignASTnode::codegen(){return nullptr;};
+Value* AssignASTnode::codegen(){};
 
-Value* WhileASTnode::codegen(){return nullptr;};
+Value* WhileASTnode::codegen(){};
 
-Value* ReturnASTnode::codegen(){return nullptr;};
+Value* ReturnASTnode::codegen(){};
 
-Value* IfASTnode::codegen(){return nullptr;};
+Value* IfASTnode::codegen(){};
 
-Value* StmtASTnode::codegen(){return nullptr;};
+Value* StmtASTnode::codegen(){};
 
-Value* BlockASTnode::codegen(){return nullptr;};
+Value* BlockASTnode::codegen(){};
 
-Value* ParamASTnode::codegen(){return nullptr;};
+Value* ParamASTnode::codegen(){};
 
-Value* ParamListASTnode::codegen(){return nullptr;};
+Value* ParamListASTnode::codegen(){};
 
-Value* TypeSpecASTnode::codegen(){return nullptr;};
+Value* TypeSpecASTnode::codegen(){};
 
-Value* FunProtoASTnode::codegen(){return nullptr;};
+Value* FunProtoASTnode::codegen(){};
 
-Value* FunDeclASTnode::codegen(){return nullptr;};
+Value* FunDeclASTnode::codegen(){};
 
-Value* ExternASTnode::codegen(){return nullptr;};
+Value* ExternASTnode::codegen(){};
 
-Value* DeclASTnode::codegen(){return nullptr;};
+Value* DeclASTnode::codegen(){};
 
-Value* ProgramASTnode::codegen(){return nullptr;};
+Value* ProgramASTnode::codegen(){};
