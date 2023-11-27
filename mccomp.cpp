@@ -41,9 +41,6 @@
 #include <system_error>
 #include <utility>
 #include <vector>
- // 
-// using namespace llvm;
-// using namespace llvm::sys;
 
 FILE *pFile;
 
@@ -53,10 +50,6 @@ bool BoolVal;              // Filled in if BOOL_LIT
 float FloatVal;            // Filled in if FLOAT_LIT
 std::string StringVal;     // Filled in if String Literal
 int lineNo, columnNo; // not static because used in mccomp.cpp
-
-// std::deque<TOKEN> program_tokens;
-// int curTokIndex = 0;
-
 TOKEN CurTok;
 std::deque<TOKEN> tok_buffer;
 
@@ -64,31 +57,16 @@ std::string grammarversion = "8";
 std::string csvfilename = "./firstfollow/firstfollowg"+grammarversion+"sep.csv";
 std::string grammarfilename = "./grammars/transformedgrammar"+grammarversion+".txt";
 std::string terminalfilename = "./grammars/terminals2.txt";
-
-
 std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
 std::vector<production_options> rhslist;
 std::vector<std::string> terminals;
-//below are our dictionaries for first and follow sets
-std::map<std::string, bool> nullable;
+std::map<std::string, bool> nullable; //dictionaries for ifnullable, first and follow sets
 std::map<std::string, std::vector<std::string>> first;
 std::map<std::string, std::vector<std::string>> follow;
 
 std::unique_ptr<ProgramASTnode> programrootnode;
 
-
-//===----------------------------------------------------------------------===//
-// Code Generation
-//===----------------------------------------------------------------------===//
-
-static llvm::LLVMContext TheContext;
-static llvm::IRBuilder<> Builder(TheContext);
-static std::unique_ptr<llvm::Module> TheModule;
-
-//===----------------------------------------------------------------------===//
 // AST Printer
-//===----------------------------------------------------------------------===//
-
 string br = "|-";
 string sp = " ";
 string nl = "\n";
@@ -97,13 +75,12 @@ inline llvm::raw_ostream &operator<<(llvm::raw_ostream &os, const ASTnode &ast) 
   return os;
 }
 
-//===----------------------------------------------------------------------===//
+// Code Generation
+static llvm::LLVMContext TheContext;
+static llvm::IRBuilder<> Builder(TheContext);
+static std::unique_ptr<llvm::Module> TheModule;
+
 // Main driver code.
-//===----------------------------------------------------------------------===//
-
-
-
-
 int main(int argc, char **argv) {
   if (argc == 2) {
     pFile = fopen(argv[1], "r");
@@ -114,16 +91,35 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  // initialize line number and column numbers to zero
-  lineNo = 1;
+  lineNo = 1; // initialize line number and column numbers to zero
   columnNo = 1;
+  load_data(); // load first and follow set from file, load list of terminals, load list of production lhs and rhs respectively
+  getNextToken(); // get the first token
+  programrootnode = parser(); // Run the parser now.
+  fprintf(stderr, "Lexing and Parsing Finished\n");
+  llvm::outs() << *programrootnode << "\n";
+  fprintf(stderr, "Printing AST Finished\n");
 
+  // Start printing final IR
+  // Print out all of the generated code into a file called output.ll or to the terminal
   
+  auto Filename = "output.ll";
+  std::error_code EC;
+  llvm::raw_fd_ostream dest(Filename, EC, llvm::sys::fs::OF_None);
+  if (EC) {
+    llvm::errs() << "Could not open file: " << EC.message();
+    return 1;
+  }
+  // Make the module, which holds all the code.
+  TheModule = std::make_unique<llvm::Module>("mini-c", TheContext);
+  // TheModule->llvm::Module::print(dest, nullptr); // print IR to file output.ll
+  TheModule->print(llvm::errs(), nullptr); // print IR to terminal
+  // End printing final IR
+  fclose(pFile); // close the file that contains the code that was parsed
+  return 0;
+}
 
-  // if we are parsing and lexing at the same time then we do not do this part of the code.
-  // get the first token
-  getNextToken();
-  // program_tokens.push_back(CurTok);
+ // program_tokens.push_back(CurTok);
   // while (CurTok.type != EOF_TOK) {
   //   fprintf(stderr, "Token: %s with type %d\n", CurTok.lexeme.c_str(), CurTok.type);
   //   getNextToken();
@@ -138,34 +134,3 @@ int main(int argc, char **argv) {
   // for (int i = 0; i<program_tokens.size(); i++){
   //   fprintf(stderr, "Token: %s with type %d\n", program_tokens[i].lexeme.c_str(), program_tokens[i].type);
   // }
-      
-  // Make the module, which holds all the code.
-  TheModule = std::make_unique<llvm::Module>("mini-c", TheContext);
-
-  // load first and follow set from file, load list of terminals, load list of production lhs and rhs respectively
-  load_data();
-
-  // Run the parser now.
-  programrootnode = parser();
-  fprintf(stderr, "Parsing Finished\n");
-  // std::cout << std::to_string(nonterminal_index("block"))<<'\n';
-
-  llvm::outs() << *programrootnode << "\n";
-
-  //********************* Start printing final IR **************************
-  // Print out all of the generated code into a file called output.ll
-  auto Filename = "output.ll";
-  std::error_code EC;
-  llvm::raw_fd_ostream dest(Filename, EC, llvm::sys::fs::OF_None);
-
-  if (EC) {
-    llvm::errs() << "Could not open file: " << EC.message();
-    return 1;
-  }
-  // TheModule->print(errs(), nullptr); // print IR to terminal
-  TheModule->llvm::Module::print(dest, nullptr);
-  //********************* End printing final IR ****************************
-
-  fclose(pFile); // close the file that contains the code that was parsed
-  return 0;
-}

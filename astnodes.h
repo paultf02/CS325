@@ -16,9 +16,6 @@ extern string nl;
 //===----------------------------------------------------------------------===//
 // AST nodes
 //===----------------------------------------------------------------------===//
-// 
-/// ASTnode - Base class for all AST nodes.
-
 
 class BlockASTnode;
 class StmtASTnode;
@@ -26,6 +23,7 @@ class ExprASTnode;
 class AssignASTnode;
 class DeclASTnode;
 
+// ASTnode - Base class for all AST nodes.
 class ASTnode {
 public:
   virtual ~ASTnode() {};
