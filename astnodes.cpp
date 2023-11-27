@@ -1,7 +1,9 @@
 #include "astnodes.h"
+#include "llvm/IR/Value.h"
 #include <string>
 
 using std::string;
+using llvm::Value;
 
 extern string br;
 extern string sp;
@@ -156,7 +158,10 @@ string IdentASTnode::to_string(string pre) const {
   return ans;
 };
 
-// vartypeastnode to string not implemented yet
+string VarTypeASTnode::to_string(string pre) const {
+  string ans = pre + "VarTypeASTnode: " + vartype + nl;
+  return ans;
+}
 
 string VarDeclASTnode::to_string(string pre) const {
   std::cout << "called VarDeclASTnode\n";
@@ -204,7 +209,10 @@ string ParamListASTnode::to_string(string pre) const {
   return ans;
 };
 
-// typespecastnode does not have to_string
+string TypeSpecASTnode::to_string(string pre) const {
+  string ans = pre + "TypeSpecASTnode: " + get_type() + nl;
+  return ans;
+}
 
 string FunProtoASTnode::to_string(string pre) const {
   std::cout << "called FunProtoASTnode\n";
@@ -278,3 +286,50 @@ string ProgramASTnode::to_string(string pre) const {
   return ans;
 };
 
+Value* BinOpASTnode::codegen(){return nullptr;};
+
+Value* UnOpASTnode::codegen(){return nullptr;};
+
+Value* IntASTnode::codegen(){return nullptr;};
+
+Value* FloatASTnode::codegen(){return nullptr;};
+
+Value* BoolASTnode::codegen(){return nullptr;};
+
+Value* IdentASTnode::codegen(){return nullptr;};
+
+Value* FunCallASTnode::codegen(){return nullptr;};
+
+Value* VarTypeASTnode::codegen(){return nullptr;};
+
+Value* VarDeclASTnode::codegen(){return nullptr;};
+
+Value* ExprASTnode::codegen(){return nullptr;};
+
+Value* AssignASTnode::codegen(){return nullptr;};
+
+Value* WhileASTnode::codegen(){return nullptr;};
+
+Value* ReturnASTnode::codegen(){return nullptr;};
+
+Value* IfASTnode::codegen(){return nullptr;};
+
+Value* StmtASTnode::codegen(){return nullptr;};
+
+Value* BlockASTnode::codegen(){return nullptr;};
+
+Value* ParamASTnode::codegen(){return nullptr;};
+
+Value* ParamListASTnode::codegen(){return nullptr;};
+
+Value* TypeSpecASTnode::codegen(){return nullptr;};
+
+Value* FunProtoASTnode::codegen(){return nullptr;};
+
+Value* FunDeclASTnode::codegen(){return nullptr;};
+
+Value* ExternASTnode::codegen(){return nullptr;};
+
+Value* DeclASTnode::codegen(){return nullptr;};
+
+Value* ProgramASTnode::codegen(){return nullptr;};
