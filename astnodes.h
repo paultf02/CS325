@@ -35,12 +35,14 @@ public:
 class BinOpASTnode : public ASTnode{
 public:
   TOKEN_TYPE binop;
+  TOKEN tok;
   unique_ptr<ExprASTnode> lhs;
   unique_ptr<ExprASTnode> rhs;
   BinOpASTnode(TOKEN_TYPE o,
                unique_ptr<ExprASTnode> l,
-               unique_ptr<ExprASTnode> r
-               ) : binop(o), lhs(std::move(l)), rhs(std::move(r)){};
+               unique_ptr<ExprASTnode> r,
+               TOKEN t
+               ) : binop(o), tok(t), lhs(std::move(l)), rhs(std::move(r)){};
   virtual llvm::Value *codegen() override;
   virtual string to_string(string pre) const override;
 };
@@ -48,10 +50,12 @@ public:
 class UnOpASTnode : public ASTnode{
 public:
   TOKEN_TYPE unop;
+  TOKEN tok;
   unique_ptr<ExprASTnode> expr;
   UnOpASTnode(TOKEN_TYPE o,
-              unique_ptr<ExprASTnode> e
-              ) : unop(o), expr(std::move(e)){};
+              unique_ptr<ExprASTnode> e,
+              TOKEN t
+              ) : unop(o), tok(t), expr(std::move(e)){};
   virtual llvm::Value *codegen() override;
   virtual string to_string(string pre) const override;
 };

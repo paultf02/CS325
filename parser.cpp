@@ -33,6 +33,14 @@ void A(){
 }
 */
 
+// we will only need look ahead if we are parsing a lhs term and curtok as mentioned
+// in ./grammars/needlookaheadg9
+// decl, return_stmt, expr, rval, rval1, rval2, rval3, rval4, rval5, rval7
+// apart from the above exceptions, CurTok will be in exactly one of the first sets of the 
+// possible production options
+// if not then there is a syntax error
+// for a nonterminal that is nullable, we need to check if it has returned a nullptr
+
 int lhs_to_index(string lhs){
   int ans;
   auto it = std::find(nonterminals.begin(), nonterminals.end(), lhs);
@@ -155,6 +163,7 @@ bool in_sentence_first(TOKEN &tok, sentence &prod){
 
 }
 
+
 unique_ptr<ProgramASTnode> parser(){
   // string name = "arg_list2";
   // std::cout << "name=" + name + " index=" << lhs_to_index(name) << '\n';
@@ -164,14 +173,6 @@ unique_ptr<ProgramASTnode> parser(){
   // std::cout << root->s << '\n';
   return std::move(root);
 }
-
-// we will only need look ahead if we are parsing a lhs term and curtok as mentioned
-// in ./grammars/needlookaheadg9
-// decl, return_stmt, expr, rval, rval1, rval2, rval3, rval4, rval5, rval7
-// apart from the above exceptions, CurTok will be in exactly one of the first sets of the 
-// possible production options
-// if not then there is a syntax error
-// for a nonterminal that is nullable, we need to check if it has returned a nullptr
 
 // do you need to fill the below in so that we can eat the EOF?
 // start -> program EOF
@@ -1023,9 +1024,11 @@ unique_ptr<ExprASTnode> parse_rval(){
 // rval_lf -> '||' rval | epsilon
 unique_ptr<BinOpASTnode> parse_rval_lf(){
   if (CurTok.type == OR) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval();
-    return make_unique<BinOpASTnode>(OR, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(OR, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else {
     return nullptr;
   }
@@ -1046,9 +1049,11 @@ unique_ptr<ExprASTnode> parse_rval1(){
 // rval1_lf -> '&&' rval1 | epsilon
 unique_ptr<BinOpASTnode> parse_rval1_lf(){
   if (CurTok.type == AND) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval1();
-    return make_unique<BinOpASTnode>(AND, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(AND, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else {
     return nullptr;
   }
@@ -1069,13 +1074,17 @@ unique_ptr<ExprASTnode> parse_rval2(){
 // rval2_lf -> '==' rval2 | '!=' rval2 | epsilon
 unique_ptr<BinOpASTnode> parse_rval2_lf(){
   if (CurTok.type == EQ) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval2();
-    return make_unique<BinOpASTnode>(EQ, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(EQ, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else if (CurTok.type == NE) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval2();
-    return make_unique<BinOpASTnode>(NE, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(NE, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else {
     return nullptr;
   }
@@ -1096,21 +1105,29 @@ unique_ptr<ExprASTnode> parse_rval3(){
 // rval3_lf -> '<=' rval3 | '<' rval3 | '>=' rval3 | '>' rval3 | epsilon
 unique_ptr<BinOpASTnode> parse_rval3_lf(){
   if (CurTok.type == LE) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval3();
-    return make_unique<BinOpASTnode>(LE, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(LE, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else if (CurTok.type == LT) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval3();
-    return make_unique<BinOpASTnode>(LT, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(LT, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else if (CurTok.type == GE) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval3();
-    return make_unique<BinOpASTnode>(GE, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(GE, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else if (CurTok.type == GT) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval3();
-    return make_unique<BinOpASTnode>(GT, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(GT, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else {
     return nullptr;
   }
@@ -1131,13 +1148,17 @@ unique_ptr<ExprASTnode> parse_rval4(){
 // rval4_lf -> '+' rval4 | '-' rval4 | epsilon
 unique_ptr<BinOpASTnode> parse_rval4_lf(){
   if (CurTok.type == PLUS) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval4();
-    return make_unique<BinOpASTnode>(PLUS, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(PLUS, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else if (CurTok.type == MINUS) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval4();
-    return make_unique<BinOpASTnode>(MINUS, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(MINUS, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else {
     return nullptr;
   }
@@ -1158,17 +1179,23 @@ unique_ptr<ExprASTnode> parse_rval5(){
 // rval5_lf -> '*' rval5 | '/' rval5 | '%' rval5 | epsilon
 unique_ptr<BinOpASTnode> parse_rval5_lf(){
   if (CurTok.type == ASTERIX) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval5();
-    return make_unique<BinOpASTnode>(ASTERIX, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(ASTERIX, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else if (CurTok.type == DIV) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval5();
-    return make_unique<BinOpASTnode>(DIV, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(DIV, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else if (CurTok.type == MOD) {
+    auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval5();
-    return make_unique<BinOpASTnode>(MOD, nullptr, std::move(rhs));
+    auto ans = make_unique<BinOpASTnode>(MOD, nullptr, std::move(rhs), temp);
+    return std::move(ans);
   } else {
     return nullptr;
   }
@@ -1178,14 +1205,16 @@ unique_ptr<BinOpASTnode> parse_rval5_lf(){
 unique_ptr<ExprASTnode> parse_rval6(){
   sentence prod2 = rhslist[lhs_to_index("rval6")][2];
   if (CurTok.type == MINUS){
+    auto temp = CurTok;
     getNextToken();
     auto expr = parse_rval6();
-    auto unop = make_unique<UnOpASTnode>(MINUS, std::move(expr));
+    auto unop = make_unique<UnOpASTnode>(MINUS, std::move(expr), temp);
     return make_unique<ExprASTnode>(std::move(unop));
   } else if (CurTok.type == NOT) {
+    auto temp = CurTok;
     getNextToken();
     auto expr = parse_rval6();
-    auto unop = make_unique<UnOpASTnode>(NOT, std::move(expr));
+    auto unop = make_unique<UnOpASTnode>(NOT, std::move(expr), temp);
     return make_unique<ExprASTnode>(std::move(unop));
   } else if (in_sentence_first(CurTok, prod2)){
     auto expr = parse_rval7();

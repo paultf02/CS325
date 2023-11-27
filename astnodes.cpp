@@ -88,7 +88,7 @@ string BinOpASTnode::to_string(string pre) const {
   string ans = pre + "BinOpASTnode:" + nl;
   string npre = pre + sp;
   string nnpre = npre + sp;
-  ans += npre + "Binary Operation: " + "enter binop here" + nl;
+  ans += npre + "Binary Operation: " + tok.lexeme + nl;
   ans += npre + "LHS:" + nl;
   ans += lhs->to_string(nnpre);
   ans += npre + "RHS:" + nl;
@@ -99,7 +99,7 @@ string BinOpASTnode::to_string(string pre) const {
 string UnOpASTnode::to_string(string pre) const {
   string ans = pre + "UnOpASTnode:" + nl;
   string npre = pre + sp;
-  ans += npre + "Unary Operation: " + "enter unop here" + nl;
+  ans += npre + "Unary Operation: " + tok.lexeme + nl;
   ans += expr->to_string(npre);
   return ans;
 }
