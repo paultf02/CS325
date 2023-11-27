@@ -134,3 +134,147 @@ string WhileASTnode::to_string(string pre) const {
   ans += stmt->to_string(npre);
   return ans;
 }
+
+string IntASTnode::to_string(string pre) const {
+  std::cout << "in IntASTnode token on lineNo " + std::to_string(tok.lineNo) + nl;
+  string ans = pre + "IntASTnode: " + tok.lexeme + nl;
+  return ans;
+};
+
+string FloatASTnode::to_string(string pre) const {
+  string ans = pre + "FloatASTnode: " + tok.lexeme + nl;
+  return ans;
+};
+
+string BoolASTnode::to_string(string pre) const {
+  string ans = pre + "BoolASTnode: " + tok.lexeme + nl;
+  return ans;
+};
+
+string IdentASTnode::to_string(string pre) const {
+  string ans = pre + "IdentASTnode: " + tok.lexeme + nl;
+  return ans;
+};
+
+// vartypeastnode to string not implemented yet
+
+string VarDeclASTnode::to_string(string pre) const {
+  std::cout << "called VarDeclASTnode\n";
+  string npre = pre + sp;
+  string ans = "";
+  ans += pre + "VarDeclASTnode: " + vartype->vartype + sp + ident->name + nl;
+  std::cout << "before 158\n";
+  auto x = ident->tok.lexeme;
+  auto y = std::to_string(ident->tok.lineNo);
+  std::cout << "before 161\n";
+  std::cout << ("finished VarDeclASTnode with ident " + x + " on line " + y + "\n");
+  return ans;
+};
+
+string ReturnASTnode::to_string(string pre) const {
+  std::cout << "in ReturnASTnode\n";
+  string ans = pre + "ReturnASTnode:" + nl;
+  string npre = pre + sp;
+  if (isVoid){
+    ans += npre + "void" + nl;
+  } else {
+    ans += expr->to_string(npre);
+  }
+  return ans;
+};
+
+string ParamASTnode::to_string(string pre) const {
+  std::cout << "in ParamASTnode\n";
+  string npre = pre + sp;
+  string ans = pre + "ParamASTnode " + vartype->vartype + sp + ident->name;
+      
+  return ans;
+};
+
+string ParamListASTnode::to_string(string pre) const {
+  std::cout << "in ParamListASTnode\n";
+  string npre = pre + sp;
+  string ans = pre + "ParamListASTnode" + nl;
+  for (auto &p : paramlist){
+    std::cout << "in ParamListASTnode for loop\n";
+    ans += pre + p->to_string(npre) + nl;
+  }
+  ans.pop_back();
+  std::cout << ans;
+  return ans;
+};
+
+// typespecastnode does not have to_string
+
+string FunProtoASTnode::to_string(string pre) const {
+  std::cout << "called FunProtoASTnode\n";
+  string npre = pre + sp;
+  string ans = "";
+  ans += pre + "FunProtoASTnode: ";
+  // std::cout << "just before getting a=typspec->vartype\n";
+  // auto a = typespec->vartype;
+  // std::cout << "just before getting a=typspec->vartype\n";
+  // auto b = a->vartype;
+  // std::cout << "just before getting name\n";
+  // string n_str = ident->name;
+  // ans += typespec->vartype->vartype + sp + ident->name;
+  ans += typespec->get_type() + sp + ident->name;
+  ans += "(";
+  std::cout << "just before iterating\n";
+  for (auto &elem : params->paramlist){
+    ans += elem->vartype->vartype + ", ";
+  }
+  ans.pop_back();
+  ans.pop_back();
+  ans += ")" + nl;
+  return ans;
+};
+
+string FunDeclASTnode::to_string(string pre) const {
+  std::cout << "called FunDeclASTnode\n";
+  string npre = pre + sp;
+  string ans = "";
+  ans += pre + "FunDeclASTnode:" + nl;
+  ans += funproto->to_string(npre);
+  ans += funbody->to_string(npre);
+  return ans;
+};
+
+string ExternASTnode::to_string(string pre) const {
+  string npre = pre + sp;
+  string ans = "";
+  ans += pre + "ExternASTnode: " + nl;
+  ans += funproto->to_string(npre);
+  //std::cout << ans;
+  return ans;
+};
+
+string DeclASTnode::to_string(string pre) const {
+  std::cout << "called DeclASTnode\n";
+  string npre = pre;
+  string ans = "";
+  if (isVar){
+    ans = vardecl->to_string(npre);
+  } else {
+    ans = fundecl->to_string(npre);
+  }
+  //std::cout << ans;
+  return ans;
+};
+
+string ProgramASTnode::to_string(string pre) const {
+  string npre = pre + sp;
+  string ans = pre + "ProgramASTnode:" + nl;
+  for (auto &ext : externs){
+    ans += ext->to_string(npre);
+  }
+  for (auto &dec : decls){
+    ans += dec->to_string(npre);
+  }
+  // ans += "number of decls is " + std::to_string(decls.size()) + nl;
+  // ans += pre + externlist->to_string(npre) + nl;
+  // ans += pre + decllist->to_string(npre);
+  ans.pop_back(); // remove last newline
+  return ans;
+};
+

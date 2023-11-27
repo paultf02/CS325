@@ -68,11 +68,7 @@ public:
   string name;
   IntASTnode(TOKEN t) : val(std::stoi(t.lexeme)), tok(t){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string(string pre) const override {
-    std::cout << "in IntASTnode token on lineNo " + std::to_string(tok.lineNo) + nl;
-    string ans = pre + "IntASTnode: " + tok.lexeme + nl;
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class FloatASTnode : public ASTnode{
@@ -82,10 +78,7 @@ public:
   string name;
   FloatASTnode(TOKEN t) : val(std::stof(t.lexeme)), tok(t){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string(string pre) const override {
-    string ans = pre + "FloatASTnode: " + tok.lexeme + nl;
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class BoolASTnode : public ASTnode{
@@ -95,10 +88,7 @@ public:
   string name;
   BoolASTnode(TOKEN t) : val(noerr_str_to_bool(t.lexeme)), tok(t) {};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string(string pre) const override {
-    string ans = pre + "BoolASTnode: " + tok.lexeme + nl;
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class IdentASTnode : public ASTnode{
@@ -107,10 +97,7 @@ public:
   string name;
   IdentASTnode(TOKEN t) : tok(t), name(t.lexeme){};
   virtual llvm::Value *codegen() override{return nullptr;}
-  virtual string to_string(string pre) const override {
-    string ans = pre + "IdentASTnode: " + tok.lexeme + nl;
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class FunCallASTnode : public ASTnode{
@@ -139,6 +126,7 @@ public:
   string vartype;
   VarTypeASTnode(string vt) : vartype(vt) {};
   virtual llvm::Value *codegen() override {return nullptr;}
+  // virtual string to_string(string pre) const override;
 };
 
 class VarDeclASTnode : public ASTnode{
@@ -150,18 +138,7 @@ public:
                  unique_ptr<IdentASTnode> id
                  ) : vartype(std::move(vt)), ident(std::move(id)){};
   virtual llvm::Value *codegen() override {return nullptr;}
-  virtual string to_string(string pre) const override {
-    std::cout << "called VarDeclASTnode\n";
-    string npre = pre + sp;
-    string ans = "";
-    ans += pre + "VarDeclASTnode: " + vartype->vartype + sp + ident->name + nl;
-    std::cout << "before 158\n";
-    auto x = ident->tok.lexeme;
-    auto y = std::to_string(ident->tok.lineNo);
-    std::cout << "before 161\n";
-    std::cout << ("finished VarDeclASTnode with ident " + x + " on line " + y + "\n");
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class ExprASTnode : public ASTnode{
@@ -215,17 +192,7 @@ public:
   ReturnASTnode(unique_ptr<ExprASTnode> e) : isVoid(false), expr(std::move(e)){};
   ReturnASTnode() : isVoid(true){};
   virtual llvm::Value *codegen() override {return nullptr;}
-  virtual string to_string(string pre) const override {
-    std::cout << "in ReturnASTnode\n";
-    string ans = pre + "ReturnASTnode:" + nl;
-    string npre = pre + sp;
-    if (isVoid){
-      ans += npre + "void" + nl;
-    } else {
-      ans += expr->to_string(npre);
-    }
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class IfASTnode : public ASTnode{
@@ -290,14 +257,7 @@ public:
               unique_ptr<IdentASTnode> id
               ) : vartype(std::move(vt)), ident(std::move(id)){};
   virtual llvm::Value *codegen() override {return nullptr;}
-  virtual string to_string(string pre) const override {
-    std::cout << "in ParamASTnode\n";
-    string npre = pre + sp;
-    string ans = pre + "ParamASTnode " + vartype->vartype + sp + ident->name;
-        
-    return ans;
-  };
-
+  virtual string to_string(string pre) const override;
 };
 
 class ParamListASTnode : public ASTnode{
@@ -311,18 +271,7 @@ public:
   // hi;
   // ParamListASTnode(){};
   virtual llvm::Value *codegen() override {return nullptr;}
-  virtual string to_string(string pre) const override {
-    std::cout << "in ParamListASTnode\n";
-    string npre = pre + sp;
-    string ans = pre + "ParamListASTnode" + nl;
-    for (auto &p : paramlist){
-      std::cout << "in ParamListASTnode for loop\n";
-      ans += pre + p->to_string(npre) + nl;
-    }
-    ans.pop_back();
-    std::cout << ans;
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class TypeSpecASTnode : public ASTnode{
@@ -364,29 +313,7 @@ public:
                 unique_ptr<ParamListASTnode> ps
                 ) : typespec(std::move(ts)), ident(std::move(id)), params(std::move(ps)){};
   virtual llvm::Value *codegen() override {return nullptr;}
-  virtual string to_string(string pre) const override {
-    std::cout << "called FunProtoASTnode\n";
-    string npre = pre + sp;
-    string ans = "";
-    ans += pre + "FunProtoASTnode: ";
-    // std::cout << "just before getting a=typspec->vartype\n";
-    // auto a = typespec->vartype;
-    // std::cout << "just before getting a=typspec->vartype\n";
-    // auto b = a->vartype;
-    // std::cout << "just before getting name\n";
-    // string n_str = ident->name;
-    // ans += typespec->vartype->vartype + sp + ident->name;
-    ans += typespec->get_type() + sp + ident->name;
-    ans += "(";
-    std::cout << "just before iterating\n";
-    for (auto &elem : params->paramlist){
-      ans += elem->vartype->vartype + ", ";
-    }
-    ans.pop_back();
-    ans.pop_back();
-    ans += ")" + nl;
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class FunDeclASTnode : public ASTnode{
@@ -401,15 +328,7 @@ public:
   funbody = std::move(b);
   };
   virtual llvm::Value *codegen() override {return nullptr;}
-  virtual string to_string(string pre) const override {
-    std::cout << "called FunDeclASTnode\n";
-    string npre = pre + sp;
-    string ans = "";
-    ans += pre + "FunDeclASTnode:" + nl;
-    ans += funproto->to_string(npre);
-    ans += funbody->to_string(npre);
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class ExternASTnode : public ASTnode{
@@ -421,14 +340,7 @@ public:
   funproto = std::make_unique<FunProtoASTnode>(std::move(ts), std::move(id), std::move(ps));
   };
   virtual llvm::Value *codegen() override {return nullptr;}
-  virtual string to_string(string pre) const override {
-    string npre = pre + sp;
-    string ans = "";
-    ans += pre + "ExternASTnode: " + nl;
-    ans += funproto->to_string(npre);
-    //std::cout << ans;
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 class DeclASTnode : public ASTnode{
@@ -440,19 +352,8 @@ public:
              ) : isVar(true), vardecl(std::move(vd)){}
   DeclASTnode(unique_ptr<FunDeclASTnode> fd
              ) : isVar(false), fundecl(std::move(fd)){}
-  virtual llvm::Value *codegen() override {return nullptr;}
-  virtual string to_string(string pre) const override {
-    std::cout << "called DeclASTnode\n";
-    string npre = pre;
-    string ans = "";
-    if (isVar){
-      ans = vardecl->to_string(npre);
-    } else {
-      ans = fundecl->to_string(npre);
-    }
-    //std::cout << ans;
-    return ans;
-  };
+  virtual llvm::Value *codegen() override {return nullptr;};
+  virtual string to_string(string pre) const override;
 };
 
 class ProgramASTnode : public ASTnode{
@@ -477,21 +378,7 @@ public:
   virtual llvm::Value *codegen() override {
     return nullptr;
   };
-  virtual string to_string(string pre) const override {
-    string npre = pre + sp;
-    string ans = pre + "ProgramASTnode:" + nl;
-    for (auto &ext : externs){
-      ans += ext->to_string(npre);
-    }
-    for (auto &dec : decls){
-      ans += dec->to_string(npre);
-    }
-    // ans += "number of decls is " + std::to_string(decls.size()) + nl;
-    // ans += pre + externlist->to_string(npre) + nl;
-    // ans += pre + decllist->to_string(npre);
-    ans.pop_back(); // remove last newline
-    return ans;
-  };
+  virtual string to_string(string pre) const override;
 };
 
 

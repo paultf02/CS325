@@ -1,4 +1,5 @@
 NEED TO DISPLAY THE BINOPS AND UNOPS
+Do to_string for the last remaining astnodes
 
 After building ast, ast seems fine for:
 addition
