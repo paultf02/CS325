@@ -10,7 +10,7 @@ extern string sp;
 extern string nl;
 
 string StmtASTnode::to_string(string pre) const {
-  std::cout << "in StmtASTnode\n";
+  // std::cout << "in StmtASTnode\n";
   int i = 1;
   string npre = pre;
   // string ans = pre + "StmtASTnode: " + whichtype;
@@ -18,10 +18,10 @@ string StmtASTnode::to_string(string pre) const {
   if (whichtype=="expr_stmt"){
       ans = expr_stmt->to_string(npre);
   } else if (whichtype=="block"){
-      std::cout<< "beginning of block in stmtast\n";
+      // std::cout<< "beginning of block in stmtast\n";
       ans = block->to_string(npre);
       // ans = npre + "block node" + nl;
-      std::cout<< "end of block in stmtast\n";
+      // std::cout<< "end of block in stmtast\n";
   } else if (whichtype=="if_stmt"){
       ans = if_stmt->to_string(npre);
   } else if (whichtype=="while_stmt"){
@@ -29,7 +29,7 @@ string StmtASTnode::to_string(string pre) const {
   } else if (whichtype=="return_stmt"){
       ans = return_stmt->to_string(npre);
   };
-  std::cout<< "end of stmtast\n";
+  // std::cout<< "end of stmtast\n";
   return ans;
 };
 
@@ -47,7 +47,7 @@ string BlockASTnode::to_string(string pre) const {
 };
 
 string ExprASTnode::to_string(string pre) const {
-  std::cout << "in ExprASTnode with type " + type + "\n";
+  // std::cout << "in ExprASTnode with type " + type + "\n";
   string ans;
   ans = pre + "ExprASTnode:" + nl;
   string npre = pre + sp;
@@ -105,7 +105,7 @@ string UnOpASTnode::to_string(string pre) const {
 }
 
 string AssignASTnode::to_string(string pre) const {
-  std::cout << "In AssignASTnode\n";
+  // std::cout << "In AssignASTnode\n";
   string ans = pre + "AssignASTnode:" + nl;
   string npre = pre + sp;
   ans += ident->to_string(npre);
@@ -127,18 +127,18 @@ string IfASTnode::to_string(string pre) const {
 };
 
 string WhileASTnode::to_string(string pre) const {
-  std::cout << "in WhileASTnode\n";
+  // std::cout << "in WhileASTnode\n";
   string ans = pre + "WhileASTnode:" + nl;
   string npre = pre + sp;
-  std::cout << "in while loop before printing expr\n";
+  // std::cout << "in while loop before printing expr\n";
   ans += expr->to_string(npre);
-  std::cout << "in while loop after printing expr and before printing stmt\n";
+  // std::cout << "in while loop after printing expr and before printing stmt\n";
   ans += stmt->to_string(npre);
   return ans;
 }
 
 string IntASTnode::to_string(string pre) const {
-  std::cout << "in IntASTnode token on lineNo " + std::to_string(tok.lineNo) + nl;
+  // std::cout << "in IntASTnode token on lineNo " + std::to_string(tok.lineNo) + nl;
   string ans = pre + "IntASTnode: " + tok.lexeme + nl;
   return ans;
 };
@@ -164,20 +164,20 @@ string VarTypeASTnode::to_string(string pre) const {
 }
 
 string VarDeclASTnode::to_string(string pre) const {
-  std::cout << "called VarDeclASTnode\n";
+  // std::cout << "called VarDeclASTnode\n";
   string npre = pre + sp;
   string ans = "";
   ans += pre + "VarDeclASTnode: " + vartype->vartype + sp + ident->name + nl;
-  std::cout << "before 158\n";
+  // std::cout << "before 158\n";
   auto x = ident->tok.lexeme;
   auto y = std::to_string(ident->tok.lineNo);
-  std::cout << "before 161\n";
-  std::cout << ("finished VarDeclASTnode with ident " + x + " on line " + y + "\n");
+  // std::cout << "before 161\n";
+  // std::cout << ("finished VarDeclASTnode with ident " + x + " on line " + y + "\n");
   return ans;
 };
 
 string ReturnASTnode::to_string(string pre) const {
-  std::cout << "in ReturnASTnode\n";
+  // std::cout << "in ReturnASTnode\n";
   string ans = pre + "ReturnASTnode:" + nl;
   string npre = pre + sp;
   if (isVoid){
@@ -189,7 +189,7 @@ string ReturnASTnode::to_string(string pre) const {
 };
 
 string ParamASTnode::to_string(string pre) const {
-  std::cout << "in ParamASTnode\n";
+  // std::cout << "in ParamASTnode\n";
   string npre = pre + sp;
   string ans = pre + "ParamASTnode " + vartype->vartype + sp + ident->name;
       
@@ -197,15 +197,15 @@ string ParamASTnode::to_string(string pre) const {
 };
 
 string ParamListASTnode::to_string(string pre) const {
-  std::cout << "in ParamListASTnode\n";
+  // std::cout << "in ParamListASTnode\n";
   string npre = pre + sp;
   string ans = pre + "ParamListASTnode" + nl;
   for (auto &p : paramlist){
-    std::cout << "in ParamListASTnode for loop\n";
+    // std::cout << "in ParamListASTnode for loop\n";
     ans += pre + p->to_string(npre) + nl;
   }
   ans.pop_back();
-  std::cout << ans;
+  // std::cout << ans;
   return ans;
 };
 
@@ -215,20 +215,20 @@ string TypeSpecASTnode::to_string(string pre) const {
 }
 
 string FunProtoASTnode::to_string(string pre) const {
-  std::cout << "called FunProtoASTnode\n";
+  // std::cout << "called FunProtoASTnode\n";
   string npre = pre + sp;
   string ans = "";
   ans += pre + "FunProtoASTnode: ";
-  // std::cout << "just before getting a=typspec->vartype\n";
+  // // std::cout << "just before getting a=typspec->vartype\n";
   // auto a = typespec->vartype;
-  // std::cout << "just before getting a=typspec->vartype\n";
+  // // std::cout << "just before getting a=typspec->vartype\n";
   // auto b = a->vartype;
-  // std::cout << "just before getting name\n";
+  // // std::cout << "just before getting name\n";
   // string n_str = ident->name;
   // ans += typespec->vartype->vartype + sp + ident->name;
   ans += typespec->get_type() + sp + ident->name;
   ans += "(";
-  std::cout << "just before iterating\n";
+  // std::cout << "just before iterating\n";
   for (auto &elem : params->paramlist){
     ans += elem->vartype->vartype + ", ";
   }
@@ -239,7 +239,7 @@ string FunProtoASTnode::to_string(string pre) const {
 };
 
 string FunDeclASTnode::to_string(string pre) const {
-  std::cout << "called FunDeclASTnode\n";
+  // std::cout << "called FunDeclASTnode\n";
   string npre = pre + sp;
   string ans = "";
   ans += pre + "FunDeclASTnode:" + nl;
@@ -253,12 +253,12 @@ string ExternASTnode::to_string(string pre) const {
   string ans = "";
   ans += pre + "ExternASTnode: " + nl;
   ans += funproto->to_string(npre);
-  //std::cout << ans;
+  //// std::cout << ans;
   return ans;
 };
 
 string DeclASTnode::to_string(string pre) const {
-  std::cout << "called DeclASTnode\n";
+  // std::cout << "called DeclASTnode\n";
   string npre = pre;
   string ans = "";
   if (isVar){

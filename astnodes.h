@@ -285,7 +285,7 @@ public:
     if (isVoid){
       ans = "void";
     } else {
-      std::cout << "just before ans = vartype->vartype in TypeSpecASTnode\n";
+      // std::cout << "just before ans = vartype->vartype in TypeSpecASTnode\n";
       ans = vartype->vartype;
     }
     return ans;

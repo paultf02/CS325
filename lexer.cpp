@@ -253,12 +253,12 @@ TOKEN getNextToken() {
 
   TOKEN temp = tok_buffer.front();
   tok_buffer.pop_front();
-  std::cout << "CurTok is now " << temp.lexeme << '\n';
+  // std::cout << "CurTok is now " << temp.lexeme << '\n';
   return CurTok = temp;
 }
 
 void putBackToken(TOKEN tok) {
-  std::cout << "Pushing front " << tok.lexeme << '\n';
+  //std::cout << "Pushing front " << tok.lexeme << '\n';
   tok_buffer.push_front(tok);
 }
 
