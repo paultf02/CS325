@@ -1,4 +1,6 @@
-NEED TO DISPLAY THE BINOPS AND UNOPS
+New symbol table for each scope?
+
+NEED TO DISPLAY THE BINOPS AND UNOPS DONE
 Add line and column numbers to AST
 If we run out of tokens come up with an error
 Make TypeError class

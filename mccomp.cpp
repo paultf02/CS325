@@ -42,6 +42,11 @@
 #include <utility>
 #include <vector>
 
+// using llvm::Value;
+// using llvm::AllocaInst;
+
+using namespace llvm;
+
 FILE *pFile;
 
 std::string IdentifierStr; // Filled in if IDENT
@@ -76,7 +81,9 @@ inline llvm::raw_ostream &operator<<(llvm::raw_ostream &os, const ASTnode &ast) 
 // Code Generation
 llvm::LLVMContext TheContext;
 std::unique_ptr<llvm::Module> TheModule;
-llvm::IRBuilder<> Builder(TheContext);
+std::unique_ptr<llvm::IRBuilder<>> Builder;
+std::map<std::string, AllocaInst*> NamedValues; // local var table(s)
+std::map<std::string, Value*> GlobalNamedValues; //global var table
 
 // Main driver code.
 int main(int argc, char **argv) {
@@ -108,8 +115,17 @@ int main(int argc, char **argv) {
     llvm::errs() << "Could not open file: " << EC.message();
     return 1;
   }
+  
+  
+  
   // Make the module, which holds all the code.
   TheModule = std::make_unique<llvm::Module>("mini-c", TheContext);
+  Builder = std::make_unique<llvm::IRBuilder<>>(TheContext);
+
+
+
+
+
   // TheModule->llvm::Module::print(dest, nullptr); // print IR to file output.ll
   TheModule->print(llvm::errs(), nullptr); // print IR to terminal
   // End printing final IR
