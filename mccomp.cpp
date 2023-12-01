@@ -130,7 +130,8 @@ int main(int argc, char **argv) {
   Builder = make_unique<llvm::IRBuilder<>>(*TheContext);
 
   programrootnode->codegen();
-
+  fprintf(stderr, "Codegen Finished\n");
+  
   TheModule->llvm::Module::print(dest, nullptr); // print IR to file output.ll
   // TheModule->print(llvm::errs(), nullptr); // print IR to terminal
   // End printing final IR

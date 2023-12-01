@@ -191,8 +191,8 @@ public:
   ExprASTnode(unique_ptr<IntASTnode> in) : type("intlit"), intlit(std::move(in)){};
   ExprASTnode(unique_ptr<FloatASTnode> fl) : type("floatlit"), floatlit(std::move(fl)){};
   ExprASTnode(unique_ptr<BoolASTnode> bo) : type("boollit"), boollit(std::move(bo)){};
-  virtual llvm::Value *codegen();;
-  virtual string to_string(string pre) const override; 
+  virtual llvm::Value *codegen();
+  virtual string to_string(string pre) const override;
 };
 
 class AssignASTnode : public ASTnode{
@@ -411,7 +411,7 @@ public:
   virtual string to_string(string pre) const override;
 };
 
-class CompileError : public std::exception {
+class CompileError : public std::exception{
   TOKEN tok;
   std::string message = "";
 public:

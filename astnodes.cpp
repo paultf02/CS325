@@ -27,6 +27,7 @@ using std::string;
 using std::make_unique;
 using std::unique_ptr;
 using std::map;
+using std::cout;
 using namespace llvm;
 
 extern string br;
@@ -480,16 +481,41 @@ Value* FunDeclASTnode::codegen(){
 
   // NamedValues needs to be modified for scope
   // NamedValues.clear();
+  AllocaInst *alloca;
   for (auto &arg : TheFunction->args()) {
-    AllocaInst *alloca = CreateEntryBlockAlloca(TheFunction, arg.getName().str());
+    alloca = CreateEntryBlockAlloca(TheFunction, string(arg.getName()));
+    cout << "Dereferencing alloca:\n";
+    *alloca;
+    cout << "Done dereferencing\n";
     Builder->CreateStore(&arg, alloca);
-    NamedValuesPtr->insert({string(arg.getName()), alloca});
+    cout << "alloca truthvalue: " << (bool) alloca << " string(arg.getName()): " << string(arg.getName()) << '\n';
+    // cout << "nullptr truthvalue: " << (bool) nullptr << '\n';
+    cout << "Dereferencing NamedValuesPtr:\n";
+    *NamedValuesPtr;
+    cout << "Done dereferencing\n";
+    if (string(arg.getName()) == "m"){
+      cout << "before access:\n";
+      NamedValuesPtr->at("n");
+      cout << "after access:\n";
+      cout << "pointer equality check" << (NamedValuesPtr->at("n") == alloca) << '\n';
+    }
+
+    cout << "Before insert\n";
+    // NamedValuesPtr->insert({string(arg.getName()), alloca});
+    NamedValuesPtr->emplace(string(arg.getName()), alloca);
+    cout << "After insert\n";
+    cout << "Dereferencing NamedValuesPtr:\n";
+    *NamedValuesPtr;
+    cout << "Done dereferencing\n";
+    cout << "map access: " << (bool) NamedValuesPtr->at(string(arg.getName())) << '\n';
+    cout << "reached 489 \n";
     //auto NamedValuesPtr = make_unique<map<string, AllocaInst*>>();
     NamedValuesVector.push_back(std::move(NamedValuesPtr));
   }
 
   // this may not be how we want to return the function
   if (Value *RetVal = funbody->codegen()) {
+    std::cout << "we are here\n";
     // Finish off the function.
     Builder->CreateRet(RetVal);
   }
@@ -521,7 +547,7 @@ Value* ProgramASTnode::codegen() {
 };
 
 AllocaInst* CreateEntryBlockAlloca(Function *TheFunction,const std::string &VarName) {
-  IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
-  TheFunction->getEntryBlock().begin());
+  IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
   return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), 0, VarName.c_str());
+  // return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), nullptr, VarName.c_str());
 }

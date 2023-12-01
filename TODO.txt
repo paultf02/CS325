@@ -36,6 +36,7 @@ after the end of this function??
 We will be looking up variables when they are being used in an expression (not the assign part)
 We type check during function calls and during operations
 What about argument type error for function call?
+Put LLVM IR unreachable after ret in basic blocks.
 
 DO NOT ALLOW VARARGS ANYWHERE
 

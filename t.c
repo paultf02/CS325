@@ -6,8 +6,8 @@ extern float print_float(float y);
 float myFloat;
 
 int addition(int n, int m){
-        int result;
-        result = n + m;
+  int result;
+  result = n + m;
   
 
   if(n == 4) {
