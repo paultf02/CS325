@@ -25,6 +25,7 @@
 #include <utility>
 #include <iostream>
 #include <map>
+#include <exception>
 
 using namespace llvm;
 using std::unique_ptr;
@@ -406,6 +407,22 @@ public:
 
   virtual llvm::Value *codegen();
   virtual string to_string(string pre) const override;
+};
+
+class CompileError : public std::exception {
+  TOKEN tok;
+  std::string message = "";
+public:
+  CompileError(TOKEN t, std::string comment) : tok(t) {
+    // this->message += ("Compiler Error " + tok.lexeme + " of type " + std::to_string(tok.type) + " on line " + std::to_string(tok.lineNo) + ", column " + std::to_string(tok.columnNo) + "\n" + comment);
+    string identification = "Compiling Error with token: " + tok.lexeme + " of type " + std::to_string(tok.type) + " on line " + std::to_string(tok.lineNo) + ", column " + std::to_string(tok.columnNo) + "\n";
+    this->message += identification;
+    this->message += comment;
+  }
+  const char *what() const noexcept override {
+    return message.c_str();
+    // return "our error class caught the parsing error";
+  }
 };
 
 AllocaInst* CreateEntryBlockAlloca(Function *TheFunction, const std::string &VarName);

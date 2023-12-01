@@ -23,6 +23,7 @@
 #include <string>
 
 using std::string;
+using std::make_unique;
 using namespace llvm;
 
 extern string br;
@@ -326,7 +327,27 @@ Value* BoolASTnode::codegen(){};
 
 Value* IdentASTnode::codegen(){};
 
-Value* FunCallASTnode::codegen(){};
+Value* FunCallASTnode::codegen(){
+  // Look up the name in the global module table.
+  Function *CalleeF = TheModule->getFunction(ident->name);
+  if (!CalleeF){
+    throw CompileError(ident->tok, "Unknown function referenced");
+  }
+  // If argument mismatch error.
+  if (CalleeF->arg_size() != arglist.size()){
+    throw CompileError(ident->tok, "Incorrect # arguments passed");
+  }
+  
+  std::vector<Value *> argvals;
+  for (int i = 0; i<arglist.size(); i++) {
+    argvals.push_back(arglist[i]->codegen());
+    if (!argvals.back()){
+      return nullptr;
+    }
+  }
+  return Builder->CreateCall(CalleeF, argvals, "calltmp");
+
+};
 
 Type* VarTypeASTnode::codegen(){
   if (vartype == "bool"){
@@ -338,7 +359,12 @@ Type* VarTypeASTnode::codegen(){
   }
 };
 
-Value* VarDeclASTnode::codegen(){};
+Value* VarDeclASTnode::codegen(){
+  unique_ptr<GlobalVariable> g;
+  Type *t = vartype->codegen();
+  g = make_unique<GlobalVariable>(*TheModule, t, false, GlobalValue::CommonLinkage, Constant::getNullValue(t));
+  return g.get();
+};
 
 Value* ExprASTnode::codegen(){};
 

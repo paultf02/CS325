@@ -15,6 +15,20 @@ Do RetVal in FunBodyASTnode::codegen and FunDeclASTnode
 NamedValues needs to be modified for scope
 How do we want to generate return statements?
 We may need to CreateRetVoid for void functions.
+In FunCallASTnode why do we have the if condition with !argvals.back()
+
+Note: all function calls will be done with 
+
+Where can variables be define?
+
+Module scope outside a function
+Inside a function
+Inside a block. this is kind of the same as ^.
+For a new function we need a new table of local variables.
+Blocks will only ever be inside a function. For a new block we add to the symbol table
+when we get out of a block we delete the symbols of that block
+When looking up a symbol by name we want to use the variable of the 
+innermost/closest block and leave the rest unchanged.
 
 
 DO NOT ALLOW VARARGS ANYWHERES

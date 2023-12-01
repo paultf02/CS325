@@ -1,6 +1,9 @@
 ProgramASTnode:
  ExternASTnode: 
   FunProtoASTnode: int print_int(int)
+ ExternASTnode: 
+  FunProtoASTnode: float print_float(float)
+ VarDeclASTnode: float myFloat
  FunDeclASTnode:
   FunProtoASTnode: int addition(int, int)
   FunBodyASTnode:
