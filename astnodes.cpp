@@ -320,7 +320,15 @@ Value* IdentASTnode::codegen(){};
 
 Value* FunCallASTnode::codegen(){};
 
-Value* VarTypeASTnode::codegen(){};
+Type* VarTypeASTnode::codegen(){
+  if (vartype == "bool"){
+    return Type::getInt1Ty(*TheContext);
+  } else if (vartype == "float"){
+    return Type::getFloatTy(*TheContext);
+  } else {
+    return Type::getInt32Ty(*TheContext);
+  }
+};
 
 Value* VarDeclASTnode::codegen(){};
 
@@ -338,23 +346,52 @@ Value* StmtASTnode::codegen(){};
 
 Value* BlockASTnode::codegen(){};
 
-Value* ParamASTnode::codegen(){};
+Type *ParamASTnode::codegen(){
+  return vartype->codegen();
+};
 
-Value* ParamListASTnode::codegen(){};
+vector<Type *> ParamListASTnode::codegen(){
+  vector<Type *> ans;
+  for (auto &param : paramlist){
+    ans.push_back(param->codegen());
+  }
+  return ans;
+};
 
-Value* TypeSpecASTnode::codegen(){};
+Type* TypeSpecASTnode::codegen(){
+  if (isVoid){
+    return Type::getVoidTy(*TheContext);
+  } else {
+    return vartype->codegen();
+  }
+};
 
-Value* FunProtoASTnode::codegen(){};
+Value* FunProtoASTnode::codegen(){
+  vector<Type *> argtypes = params->codegen();
+  Type *outputtype = typespec->codegen();
+  FunctionType *ft = FunctionType::get(outputtype, argtypes, false);
+  Function *F = Function::Create(ft, Function::ExternalLinkage, ident->name, TheModule.get());
+  // Set names for all arguments.
+  unsigned idx = 0;
+  for (auto &prm : F->args()){
+    prm.setName(params->paramlist.at(idx)->ident->name);
+    idx++;
+  }
+  return F;
+};
 
 Value* FunDeclASTnode::codegen(){};
 
 Value* ExternASTnode::codegen(){
-
-  return nullptr;
+  return funproto->codegen();;
 };
 
 Value* DeclASTnode::codegen(){
-  return nullptr;
+  if (isVar){
+    return vardecl->codegen();
+  } else {
+    return fundecl->codegen();
+  }
 };
 
 Value* ProgramASTnode::codegen() {

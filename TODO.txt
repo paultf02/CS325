@@ -6,7 +6,12 @@ If we run out of tokens come up with an error
 Make TypeError class
 Make ScopeError class
 Clean up namespaces and all that. Be consistent across the entire project.
-Change compiler from debug to non debug mode
+
+Inside VarTypeASTnode constructor, add an error if user tries to put an invalid type.
+
+DO NOT ALLOW VARARGS ANYWHERES
+
+
 
 
 After building ast, ast seems fine for:
