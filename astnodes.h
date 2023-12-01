@@ -35,9 +35,9 @@ extern string br;
 extern string sp;
 extern string nl;
 
-extern llvm::LLVMContext TheContext;
-extern std::unique_ptr<llvm::Module> TheModule;
-extern std::unique_ptr<llvm::IRBuilder<>> Builder;
+extern unique_ptr<LLVMContext> TheContext;
+extern unique_ptr<llvm::Module> TheModule;
+extern unique_ptr<llvm::IRBuilder<>> Builder;
 extern std::map<std::string, AllocaInst*> NamedValues; // local var table(s)
 extern std::map<std::string, Value*> GlobalNamedValues; //global var table
 
@@ -55,7 +55,7 @@ class DeclASTnode;
 class ASTnode {
 public:
   virtual ~ASTnode() {};
-  virtual llvm::Value *codegen() = 0;
+  virtual llvm::Value *codegen();
   // virtual llvm::Value *codegen() {return nullptr;};
   virtual string to_string(string pre) const {return pre + "not done" + nl;};
 };

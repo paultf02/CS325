@@ -23,7 +23,7 @@
 #include <string>
 
 using std::string;
-using llvm::Value;
+using namespace llvm;
 
 extern string br;
 extern string sp;
@@ -348,15 +348,21 @@ Value* FunProtoASTnode::codegen(){};
 
 Value* FunDeclASTnode::codegen(){};
 
-Value* ExternASTnode::codegen(){};
+Value* ExternASTnode::codegen(){
 
-Value* DeclASTnode::codegen(){};
+  return nullptr;
+};
 
-Value* ProgramASTnode::codegen(){
+Value* DeclASTnode::codegen(){
+  return nullptr;
+};
+
+Value* ProgramASTnode::codegen() {
   for (auto &elem : externs){
     elem->codegen();
   }
   for (auto &elem : decls){
     elem->codegen();
   }
+  return nullptr;
 };

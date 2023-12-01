@@ -98,13 +98,14 @@ int main(int argc, char **argv) {
     return 1;
   }
 
+  string fname = argv[1];
   lineNo = 1; // initialize line number and column numbers to zero
   columnNo = 1;
   load_data(); // load first and follow set from file, load list of terminals, load list of production lhs and rhs respectively
   getNextToken(); // get the first token
   unique_ptr<ProgramASTnode> programrootnode = parser(); // Run the parser now.
   fprintf(stderr, "Lexing and Parsing Finished\n");
-  llvm::outs() << *programrootnode << "\n";
+  // llvm::outs() << *programrootnode << "\n";
   fprintf(stderr, "Printing AST Finished\n");
 
   // Start printing final IR
@@ -115,12 +116,12 @@ int main(int argc, char **argv) {
   llvm::raw_fd_ostream dest(Filename, EC, llvm::sys::fs::OF_None);
   if (EC) {
     llvm::errs() << "Could not open file: " << EC.message();
-    return 1;
+    return 2;
   }
   
   // Make the module, which holds all the code.
   TheContext = make_unique<LLVMContext>();
-  TheModule = make_unique<llvm::Module>("mini-c", *TheContext);
+  TheModule = make_unique<llvm::Module>(fname, *TheContext);
   Builder = make_unique<llvm::IRBuilder<>>(*TheContext);
 
   programrootnode->codegen();
