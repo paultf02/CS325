@@ -39,7 +39,8 @@ extern string nl;
 extern unique_ptr<LLVMContext> TheContext;
 extern unique_ptr<llvm::Module> TheModule;
 extern unique_ptr<llvm::IRBuilder<>> Builder;
-extern std::map<std::string, AllocaInst*> NamedValues; // local var table(s)
+// extern std::map<std::string, AllocaInst*> NamedValues; // local var table(s)
+extern vector<unique_ptr<std::map<string, AllocaInst*>>> NamedValuesVector;
 extern std::map<std::string, Value*> GlobalNamedValues; //global var table
 
 //===----------------------------------------------------------------------===//
@@ -160,6 +161,7 @@ public:
 
 class VarDeclASTnode : public ASTnode{
 public:
+  bool isGlobal = true;
   unique_ptr<VarTypeASTnode> vartype;
   unique_ptr<IdentASTnode> ident;
   // string name;

@@ -46,6 +46,7 @@ using std::string;
 using std::vector;
 using std::unique_ptr;
 using std::make_unique;
+using std::map;
 
 using namespace llvm;
 
@@ -84,8 +85,9 @@ inline llvm::raw_ostream &operator<<(llvm::raw_ostream &os, const ASTnode &ast) 
 unique_ptr<LLVMContext> TheContext;
 unique_ptr<Module> TheModule;
 unique_ptr<IRBuilder<>> Builder;
-std::map<string, AllocaInst*> NamedValues; // local var table(s)
-std::map<string, Value*> GlobalNamedValues; //global var table
+// map<string, AllocaInst*> NamedValues; // local var table(s)
+vector<unique_ptr<map<string, AllocaInst*>>> NamedValuesVector;
+map<string, Value*> GlobalNamedValues; //global var table
 
 // Main driver code.
 int main(int argc, char **argv) {

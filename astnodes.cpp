@@ -21,9 +21,12 @@
 #include "llvm/Target/TargetMachine.h"
 #include "llvm/Target/TargetOptions.h"
 #include <string>
+#include <map>
 
 using std::string;
 using std::make_unique;
+using std::unique_ptr;
+using std::map;
 using namespace llvm;
 
 extern string br;
@@ -337,6 +340,8 @@ Value* FunCallASTnode::codegen(){
   if (CalleeF->arg_size() != arglist.size()){
     throw CompileError(ident->tok, "Incorrect # arguments passed");
   }
+
+  // What about argument type error?
   
   std::vector<Value *> argvals;
   for (int i = 0; i<arglist.size(); i++) {
@@ -360,10 +365,18 @@ Type* VarTypeASTnode::codegen(){
 };
 
 Value* VarDeclASTnode::codegen(){
-  unique_ptr<GlobalVariable> g;
-  Type *t = vartype->codegen();
-  g = make_unique<GlobalVariable>(*TheModule, t, false, GlobalValue::CommonLinkage, Constant::getNullValue(t));
-  return g.get();
+  if (isGlobal){
+    unique_ptr<GlobalVariable> g;
+    Type *t = vartype->codegen();
+    g = make_unique<GlobalVariable>(*TheModule, t, false, GlobalValue::CommonLinkage, Constant::getNullValue(t));
+    // is there a global symbol table with an alloca?
+    // can we use llvm functions to modify g or do we need to do smth else
+    // as in do we need to use CreateStore?
+    // Builder->CreateStore(g, alloca);
+    return g.get();
+  } else {
+    return nullptr;
+  }
 };
 
 Value* ExprASTnode::codegen(){};
@@ -376,10 +389,40 @@ Value* ReturnASTnode::codegen(){};
 
 Value* IfASTnode::codegen(){};
 
-Value* StmtASTnode::codegen(){};
+Value* StmtASTnode::codegen(){
+  if (whichtype=="expr_stmt"){
+
+  } else if (whichtype=="block"){
+
+  } else if (whichtype=="if_stmt"){
+
+  } else if (whichtype=="while_stmt"){
+
+  } else {
+    // whichtype=="return_stmt"
+
+  }
+};
 
 Value* BlockASTnode::codegen(){
-  return nullptr;
+  // we need to create a new NamedValues table for each ldecl and
+  // push back onto NamedValuesVector
+  auto NamedValuesPtr = make_unique<map<string, AllocaInst*>>();
+  for (auto &ldecl : localdecls){
+    ldecl->codegen();
+    // when we create this alloca is it stack or heap allocated? Will it persist
+    // after the end of this function??
+    AllocaInst *alloca = nullptr;
+    NamedValuesPtr->insert({ldecl->vardecl->ident->name, alloca});
+  }
+  NamedValuesVector.push_back(std::move(NamedValuesPtr));
+  
+  Value* laststmt;
+  for (auto &stmt : stmtlist){
+    laststmt = stmt->codegen();
+  }
+  NamedValuesVector.pop_back(); // delete the top most symbol table after we exit the block
+  return laststmt;
 };
 
 Type *ParamASTnode::codegen(){
@@ -432,12 +475,17 @@ Value* FunDeclASTnode::codegen(){
   BasicBlock *BB = BasicBlock::Create(*TheContext, "entry", TheFunction);
   Builder->SetInsertPoint(BB);
 
+  NamedValuesVector.clear();
+  auto NamedValuesPtr = make_unique<map<string, AllocaInst*>>();
+
   // NamedValues needs to be modified for scope
-  NamedValues.clear();
+  // NamedValues.clear();
   for (auto &arg : TheFunction->args()) {
     AllocaInst *alloca = CreateEntryBlockAlloca(TheFunction, arg.getName().str());
     Builder->CreateStore(&arg, alloca);
-    NamedValues[std::string(arg.getName())] = alloca;
+    NamedValuesPtr->insert({string(arg.getName()), alloca});
+    //auto NamedValuesPtr = make_unique<map<string, AllocaInst*>>();
+    NamedValuesVector.push_back(std::move(NamedValuesPtr));
   }
 
   // this may not be how we want to return the function
