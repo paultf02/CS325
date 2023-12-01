@@ -352,4 +352,11 @@ Value* ExternASTnode::codegen(){};
 
 Value* DeclASTnode::codegen(){};
 
-Value* ProgramASTnode::codegen(){};
+Value* ProgramASTnode::codegen(){
+  for (auto &elem : externs){
+    elem->codegen();
+  }
+  for (auto &elem : decls){
+    elem->codegen();
+  }
+};

@@ -5,6 +5,7 @@ Add line and column numbers to AST
 If we run out of tokens come up with an error
 Make TypeError class
 Make ScopeError class
+Clean up namespaces and all that. Be consistent across the entire project.
 
 
 

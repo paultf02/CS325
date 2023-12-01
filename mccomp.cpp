@@ -42,32 +42,34 @@
 #include <utility>
 #include <vector>
 
-// using llvm::Value;
-// using llvm::AllocaInst;
+using std::string;
+using std::vector;
+using std::unique_ptr;
+using std::make_unique;
 
 using namespace llvm;
 
 FILE *pFile;
 
-std::string IdentifierStr; // Filled in if IDENT
+string IdentifierStr; // Filled in if IDENT
 int IntVal;                // Filled in if INT_LIT
 bool BoolVal;              // Filled in if BOOL_LIT
 float FloatVal;            // Filled in if FLOAT_LIT
-std::string StringVal;     // Filled in if String Literal
+string StringVal;     // Filled in if String Literal
 int lineNo, columnNo; // not static because used in mccomp.cpp
 TOKEN CurTok;
 std::deque<TOKEN> tok_buffer;
 
-std::string grammarversion = "8";
-std::string csvfilename = "./firstfollow/firstfollowg"+grammarversion+"sep.csv";
-std::string grammarfilename = "./grammars/transformedgrammar"+grammarversion+".txt";
-std::string terminalfilename = "./grammars/terminals2.txt";
-std::vector<std::string> nonterminals; // this is the lhs of the grammar, does not include epsilon
-std::vector<production_options> rhslist;
-std::vector<std::string> terminals;
-std::map<std::string, bool> nullable; //dictionaries for ifnullable, first and follow sets
-std::map<std::string, std::vector<std::string>> first;
-std::map<std::string, std::vector<std::string>> follow;
+string grammarversion = "8";
+string csvfilename = "./firstfollow/firstfollowg"+grammarversion+"sep.csv";
+string grammarfilename = "./grammars/transformedgrammar"+grammarversion+".txt";
+string terminalfilename = "./grammars/terminals2.txt";
+vector<string> nonterminals; // this is the lhs of the grammar, does not include epsilon
+vector<production_options> rhslist;
+vector<string> terminals;
+std::map<string, bool> nullable; //dictionaries for ifnullable, first and follow sets
+std::map<string, vector<string>> first;
+std::map<string, vector<string>> follow;
 
 // AST Printer
 string br = "|-";
@@ -79,11 +81,11 @@ inline llvm::raw_ostream &operator<<(llvm::raw_ostream &os, const ASTnode &ast) 
 }
 
 // Code Generation
-llvm::LLVMContext TheContext;
-std::unique_ptr<llvm::Module> TheModule;
-std::unique_ptr<llvm::IRBuilder<>> Builder;
-std::map<std::string, AllocaInst*> NamedValues; // local var table(s)
-std::map<std::string, Value*> GlobalNamedValues; //global var table
+unique_ptr<LLVMContext> TheContext;
+unique_ptr<Module> TheModule;
+unique_ptr<IRBuilder<>> Builder;
+std::map<string, AllocaInst*> NamedValues; // local var table(s)
+std::map<string, Value*> GlobalNamedValues; //global var table
 
 // Main driver code.
 int main(int argc, char **argv) {
@@ -100,7 +102,7 @@ int main(int argc, char **argv) {
   columnNo = 1;
   load_data(); // load first and follow set from file, load list of terminals, load list of production lhs and rhs respectively
   getNextToken(); // get the first token
-  std::unique_ptr<ProgramASTnode> programrootnode = parser(); // Run the parser now.
+  unique_ptr<ProgramASTnode> programrootnode = parser(); // Run the parser now.
   fprintf(stderr, "Lexing and Parsing Finished\n");
   llvm::outs() << *programrootnode << "\n";
   fprintf(stderr, "Printing AST Finished\n");
@@ -116,18 +118,15 @@ int main(int argc, char **argv) {
     return 1;
   }
   
-  
-  
   // Make the module, which holds all the code.
-  TheModule = std::make_unique<llvm::Module>("mini-c", TheContext);
-  Builder = std::make_unique<llvm::IRBuilder<>>(TheContext);
+  TheContext = make_unique<LLVMContext>();
+  TheModule = make_unique<llvm::Module>("mini-c", *TheContext);
+  Builder = make_unique<llvm::IRBuilder<>>(*TheContext);
 
+  programrootnode->codegen();
 
-
-
-
-  // TheModule->llvm::Module::print(dest, nullptr); // print IR to file output.ll
-  TheModule->print(llvm::errs(), nullptr); // print IR to terminal
+  TheModule->llvm::Module::print(dest, nullptr); // print IR to file output.ll
+  // TheModule->print(llvm::errs(), nullptr); // print IR to terminal
   // End printing final IR
   fclose(pFile); // close the file that contains the code that was parsed
   return 0;
