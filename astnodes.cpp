@@ -258,6 +258,14 @@ string FunProtoASTnode::to_string(string pre) const {
   return ans;
 };
 
+string FunBodyASTnode::to_string(string pre) const{
+  string npre = pre + sp;
+  string ans = "";
+  ans += pre + "FunBodyASTnode:" + nl;
+  ans += body->to_string(npre);
+  return ans;
+};
+
 string FunDeclASTnode::to_string(string pre) const {
   // std::cout << "called FunDeclASTnode\n";
   string npre = pre + sp;
@@ -344,7 +352,9 @@ Value* IfASTnode::codegen(){};
 
 Value* StmtASTnode::codegen(){};
 
-Value* BlockASTnode::codegen(){};
+Value* BlockASTnode::codegen(){
+  return nullptr;
+};
 
 Type *ParamASTnode::codegen(){
   return vartype->codegen();
@@ -366,7 +376,7 @@ Type* TypeSpecASTnode::codegen(){
   }
 };
 
-Value* FunProtoASTnode::codegen(){
+Function* FunProtoASTnode::codegen(){
   vector<Type *> argtypes = params->codegen();
   Type *outputtype = typespec->codegen();
   FunctionType *ft = FunctionType::get(outputtype, argtypes, false);
@@ -380,7 +390,39 @@ Value* FunProtoASTnode::codegen(){
   return F;
 };
 
-Value* FunDeclASTnode::codegen(){};
+Value* FunBodyASTnode::codegen(){
+  return body->codegen();
+}
+
+Value* FunDeclASTnode::codegen(){
+  Function *TheFunction = TheModule->getFunction(funproto->ident->name);
+  if (!TheFunction){
+    TheFunction = funproto->codegen();
+  }
+  if (!TheFunction){
+    return nullptr;
+  }
+
+  BasicBlock *BB = BasicBlock::Create(*TheContext, "entry", TheFunction);
+  Builder->SetInsertPoint(BB);
+
+  // NamedValues needs to be modified for scope
+  NamedValues.clear();
+  for (auto &arg : TheFunction->args()) {
+    AllocaInst *alloca = CreateEntryBlockAlloca(TheFunction, arg.getName().str());
+    Builder->CreateStore(&arg, alloca);
+    NamedValues[std::string(arg.getName())] = alloca;
+  }
+
+  // this may not be how we want to return the function
+  if (Value *RetVal = funbody->codegen()) {
+    // Finish off the function.
+    Builder->CreateRet(RetVal);
+  }
+  // Validate the generated code, checking for consistency.
+  verifyFunction(*TheFunction);
+  return TheFunction;
+};
 
 Value* ExternASTnode::codegen(){
   return funproto->codegen();;
@@ -401,5 +443,11 @@ Value* ProgramASTnode::codegen() {
   for (auto &elem : decls){
     elem->codegen();
   }
-  return nullptr;
+  return nullptr; 
 };
+
+AllocaInst* CreateEntryBlockAlloca(Function *TheFunction,const std::string &VarName) {
+  IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+  TheFunction->getEntryBlock().begin());
+  return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), 0, VarName.c_str());
+}

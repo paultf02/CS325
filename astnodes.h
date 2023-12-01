@@ -331,6 +331,16 @@ public:
                 unique_ptr<IdentASTnode> id,
                 unique_ptr<ParamListASTnode> ps
                 ) : typespec(std::move(ts)), ident(std::move(id)), params(std::move(ps)){};
+  virtual Function *codegen();
+  virtual string to_string(string pre) const override;
+};
+
+class FunBodyASTnode : public ASTnode{
+public:
+  unique_ptr<BlockASTnode> body;
+  FunBodyASTnode(unique_ptr<BlockASTnode> b){
+    body = std::move(b);
+  }
   virtual llvm::Value *codegen();
   virtual string to_string(string pre) const override;
 };
@@ -338,13 +348,13 @@ public:
 class FunDeclASTnode : public ASTnode{
 public:
   unique_ptr<FunProtoASTnode> funproto;
-  unique_ptr<BlockASTnode> funbody;
+  unique_ptr<FunBodyASTnode> funbody;
   FunDeclASTnode( unique_ptr<TypeSpecASTnode> ts,
                   unique_ptr<IdentASTnode> id,
                   unique_ptr<ParamListASTnode> ps,
                   unique_ptr<BlockASTnode> b){
   funproto = std::make_unique<FunProtoASTnode>(std::move(ts), std::move(id), std::move(ps));
-  funbody = std::move(b);
+  funbody = std::make_unique<FunBodyASTnode>(std::move(b));
   };
   virtual llvm::Value *codegen();
   virtual string to_string(string pre) const override;
@@ -398,6 +408,7 @@ public:
   virtual string to_string(string pre) const override;
 };
 
+AllocaInst* CreateEntryBlockAlloca(Function *TheFunction, const std::string &VarName);
 
   // virtual string to_string(string pre) const override {
   //   string npre = pre + sp;

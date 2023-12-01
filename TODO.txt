@@ -8,6 +8,14 @@ Make ScopeError class
 Clean up namespaces and all that. Be consistent across the entire project.
 
 Inside VarTypeASTnode constructor, add an error if user tries to put an invalid type.
+In ProgramASTnode codegen should we return pointer to main function?
+  also for FunDeclASTnode
+The type in CreateEntryBlockAlloca will need to be changed
+Do RetVal in FunBodyASTnode::codegen and FunDeclASTnode
+NamedValues needs to be modified for scope
+How do we want to generate return statements?
+We may need to CreateRetVoid for void functions.
+
 
 DO NOT ALLOW VARARGS ANYWHERES
 

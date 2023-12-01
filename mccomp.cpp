@@ -106,8 +106,11 @@ int main(int argc, char **argv) {
   unique_ptr<ProgramASTnode> programrootnode = parser(); // Run the parser now.
   fprintf(stderr, "Lexing and Parsing Finished\n");
   // llvm::outs() << *programrootnode << "\n";
+  string ASTstring = programrootnode->to_string("");
+  std::ofstream out("AST.txt");
+  out << ASTstring;
+  out.close();
   fprintf(stderr, "Printing AST Finished\n");
-
   // Start printing final IR
   // Print out all of the generated code into a file called output.ll or to the terminal
   
