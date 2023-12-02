@@ -33,7 +33,7 @@ is PLUS a valid unary operation?? Grammar, first/follow, all will then need to b
   should be, deal with this later
 
 GlobalVariables should only be declared once but same name can be redeclared in local scope.
-
+Make AST Prettier by renaming if then else components. change expr to condition, first block to then, second block to else
 
 Errors:
 function arguments cant have the same name

@@ -33,7 +33,7 @@ int comp1(){
   else {
     // i = 3;
   }
-  return 1;
+  return 0;
 }
 
 // int comp2(){

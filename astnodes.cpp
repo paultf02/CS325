@@ -527,15 +527,15 @@ Value* IfASTnode::codegen(){
   Value *cond = expr->codegen();
   Value *comp = Builder->CreateICmpNE(cond, ConstantInt::get(*TheContext, APInt(32, 0, true)), "ifcond");
   if (else_stmt){
+    else_ = BasicBlock::Create(*TheContext, "else");
     Builder->CreateCondBr(comp, then_, else_);
     Builder->SetInsertPoint(then_);
     block->codegen();
     Builder->CreateBr(end_);
-    else_ = BasicBlock::Create(*TheContext, "else", TheFunction);
+    TheFunction->insert(TheFunction->end(), else_);
     Builder->SetInsertPoint(else_);
     else_stmt->codegen();
     Builder->CreateBr(end_);
-    // TheFunction->insert(TheFunction->end(), else_);
     TheFunction->insert(TheFunction->end(), end_);
     Builder->SetInsertPoint(end_);
   } else {
@@ -704,6 +704,7 @@ Value* FunDeclASTnode::codegen(){
   // }
   // Validate the generated code, checking for consistency.
   verifyFunction(*TheFunction);
+  //
   return TheFunction;
 };
 

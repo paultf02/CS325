@@ -1,6 +1,6 @@
 ProgramASTnode:
  FunDeclASTnode:
-  FunProtoASTnode: int comp)
+  FunProtoASTnode: int comp1()
   FunBodyASTnode:
    BlockASTnode:
     IfASTnode:
@@ -11,4 +11,4 @@ ProgramASTnode:
       BlockASTnode:
     ReturnASTnode:
      ExprASTnode:
-      IntASTnode: 1
+      IntASTnode: 0
