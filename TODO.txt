@@ -10,6 +10,7 @@ How does assessing the truth or falsity of 32 bits work?
 CreateEntryBlockAlloca needs to have multiple types possible
   FIX THIS
 
+5923 loc = 4480 + 858 + 585
 
 To Do:
 FunDecl
@@ -26,8 +27,8 @@ Return - Done
 Expr - Searching through symbol table
 BinOp
 UnOp 
-If
-While
+If - Done
+While - Done
 Int, Float, Bool, Ident - Done
 
 Type checking - This is not done at all, will be errors
