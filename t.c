@@ -27,13 +27,30 @@
 int comp1(){
   // int i;
   // i = 1;
-  if (2){
-    // i = 2;
-  } 
-  else {
-    // i = 3;
+  // if (2){
+  //   // i = 2;
+  // } 
+  // else {
+  //   // i = 3;
+  // }
+  int i;
+  int j;
+  bool k;
+  i = 4;
+  j = i + 1;
+  k = (j == 5);
+  if (i){
+    j = 10;
   }
-  return 0;
+
+  // while (i == 4) {
+  //   // i = i + 1;
+  // }
+  return k;
+}
+
+int main(){
+  return comp1();
 }
 
 // int comp2(){

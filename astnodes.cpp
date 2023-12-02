@@ -348,7 +348,7 @@ Value* BinOpASTnode::codegen(){
   case EQ:
     l = lhs->codegen();
     r = rhs->codegen();
-    val = Builder->CreateICmpEQ(l, r, "add");
+    val = Builder->CreateICmpEQ(l, r, "equalitycheck");
     break;
   case NE:
     break;
@@ -389,7 +389,7 @@ Value* FloatASTnode::codegen(){
 
 Value* BoolASTnode::codegen(){
   int v = val ? 1 : 0;
-  return ConstantInt::get(*TheContext, APInt(1, v, true));
+  return ConstantInt::get(*TheContext, APInt(32, v, true));
 };
 
 Value* IdentASTnode::codegen(){
@@ -507,6 +507,17 @@ Value* ExprASTnode::codegen(){
 };
 
 Value* WhileASTnode::codegen(){
+  Function *TheFunction = Builder->GetInsertBlock()->getParent();
+  BasicBlock *whilebody_ = BasicBlock::Create(*TheContext, "whilebody", TheFunction);
+  BasicBlock *end_ = BasicBlock::Create(*TheContext, "endwhile");
+  Value *cond = expr->codegen();
+  Value *comp = Builder->CreateICmpNE(cond, ConstantInt::get(*TheContext, APInt(32, 0, true)), "whilecond");
+  Builder->CreateCondBr(comp, whilebody_, end_);
+  Builder->SetInsertPoint(whilebody_);
+  stmt->codegen();
+  Builder->CreateBr(end_);
+  TheFunction->insert(TheFunction->end(), end_);
+  Builder->SetInsertPoint(end_);
   return llvmnull;
 };
 
@@ -523,9 +534,20 @@ Value* IfASTnode::codegen(){
   Function *TheFunction = Builder->GetInsertBlock()->getParent();
   BasicBlock *then_ = BasicBlock::Create(*TheContext, "then", TheFunction);
   BasicBlock *else_;
-  BasicBlock *end_ = BasicBlock::Create(*TheContext, "end");
+  BasicBlock *end_ = BasicBlock::Create(*TheContext, "endif");
   Value *cond = expr->codegen();
-  Value *comp = Builder->CreateICmpNE(cond, ConstantInt::get(*TheContext, APInt(32, 0, true)), "ifcond");
+
+  Value *llvmfalse = ConstantInt::get(*TheContext, APInt(32, 0, true));
+  // auto t = llvmfalse->getType();
+  string typestring;
+  raw_string_ostream typeStream(typestring);
+  llvmfalse->getType()->print(typeStream);
+  llvm::outs() << "llvmfalse type string: " << typestring << "\n";
+  cond->getType()->print(typeStream);
+  llvm::outs() << "cond type string: " << typestring << "\n";
+
+
+  Value *comp = Builder->CreateICmpNE(cond, llvmfalse, "ifcond");
   if (else_stmt){
     else_ = BasicBlock::Create(*TheContext, "else");
     Builder->CreateCondBr(comp, then_, else_);
@@ -733,7 +755,8 @@ Value* ProgramASTnode::codegen() {
 
 AllocaInst* CreateEntryBlockAlloca(Function *TheFunction,const std::string &VarName) {
   IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
-  return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), 0, VarName.c_str());
+  //return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), 0, VarName.c_str());
+  return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), 0, VarName);
   // return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), nullptr, VarName.c_str());
 }
 
