@@ -11,3 +11,8 @@ ProgramASTnode:
     VarDeclASTnode: int result
     VarDeclASTnode: float cat
     VarDeclASTnode: bool dog
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       IntASTnode: 42

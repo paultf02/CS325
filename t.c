@@ -9,6 +9,7 @@ int addition(int n, int m){
   int result;
   float cat;
   bool dog;
+  result = 42;
   // result = n + m;
   
 

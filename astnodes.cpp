@@ -324,11 +324,18 @@ Value* BinOpASTnode::codegen(){};
 
 Value* UnOpASTnode::codegen(){};
 
-Value* IntASTnode::codegen(){};
+Value* IntASTnode::codegen(){
+  return ConstantInt::get(*TheContext, APInt(32, val, true));
+};
 
-Value* FloatASTnode::codegen(){};
+Value* FloatASTnode::codegen(){
+  return ConstantFP::get(*TheContext, APFloat(val));
+};
 
-Value* BoolASTnode::codegen(){};
+Value* BoolASTnode::codegen(){
+  int v = val ? 1 : 0;
+  return ConstantInt::get(*TheContext, APInt(1, v));
+};
 
 Value* IdentASTnode::codegen(){};
 
@@ -397,13 +404,43 @@ Value* VarDeclASTnode::codegen(){
   }
 };
 
-Value* ExprASTnode::codegen(){
-  return llvmnull;
-};
 
 Value* AssignASTnode::codegen(){
-  return llvmnull;
+  AllocaInst* alloca = find_local_global(ident->name);
+  if (!alloca){
+    throw CompileError(ident->tok, "Variable needs to be declared before being defined");
+  }
+  Value* rhsvalue = rhs->codegen();
+  Builder->CreateStore(rhsvalue, alloca);
+  return rhsvalue;
 };
+
+Value* ExprASTnode::codegen(){
+  cout << "The type of ExprASTnode is: " << type << '\n';
+  cout << (type == "assign") << '\n';
+  cout << (type == "intlit") << '\n';
+  cout << (type == "floatlit") << '\n';
+  Value* val;
+  if (type == "assign"){
+    val = assign->codegen();
+  } else if (type == "binop"){
+    val = binop->codegen();
+  } else if (type == "unop"){
+    val = unop->codegen();
+  } else if (type == "ident"){
+    val = ident->codegen();
+  } else if (type == "funcall"){
+    val = funcall->codegen();
+  } else if (type == "intlit"){
+    val = intlit->codegen();
+  } else if (type == "floatlit"){
+    val = floatlit->codegen();
+  } else if (type == "boollit"){
+    val = boollit->codegen();
+  } else 
+  return val;
+};
+
 
 Value* WhileASTnode::codegen(){
   return llvmnull;
@@ -418,8 +455,9 @@ Value* IfASTnode::codegen(){
 };
 
 Value* StmtASTnode::codegen(){
-  cout << "In StmtASTnode\n";
-  throw CompileError("have not implemented StmtASTnode");
+  cout << "The type of StmtASTnode is: " << whichtype << '\n';
+  // cout << "In StmtASTnode\n";
+  // throw CompileError("have not implemented StmtASTnode");
   if (whichtype=="expr_stmt"){
     expr_stmt->codegen();
   } else if (whichtype=="block"){
@@ -601,3 +639,25 @@ AllocaInst* CreateEntryBlockAlloca(Function *TheFunction,const std::string &VarN
   return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), 0, VarName.c_str());
   // return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), nullptr, VarName.c_str());
 }
+
+AllocaInst* find_local(string funcname){
+  // start looking from the end of NamedValuesVector (most recent block)
+  for (int i = NamedValuesVector.size()-1; i>=0; i--){
+    if (NamedValuesVector[i]->find(funcname) != NamedValuesVector[i]->end()){
+      return NamedValuesVector[i]->at(funcname);
+    }
+  }
+  return nullptr;
+};
+
+AllocaInst* find_local_global(string funcname){
+  AllocaInst* lcl = find_local(funcname);
+  if (lcl) {
+    return lcl;
+  }
+  if (GlobalNamedValues.find(funcname) != GlobalNamedValues.end()){
+    return GlobalNamedValues.at(funcname);
+  } else {
+    return nullptr;
+  }
+};
