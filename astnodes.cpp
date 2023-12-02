@@ -321,13 +321,17 @@ string ProgramASTnode::to_string(string pre) const {
 };
 
 Value* BinOpASTnode::codegen(){
-  Value *val;
+  //
+  Value *val, *l, *r;
   switch(binop){
   case AND:
     break;
   case OR:
     break;
   case PLUS:
+    l = lhs->codegen();
+    r = rhs->codegen();
+    val = Builder->CreateAdd(l, r, "add");
     break;
   case MINUS:
     break;
@@ -338,6 +342,9 @@ Value* BinOpASTnode::codegen(){
   case MOD:
     break;
   case EQ:
+    l = lhs->codegen();
+    r = rhs->codegen();
+    val = Builder->CreateICmpEQ(l, r, "add");
     break;
   case NE:
     break;

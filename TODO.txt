@@ -1,3 +1,8 @@
+Type checking:
+for a binary operation what are the rules if different types?
+
+
+
 To Do:
 FunDecl
   Why do we CreateStore after creating the alloca when declaring function?
@@ -15,11 +20,18 @@ BinOp
 UnOp 
 If
 While
+Int, Float, Bool, Ident - Done
+
+Type checking - This is not done at all, will be errors
+  Function arguments in FunCall
+  Binops
+  Unops 
 
 is PLUS a valid unary operation?? Grammar, first/follow, all will then need to be changed
   should be, deal with this later
-Int, Float, Bool, Ident,
-Type checking - This is not done at all, will be errors
+
+GlobalVariables should only be declared once but same name can be redeclared in local scope.
+
 
 Errors:
 function arguments cant have the same name
