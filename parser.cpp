@@ -1201,7 +1201,8 @@ unique_ptr<BinOpASTnode> parse_rval5_lf(){
   }
 }
 
-// rval6 -> '-' rval6 | '!' rval6 | rval7
+/// // rval6 -> '-' rval6 | '!' rval6 | rval7
+// rval6 -> '-' rval6 | '!' rval6 | '+' rval6 | rval7
 unique_ptr<ExprASTnode> parse_rval6(){
   sentence prod2 = rhslist[lhs_to_index("rval6")][2];
   if (CurTok.type == MINUS){
@@ -1215,6 +1216,12 @@ unique_ptr<ExprASTnode> parse_rval6(){
     getNextToken();
     auto expr = parse_rval6();
     auto unop = make_unique<UnOpASTnode>(NOT, std::move(expr), temp);
+    return make_unique<ExprASTnode>(std::move(unop));
+  } else if (CurTok.type == PLUS) {
+    auto temp = CurTok;
+    getNextToken();
+    auto expr = parse_rval6();
+    auto unop = make_unique<UnOpASTnode>(PLUS, std::move(expr), temp);
     return make_unique<ExprASTnode>(std::move(unop));
   } else if (in_sentence_first(CurTok, prod2)){
     auto expr = parse_rval7();
