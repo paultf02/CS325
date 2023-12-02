@@ -88,6 +88,7 @@ unique_ptr<IRBuilder<>> Builder;
 // map<string, AllocaInst*> NamedValues; // local var table(s)
 vector<unique_ptr<map<string, AllocaInst*>>> NamedValuesVector;
 map<string, Value*> GlobalNamedValues; //global var table
+Value *llvmnull;
 
 // Main driver code.
 int main(int argc, char **argv) {
@@ -128,6 +129,7 @@ int main(int argc, char **argv) {
   TheContext = make_unique<LLVMContext>();
   TheModule = make_unique<llvm::Module>(fname, *TheContext);
   Builder = make_unique<llvm::IRBuilder<>>(*TheContext);
+  llvmnull = Constant::getNullValue(Type::getInt1Ty(*TheContext));
 
   programrootnode->codegen();
   fprintf(stderr, "Codegen Finished\n");

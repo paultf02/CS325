@@ -33,6 +33,7 @@ using namespace llvm;
 extern string br;
 extern string sp;
 extern string nl;
+extern Value *llvmnull;
 
 string StmtASTnode::to_string(string pre) const {
   // std::cout << "in StmtASTnode\n";
@@ -348,7 +349,9 @@ Value* FunCallASTnode::codegen(){
   for (int i = 0; i<arglist.size(); i++) {
     argvals.push_back(arglist[i]->codegen());
     if (!argvals.back()){
-      return nullptr;
+      throw CompileError("argvals.back() is null in FunCallASTnode");
+      // return nullptr;
+
     }
   }
   return Builder->CreateCall(CalleeF, argvals, "calltmp");
@@ -367,53 +370,90 @@ Type* VarTypeASTnode::codegen(){
 
 Value* VarDeclASTnode::codegen(){
   if (isGlobal){
-    unique_ptr<GlobalVariable> g;
+    // unique_ptr<GlobalVariable> g;
+    // Type *t = vartype->codegen();
+    // cout << "from vartypeastnode, truthiness of t: " << (bool) t << '\n';
+    // g = make_unique<GlobalVariable>(*TheModule, t, false, GlobalValue::CommonLinkage, Constant::getNullValue(t));
+    // // is there a global symbol table with an alloca?
+    // // can we use llvm functions to modify g or do we need to do smth else
+    // // as in do we need to use CreateStore?
+    // // Builder->CreateStore(g, alloca);
+    // cout << "in vardeclastnode, truthiness of g.get(): " << (bool) g.get() << '\n';
+    // return g.get();
+    GlobalVariable *g;
     Type *t = vartype->codegen();
-    g = make_unique<GlobalVariable>(*TheModule, t, false, GlobalValue::CommonLinkage, Constant::getNullValue(t));
+    //cout << "from vartypeastnode, truthiness of t: " << (bool) t << '\n';
+    g = new GlobalVariable(*TheModule, t, false, GlobalValue::CommonLinkage, Constant::getNullValue(t));
+    
     // is there a global symbol table with an alloca?
     // can we use llvm functions to modify g or do we need to do smth else
     // as in do we need to use CreateStore?
     // Builder->CreateStore(g, alloca);
-    return g.get();
+    //cout << "in vardeclastnode, truthiness of g.get(): " << (bool) g.get() << '\n';
+    return g;
   } else {
-    return nullptr;
+    return llvmnull;
+    //throw CompileError("have not implemented local decls yet");
   }
 };
 
-Value* ExprASTnode::codegen(){};
+Value* ExprASTnode::codegen(){
+  return llvmnull;
+};
 
-Value* AssignASTnode::codegen(){};
+Value* AssignASTnode::codegen(){
+  return llvmnull;
+};
 
-Value* WhileASTnode::codegen(){};
+Value* WhileASTnode::codegen(){
+  return llvmnull;
+};
 
-Value* ReturnASTnode::codegen(){};
+Value* ReturnASTnode::codegen(){
+  return llvmnull;
+};
 
-Value* IfASTnode::codegen(){};
+Value* IfASTnode::codegen(){
+  return llvmnull;
+};
 
 Value* StmtASTnode::codegen(){
+  cout << "In StmtASTnode\n";
+  throw CompileError("have not implemented StmtASTnode");
   if (whichtype=="expr_stmt"){
-
+    expr_stmt->codegen();
   } else if (whichtype=="block"){
-
+    block->codegen();
   } else if (whichtype=="if_stmt"){
-
+    if_stmt->codegen();
   } else if (whichtype=="while_stmt"){
-
-  } else {
-    // whichtype=="return_stmt"
-
+    while_stmt->codegen();
+  } else if (whichtype=="return_stmt"){
+    return_stmt->codegen();
   }
+  return llvmnull;
 };
 
 Value* BlockASTnode::codegen(){
+  //We assume that the Builder.SetInsertPoint is already done.
+  
   // we need to create a new NamedValues table for each ldecl and
   // push back onto NamedValuesVector
   auto NamedValuesPtr = make_unique<map<string, AllocaInst*>>();
+  // bool createdNewMap = false;
   for (auto &ldecl : localdecls){
-    ldecl->codegen();
+    // ldecl->codegen(); // this doesn't do anything
     // when we create this alloca is it stack or heap allocated? Will it persist
     // after the end of this function??
-    AllocaInst *alloca = nullptr;
+    // throw CompileError("have not implemented block yet");
+    // which basic block should this alloca be in?
+
+    // if this name has already been defined in this block throw an error
+    if (NamedValuesPtr->find(ldecl->vardecl->ident->name) != NamedValuesPtr->end()){
+      throw CompileError(ldecl->vardecl->ident->tok, "Variable cannot be declared more than once in the given scope");
+    }
+
+    AllocaInst *alloca = Builder->CreateAlloca(Type::getInt32Ty(*TheContext), 0, ldecl->vardecl->ident->name);
     NamedValuesPtr->insert({ldecl->vardecl->ident->name, alloca});
   }
   NamedValuesVector.push_back(std::move(NamedValuesPtr));
@@ -422,8 +462,9 @@ Value* BlockASTnode::codegen(){
   for (auto &stmt : stmtlist){
     laststmt = stmt->codegen();
   }
+
   NamedValuesVector.pop_back(); // delete the top most symbol table after we exit the block
-  return laststmt;
+  return llvmnull;
 };
 
 Type *ParamASTnode::codegen(){
@@ -461,6 +502,7 @@ Function* FunProtoASTnode::codegen(){
 };
 
 Value* FunBodyASTnode::codegen(){
+  //checks for return value?
   return body->codegen();
 }
 
@@ -470,7 +512,8 @@ Value* FunDeclASTnode::codegen(){
     TheFunction = funproto->codegen();
   }
   if (!TheFunction){
-    return nullptr;
+    throw CompileError("in FunDeclASTnode idk why this is returning null");
+    // return nullptr;
   }
 
   BasicBlock *BB = BasicBlock::Create(*TheContext, "entry", TheFunction);
@@ -484,41 +527,47 @@ Value* FunDeclASTnode::codegen(){
   AllocaInst *alloca;
   for (auto &arg : TheFunction->args()) {
     alloca = CreateEntryBlockAlloca(TheFunction, string(arg.getName()));
-    cout << "Dereferencing alloca:\n";
-    *alloca;
-    cout << "Done dereferencing\n";
+    // cout << "Dereferencing alloca:\n";
+    // cout << "alloca boolvalue: " << (bool) alloca << '\n';
+    // cout << (string) alloca->getName() << '\n';
+    // cout << "Done dereferencing\n";
     Builder->CreateStore(&arg, alloca);
-    cout << "alloca truthvalue: " << (bool) alloca << " string(arg.getName()): " << string(arg.getName()) << '\n';
-    // cout << "nullptr truthvalue: " << (bool) nullptr << '\n';
-    cout << "Dereferencing NamedValuesPtr:\n";
-    *NamedValuesPtr;
-    cout << "Done dereferencing\n";
-    if (string(arg.getName()) == "m"){
-      cout << "before access:\n";
-      NamedValuesPtr->at("n");
-      cout << "after access:\n";
-      cout << "pointer equality check" << (NamedValuesPtr->at("n") == alloca) << '\n';
-    }
+    // cout << "alloca truthvalue: " << (bool) alloca << " string(arg.getName()): " << string(arg.getName()) << '\n';
+    // // cout << "nullptr truthvalue: " << (bool) nullptr << '\n';
+    // cout << "Dereferencing NamedValuesPtr:\n";
+    // *NamedValuesPtr;
+    // cout << "Done dereferencing\n";
+    // if (string(arg.getName()) == "m"){
+    //   cout << "before access:\n";
+    //   NamedValuesPtr->at("n");
+    //   cout << "after access:\n";
+    //   cout << "pointer equality check" << (NamedValuesPtr->at("n") == alloca) << '\n';
+    // }
 
-    cout << "Before insert\n";
-    // NamedValuesPtr->insert({string(arg.getName()), alloca});
-    NamedValuesPtr->emplace(string(arg.getName()), alloca);
-    cout << "After insert\n";
-    cout << "Dereferencing NamedValuesPtr:\n";
-    *NamedValuesPtr;
-    cout << "Done dereferencing\n";
-    cout << "map access: " << (bool) NamedValuesPtr->at(string(arg.getName())) << '\n';
-    cout << "reached 489 \n";
+    // cout << "Before insert\n";
+    NamedValuesPtr->insert({string(arg.getName()), alloca});
+    // NamedValuesPtr->emplace(string(arg.getName()), alloca);
+    // cout << "After insert\n";
+    // cout << "Dereferencing NamedValuesPtr:\n";
+    // *NamedValuesPtr;
+    // cout << "Done dereferencing\n";
+    // cout << "map access: " << (string) NamedValuesPtr->at(string(arg.getName()))->getName() << '\n';
+    // cout << "map access: " << (string) NamedValuesPtr->at("n")->getName()<< '\n';
+    // cout << "reached end of critical part \n";
     //auto NamedValuesPtr = make_unique<map<string, AllocaInst*>>();
-    NamedValuesVector.push_back(std::move(NamedValuesPtr));
   }
 
+  NamedValuesVector.push_back(std::move(NamedValuesPtr));
+
+  // cout << "truthiness of NamedValuesPtr after moving: " << (bool) NamedValuesPtr << '\n';
+  funbody->codegen();
   // this may not be how we want to return the function
-  if (Value *RetVal = funbody->codegen()) {
-    std::cout << "we are here\n";
-    // Finish off the function.
-    Builder->CreateRet(RetVal);
-  }
+  // Value *RetVal = funbody->codegen();
+  // if (RetVal) {
+  //   std::cout << "we are here\n";
+  //   // Finish off the function.
+  //   Builder->CreateRet(RetVal);
+  // }
   // Validate the generated code, checking for consistency.
   verifyFunction(*TheFunction);
   return TheFunction;
@@ -532,6 +581,7 @@ Value* DeclASTnode::codegen(){
   if (isVar){
     return vardecl->codegen();
   } else {
+    cout << "here in the fundecl part of DeclASTnode\n";
     return fundecl->codegen();
   }
 };
@@ -543,7 +593,7 @@ Value* ProgramASTnode::codegen() {
   for (auto &elem : decls){
     elem->codegen();
   }
-  return nullptr; 
+  return llvmnull; 
 };
 
 AllocaInst* CreateEntryBlockAlloca(Function *TheFunction,const std::string &VarName) {

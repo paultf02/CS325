@@ -166,8 +166,9 @@ public:
   unique_ptr<IdentASTnode> ident;
   // string name;
   VarDeclASTnode(unique_ptr<VarTypeASTnode> vt,
-                 unique_ptr<IdentASTnode> id
-                 ) : vartype(std::move(vt)), ident(std::move(id)){};
+                 unique_ptr<IdentASTnode> id,
+                 bool isGlbl = true
+                 ) : isGlobal(isGlbl), vartype(std::move(vt)), ident(std::move(id)){};
   virtual llvm::Value *codegen();
   virtual string to_string(string pre) const override;
 };
@@ -419,6 +420,9 @@ public:
     // this->message += ("Compiler Error " + tok.lexeme + " of type " + std::to_string(tok.type) + " on line " + std::to_string(tok.lineNo) + ", column " + std::to_string(tok.columnNo) + "\n" + comment);
     string identification = "Compiling Error with token: " + tok.lexeme + " of type " + std::to_string(tok.type) + " on line " + std::to_string(tok.lineNo) + ", column " + std::to_string(tok.columnNo) + "\n";
     this->message += identification;
+    this->message += comment;
+  };
+  CompileError(std::string comment) {
     this->message += comment;
   }
   const char *what() const noexcept override {

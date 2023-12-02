@@ -1,3 +1,32 @@
+To Do:
+FunDecl
+  Why do we CreateStore after creating the alloca when declaring function?
+VarDecl
+  For Global Variable when and where should we create alloca?
+Block - Searching through symbol table
+  Currently just creates alloca at the entry basic block of parent function.
+  This may cause errors for nested (syntactic) blocks?
+  Maybe we need to use Builder.SetInsertBlock in FunBodyASTnode
+Stmt
+Assign - Searching through symbol table
+Return 
+Expr - Searching through symbol table
+BinOp 
+UnOp 
+If
+While
+
+Int, Float, Bool, Ident,
+Type checking
+
+Errors:
+function arguments cant have the same name
+variable cant be declared twice
+cant be a function defined twice
+checks for return value for function? check c99 spec.
+
+
+
 New symbol table for each scope?
 
 NEED TO DISPLAY THE BINOPS AND UNOPS DONE
@@ -16,6 +45,8 @@ NamedValues needs to be modified for scope
 How do we want to generate return statements?
 We may need to CreateRetVoid for void functions.
 In FunCallASTnode why do we have the if condition with !argvals.back()
+Have an error where you cannot have multiple function arguments with the same name
+
 
 Note: all function calls will be done with 
 

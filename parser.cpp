@@ -771,7 +771,7 @@ unique_ptr<DeclASTnode> parse_local_decl(){
   } else {
     throw ParseError(CurTok, "was expecting ';' but got " + CurTok.lexeme);
   }
-  unique_ptr<VarDeclASTnode> vardecl = make_unique<VarDeclASTnode>(std::move(vartype), std::move(ident));
+  unique_ptr<VarDeclASTnode> vardecl = make_unique<VarDeclASTnode>(std::move(vartype), std::move(ident), false);
 
   return make_unique<DeclASTnode>(std::move(vardecl));
 }
