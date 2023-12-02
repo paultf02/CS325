@@ -7,17 +7,19 @@ Block - Searching through symbol table
   Currently just creates alloca at the entry basic block of parent function.
   This may cause errors for nested (syntactic) blocks?
   Maybe we need to use Builder.SetInsertBlock in FunBodyASTnode
-Stmt
+Stmt - Done
 Assign - Searching through symbol table
-Return 
+Return - Done
 Expr - Searching through symbol table
-BinOp 
+BinOp
 UnOp 
 If
 While
 
+is PLUS a valid unary operation?? Grammar, first/follow, all will then need to be changed
+  should be, deal with this later
 Int, Float, Bool, Ident,
-Type checking
+Type checking - This is not done at all, will be errors
 
 Errors:
 function arguments cant have the same name

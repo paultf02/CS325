@@ -1,8 +1,4 @@
 ProgramASTnode:
- ExternASTnode: 
-  FunProtoASTnode: int print_int(int)
- ExternASTnode: 
-  FunProtoASTnode: float print_float(float)
  VarDeclASTnode: int myInt
  FunDeclASTnode:
   FunProtoASTnode: int addition(int, int)
@@ -16,3 +12,24 @@ ProgramASTnode:
       IdentASTnode: result
       ExprASTnode:
        IntASTnode: 42
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: cat
+      ExprASTnode:
+       FloatASTnode: 9.7
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: result
+ FunDeclASTnode:
+  FunProtoASTnode: int mai)
+  FunBodyASTnode:
+   BlockASTnode:
+    ReturnASTnode:
+     ExprASTnode:
+      FunCallASTnode:
+       IdentASTnode: addition
+       Args:
+        ExprASTnode:
+         IntASTnode: 7
+        ExprASTnode:
+         IntASTnode: 8

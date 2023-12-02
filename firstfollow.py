@@ -1,7 +1,7 @@
 # we have 3 categories of term
 # nonterminal, terminal, epsilon
 
-grammarversion = "8"
+grammarversion = "10"
 
 inputgrammarfile = f"./grammars/transformedgrammar{grammarversion}.txt"
 outputcsvfile = f"./firstfollow/firstfollowg{grammarversion}sep.csv"

@@ -320,15 +320,59 @@ string ProgramASTnode::to_string(string pre) const {
   return ans;
 };
 
-Value* BinOpASTnode::codegen(){};
+Value* BinOpASTnode::codegen(){
+  Value *val;
+  switch(binop){
+  case AND:
+    break;
+  case OR:
+    break;
+  case PLUS:
+    break;
+  case MINUS:
+    break;
+  case ASTERIX:
+    break;
+  case DIV:
+    break;
+  case MOD:
+    break;
+  case EQ:
+    break;
+  case NE:
+    break;
+  case LE:
+    break;
+  case LT:
+    break;
+  case GE:
+    break;
+  case GT:
+    break;
+  }
+  return val;
+};
 
-Value* UnOpASTnode::codegen(){};
+Value* UnOpASTnode::codegen(){
+  Value *val;
+  switch(unop){
+  case MINUS:
+    break;
+  case NOT:
+    break;
+  case PLUS:
+    break;
+  }
+  return val;
+};
 
 Value* IntASTnode::codegen(){
+  cout << "in IntASTnode " << name << '\n';
   return ConstantInt::get(*TheContext, APInt(32, val, true));
 };
 
 Value* FloatASTnode::codegen(){
+  cout << "in FloatASTnode " << name << '\n';
   return ConstantFP::get(*TheContext, APFloat(val));
 };
 
@@ -337,7 +381,14 @@ Value* BoolASTnode::codegen(){
   return ConstantInt::get(*TheContext, APInt(1, v));
 };
 
-Value* IdentASTnode::codegen(){};
+Value* IdentASTnode::codegen(){
+  AllocaInst* alloca = find_local_global(name);
+  if (!alloca){
+    throw CompileError(tok, "Variable needs to be declared before being used");
+  }
+  Value* v = Builder->CreateLoad(alloca->getAllocatedType(), alloca, name);
+  return v;
+};
 
 Value* FunCallASTnode::codegen(){
   // Look up the name in the global module table.
@@ -361,7 +412,8 @@ Value* FunCallASTnode::codegen(){
 
     }
   }
-  return Builder->CreateCall(CalleeF, argvals, "calltmp");
+  CallInst *callinst = Builder->CreateCall(CalleeF, argvals, "calltmp");
+  return callinst;
 
 };
 
@@ -404,7 +456,6 @@ Value* VarDeclASTnode::codegen(){
   }
 };
 
-
 Value* AssignASTnode::codegen(){
   AllocaInst* alloca = find_local_global(ident->name);
   if (!alloca){
@@ -437,17 +488,24 @@ Value* ExprASTnode::codegen(){
     val = floatlit->codegen();
   } else if (type == "boollit"){
     val = boollit->codegen();
-  } else 
+  };
+  if (!val){
+    throw std::runtime_error("in ExprASTnode, val is a nullptr which it should not be");
+  }
   return val;
 };
-
 
 Value* WhileASTnode::codegen(){
   return llvmnull;
 };
 
 Value* ReturnASTnode::codegen(){
-  return llvmnull;
+  if (isVoid){
+    return Builder->CreateRetVoid();
+  } else {
+    Value* retval = expr->codegen();
+    return Builder->CreateRet(retval);
+  }
 };
 
 Value* IfASTnode::codegen(){
