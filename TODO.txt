@@ -1,6 +1,8 @@
 Type checking:
 for a binary operation what are the rules if different types?
+Should we have a boolean just be a 0 or 1 in 32 bits?
 
+How does assessing the truth or falsity of 32 bits work?
 
 
 To Do:

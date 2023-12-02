@@ -255,11 +255,15 @@ string FunProtoASTnode::to_string(string pre) const {
   ans += typespec->get_type() + sp + ident->name;
   ans += "(";
   // std::cout << "just before iterating\n";
+  bool commas = false;
   for (auto &elem : params->paramlist){
     ans += elem->vartype->vartype + ", ";
+    commas = true;
   }
-  ans.pop_back();
-  ans.pop_back();
+  if (commas){
+    ans.pop_back();
+    ans.pop_back();
+  }
   ans += ")" + nl;
   return ans;
 };
@@ -385,7 +389,7 @@ Value* FloatASTnode::codegen(){
 
 Value* BoolASTnode::codegen(){
   int v = val ? 1 : 0;
-  return ConstantInt::get(*TheContext, APInt(1, v));
+  return ConstantInt::get(*TheContext, APInt(1, v, true));
 };
 
 Value* IdentASTnode::codegen(){
@@ -475,9 +479,9 @@ Value* AssignASTnode::codegen(){
 
 Value* ExprASTnode::codegen(){
   cout << "The type of ExprASTnode is: " << type << '\n';
-  cout << (type == "assign") << '\n';
-  cout << (type == "intlit") << '\n';
-  cout << (type == "floatlit") << '\n';
+  // cout << (type == "assign") << '\n';
+  // cout << (type == "intlit") << '\n';
+  // cout << (type == "floatlit") << '\n';
   Value* val;
   if (type == "assign"){
     val = assign->codegen();
@@ -516,6 +520,33 @@ Value* ReturnASTnode::codegen(){
 };
 
 Value* IfASTnode::codegen(){
+  Function *TheFunction = Builder->GetInsertBlock()->getParent();
+  BasicBlock *then_ = BasicBlock::Create(*TheContext, "then", TheFunction);
+  BasicBlock *else_;
+  BasicBlock *end_ = BasicBlock::Create(*TheContext, "end");
+  Value *cond = expr->codegen();
+  Value *comp = Builder->CreateICmpNE(cond, ConstantInt::get(*TheContext, APInt(32, 0, true)), "ifcond");
+  if (else_stmt){
+    Builder->CreateCondBr(comp, then_, else_);
+    Builder->SetInsertPoint(then_);
+    block->codegen();
+    Builder->CreateBr(end_);
+    else_ = BasicBlock::Create(*TheContext, "else", TheFunction);
+    Builder->SetInsertPoint(else_);
+    else_stmt->codegen();
+    Builder->CreateBr(end_);
+    // TheFunction->insert(TheFunction->end(), else_);
+    TheFunction->insert(TheFunction->end(), end_);
+    Builder->SetInsertPoint(end_);
+  } else {
+    Builder->CreateCondBr(comp, then_, end_);
+    Builder->SetInsertPoint(then_);
+    block->codegen();
+    Builder->CreateBr(end_);
+    TheFunction->insert(TheFunction->end(), end_);
+    Builder->SetInsertPoint(end_);
+  }
+  
   return llvmnull;
 };
 
