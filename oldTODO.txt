@@ -1,0 +1,347 @@
+If and while conditions not working
+  ICmp operand types not matching
+  https://stackoverflow.com/questions/35856196/llvm-test-example-issue-with-type-comparison
+  Need to do casting
+Type checking:
+for a binary operation what are the rules if different types?
+Should we have a boolean just be a 0 or 1 in 32 bits?
+How does assessing the truth or falsity of 32 bits work?
+
+% can only take integers and bool
+&& need to implement short circuit
+|| need to implement short circuit
+binary +
+unary +
+binary -
+unary -
+*
+/
+%
+==
+!=
+<=
+<
+>
+>=
+unary !
+
+if we have a binary operation between two types, we promote lower to higher.
+
+Integer division of positive values truncates towards zero, so 5/3 is 1. However, if either operand is negative, the direction of rounding is implementation-defined.
+
+https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#Assignment-Operators
+CreateEntryBlockAlloca needs to have multiple types possible
+  FIX THIS
+
+we cannot assign to something that isnt a variable (so not an int, bool, float)
+
+5923 loc = 4480 + 858 + 585
+
+To Do:
+FunDecl
+  Why do we CreateStore after creating the alloca when declaring function?
+VarDecl
+  For Global Variable when and where should we create alloca?
+Block - Searching through symbol table
+  Currently just creates alloca at the entry basic block of parent function.
+  This may cause errors for nested (syntactic) blocks?
+  Maybe we need to use Builder.SetInsertBlock in FunBodyASTnode
+Stmt - Done
+Assign - Searching through symbol table
+Return - Done
+Expr - Searching through symbol table
+BinOp
+UnOp 
+If - Done
+While - Done
+Int, Float, Bool, Ident - Done
+
+Type checking - This is not done at all, will be errors
+  Function arguments in FunCall
+  Binops
+  Unops 
+
+is PLUS a valid unary operation?? Grammar, first/follow, all will then need to be changed
+  should be, deal with this later
+
+GlobalVariables should only be declared once but same name can be redeclared in local scope.
+Make AST Prettier by renaming if then else components. change expr to condition, first block to then, second block to else
+
+Errors:
+function arguments cant have the same name
+variable cant be declared twice
+cant be a function defined twice
+checks for return value for function? check c99 spec.
+
+
+
+New symbol table for each scope?
+
+NEED TO DISPLAY THE BINOPS AND UNOPS DONE
+Add line and column numbers to AST
+If we run out of tokens come up with an error
+Make TypeError class
+Make ScopeError class
+Clean up namespaces and all that. Be consistent across the entire project.
+
+Inside VarTypeASTnode constructor, add an error if user tries to put an invalid type.
+In ProgramASTnode codegen should we return pointer to main function?
+  also for FunDeclASTnode
+The type in CreateEntryBlockAlloca will need to be changed
+Do RetVal in FunBodyASTnode::codegen and FunDeclASTnode
+NamedValues needs to be modified for scope
+How do we want to generate return statements?
+We may need to CreateRetVoid for void functions.
+In FunCallASTnode why do we have the if condition with !argvals.back()
+Have an error where you cannot have multiple function arguments with the same name
+
+
+Note: all function calls will be done with 
+
+Where can variables be define?
+
+Module scope outside a function
+Inside a function
+Inside a block. this is kind of the same as ^.
+For a new function we need a new table of local variables.
+Blocks will only ever be inside a function. For a new block we add to the symbol table
+when we get out of a block we delete the symbols of that block
+When looking up a symbol by name we want to use the variable of the 
+innermost/closest block and leave the rest unchanged.
+When we declare a global variable do we need an alloca?
+We will be setting all variables as non constant.
+When we create this alloca is it stack or heap allocated? Will it persist
+after the end of this function??
+We will be looking up variables when they are being used in an expression (not the assign part)
+We type check during function calls and during operations
+What about argument type error for function call?
+Put LLVM IR unreachable after ret in basic blocks.
+
+DO NOT ALLOW VARARGS ANYWHERE
+
+
+
+
+After building ast, ast seems fine for:
+addition
+cosine
+factorial
+fibonacci
+palindrome
+pi
+recurse
+rfact
+unary
+void - segfault
+
+
+
+
+
+
+
+Refer to each other:
+BlockASTnode refers to StmtASTnode
+StmtASTnode refers to BlockASTnode
+
+DeclASTnode refers to FunDeclASTnode
+FunDeclASTnode refers to BlockASTnode
+BlockASTnode refers to DeclASTnode
+
+FunCallASTnode refers to ExprASTnode
+ExprASTnode refers to FunCallASTnode
+
+BinOpASTnode refers to ExprASTnode
+ExprASTnode refers to BinOpASTnode
+
+UnOpASTnode refers to ExprASTnode
+ExprASTnode refers to UnOpASTnode
+
+AssignASTnode refers to ExprASTnode
+ExprASTnode refers to AssignASTnode
+
+
+To do:
+Add grammar enforced operator precedence DONE, NEED TO TEST
+Remove left recursion, DONE
+Compute first and follow sets, DONE
+Use appropriate lookahead for certain cases to determine production to use, DONE (not for all grammars though)
+Make a predictive recursive descent parser. No backtracking. DONE
+Create abstract syntax tree DONE
+    parse each expression DONE
+    create appropriate ASTnode classes DONE
+    figure out how to use std::move DONE
+If we run out of tokens then come up with an error
+Pretty print abstract syntax tree (see clang AST output and model it on that) by implementing to string method
+Make error message exception class DONE
+Turn abstract syntax tree into LLVM IR by running recursive codegen() method
+    This will require type checking and variable scope (any other semantic checks?)
+A local_decl is exactly the same as var_decl;
+
+Add meaningful error messages to lexer, parser, semantic checker and codegen
+Fix error in find_sentence_first (will include epsilon erroneously) DONE
+Failed cosine, pi, recurse, rfact, unary  
+    the current token is always '-' and it is using lookahead
+    THIS IS FIXED
+    NOW JUST NEED TO DEAL WITH unary, ALSO FIXED
+
+Areas for mistakes:
+Make sure to eat a token after matching with a terminal
+Add an error if we are in the middle of a lookahead and run out of tokens
+Check that we handle the nullable case for nullable nonterminals
+Check that we are not returning nullptr when not supposed to
+Check not accidentally eating tokens after calling another parse function
+  Should only eat a token after matching with a terminal
+Note that a LocalDecl is always a VarDeclASTnode
+Should you remove LocalDeclList ? yes i did 
+Check the cases where you are returning nullptr and return a default uniqueptr instead
+
+
+For single production lhs, make sure you do the error inside the first nonterminal of the only sentence
+/*
+Recursive descent predictive parsing
+void A(){
+  choose A-production A -> X1X2...Xk // we will use if then else
+  for (i=1 to k){
+    if (Xi is a nonterminal){
+      call procedure Xi();
+    } else if (Xi == current input symbol a){
+      advance input to the next symbol;
+    } else {
+      raise error
+    }
+  }
+}
+*/
+
+check operator precedence
+why are there two minus signs in grammar? line 29 and line 31 in transformedgrammar3
+why are there no commas in params?
+do we add EOF to the grammar?
+
+now we have first and follow sets
+we need to build the table and see how many cells have multiple entries
+can we change the grammar so it becomes LL(1)?
+can we easily modify the code so we can parse LL(k)?
+
+for ll(k) > 2 we need to compute first_k and follow_k sets
+how do we do this
+
+epsilon cannot be in any follow sets
+
+revise the whole no epsilon productions stuff
+in the grammar how can you just take void as a param?
+int main(void){}; 
+is the above valid?
+see https://stackoverflow.com/questions/693788/is-it-better-to-use-c-void-arguments-void-foovoid-or-not-void-foo
+
+for rval1 in the ll parsing table, can we just pick the production that is not epsilon if the next character is + or whatever?
+
+let the terminal in the second index of tuple be called +1 token.
+('decl', '"int"') : [(7, 0), (7, 1)] # if +2 is IDENT and +3 is ; then do (7,0) | if +2 is IDENT and +3 is ( then do (7, 1)
+('decl', '"float"') : [(7, 0), (7, 1)] # if +2 is IDENT and +3 is ; then do (7,0) | if +2 is IDENT and +3 is ( then do (7, 1)
+('decl', '"bool"') : [(7, 0), (7, 1)] # if +2 is IDENT and +3 is ; then do (7,0) | if +2 is IDENT and +3 is ( then do (7, 1)
+('return_stmt', '"return"') : [(25, 0), (25, 1)] # if +2 is IDENT then do (25, 0) | otherwise do (25, 1)
+('expr', 'IDENT') : [(26, 0), (26, 1)] # if +2 is = then do (26, 0) | otherwise do (26, 1)
+('rval1', '"+"') : [(29, 8), (29, 13)] # never do (29, 13) ## CHECK THIS
+('rval1', '"-"') : [(29, 9), (29, 13)]
+('rval1', '"*"') : [(29, 10), (29, 13)]
+('rval1', '"/"') : [(29, 11), (29, 13)]
+('rval1', '"%"') : [(29, 12), (29, 13)]
+('rval1', '"<"') : [(29, 5), (29, 13)]
+('rval1', '">"') : [(29, 7), (29, 13)]
+('rval1', '"<="') : [(29, 4), (29, 13)]
+('rval1', '">="') : [(29, 6), (29, 13)]
+('rval1', '"=="') : [(29, 2), (29, 13)]
+('rval1', '"!="') : [(29, 3), (29, 13)]
+('rval1', '"||"') : [(29, 0), (29, 13)]
+('rval1', '"&&"') : [(29, 1), (29, 13)]
+
+After we have a parse tree what semantic analysis needs to be done?
+declaration and type
+type checking
+variable scope
+type inference / coercion
+where can x be stored: register, local, global, heap, static
+Array-bound checking # miniC does not have arrays
+Type mismatch
+Undeclared variable
+Reserved identifier misuse.
+Multiple declaration of variable in a scope.
+Accessing an out of scope variable.
+Actual and formal parameter mismatch.
+
+grammar enforced precedence
+
+
+1126 cells with 0 entries
+156 cells with 1 entry
+48 cells with more than 1 entry
+cells with more than 1 entry:
+('decl', "'int'") : [(7, 0), (7, 1)]
+('decl', "'float'") : [(7, 0), (7, 1)]
+('decl', "'bool'") : [(7, 0), (7, 1)]
+('return_stmt', "'return'") : [(25, 0), (25, 1)]
+('expr', 'IDENT') : [(26, 0), (26, 1)]
+('rval', "'('") : [(27, 0), (27, 1)]
+('rval', "'-'") : [(27, 0), (27, 1)]
+('rval', "'!'") : [(27, 0), (27, 1)]
+('rval', 'BOOL_LIT') : [(27, 0), (27, 1)]
+('rval', 'INT_LIT') : [(27, 0), (27, 1)]
+('rval', 'FLOAT_LIT') : [(27, 0), (27, 1)]
+('rval', 'IDENT') : [(27, 0), (27, 1)]
+('rval1', "'('") : [(28, 0), (28, 1)]
+('rval1', "'-'") : [(28, 0), (28, 1)]
+('rval1', "'!'") : [(28, 0), (28, 1)]
+('rval1', 'BOOL_LIT') : [(28, 0), (28, 1)]
+('rval1', 'INT_LIT') : [(28, 0), (28, 1)]
+('rval1', 'FLOAT_LIT') : [(28, 0), (28, 1)]
+('rval1', 'IDENT') : [(28, 0), (28, 1)]
+('rval2', "'('") : [(29, 0), (29, 1), (29, 2)]
+('rval2', "'-'") : [(29, 0), (29, 1), (29, 2)]
+('rval2', "'!'") : [(29, 0), (29, 1), (29, 2)]
+('rval2', 'BOOL_LIT') : [(29, 0), (29, 1), (29, 2)]
+('rval2', 'INT_LIT') : [(29, 0), (29, 1), (29, 2)]
+('rval2', 'FLOAT_LIT') : [(29, 0), (29, 1), (29, 2)]
+('rval2', 'IDENT') : [(29, 0), (29, 1), (29, 2)]
+('rval3', "'('") : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', "'-'") : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', "'!'") : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', 'BOOL_LIT') : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', 'INT_LIT') : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', 'FLOAT_LIT') : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval3', 'IDENT') : [(30, 0), (30, 1), (30, 2), (30, 3), (30, 4)]
+('rval4', "'('") : [(31, 0), (31, 1), (31, 2)]
+('rval4', "'-'") : [(31, 0), (31, 1), (31, 2)]
+('rval4', "'!'") : [(31, 0), (31, 1), (31, 2)]
+('rval4', 'BOOL_LIT') : [(31, 0), (31, 1), (31, 2)]
+('rval4', 'INT_LIT') : [(31, 0), (31, 1), (31, 2)]
+('rval4', 'FLOAT_LIT') : [(31, 0), (31, 1), (31, 2)]
+('rval4', 'IDENT') : [(31, 0), (31, 1), (31, 2)]
+('rval5', "'('") : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', "'-'") : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', "'!'") : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', 'BOOL_LIT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', 'INT_LIT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', 'FLOAT_LIT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval5', 'IDENT') : [(32, 0), (32, 1), (32, 2), (32, 3)]
+('rval7', 'IDENT') : [(34, 1), (34, 2)]
+
+
+if i use transformedgrammar6 then the ambiguities are
+('decl', "'int'") : [('first', 7, 0), ('first', 7, 1)]
+('decl', "'float'") : [('first', 7, 0), ('first', 7, 1)]
+('decl', "'bool'") : [('first', 7, 0), ('first', 7, 1)]
+('return_stmt', "'return'") : [('first', 25, 0), ('first', 25, 1)]
+('expr', 'IDENT') : [('first', 26, 0), ('first', 26, 1)]
+('rval7', 'IDENT') : [('first', 40, 1), ('first', 40, 2)]
+
+NOT GOING TO WORK:
+
+// now turn the parse tree into an AST
+// extern_list and children that are extern and extern_list1 can be turned into one node
+// same for decl_list, param_list, local_decls, stmt_list, arg_list
+// expr mixes assignment and nested expressions.
+// we want to remove rvals and then make it all 
+// take a particular look at nodes with keywords and then turn them into an AST node without keyword children
+// so for if_stmt then turn it into IfThenElseASTnode

@@ -608,7 +608,7 @@ Value* BlockASTnode::codegen(){
     if (NamedValuesPtr->find(ldecl->vardecl->ident->name) != NamedValuesPtr->end()){
       throw CompileError(ldecl->vardecl->ident->tok, "Variable cannot be declared more than once in the given scope");
     }
-
+    //Type t = ldecl->vardecl->vartype->vartype;
     AllocaInst *alloca = Builder->CreateAlloca(Type::getInt32Ty(*TheContext), 0, ldecl->vardecl->ident->name);
     NamedValuesPtr->insert({ldecl->vardecl->ident->name, alloca});
   }
