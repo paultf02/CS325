@@ -1,0 +1,55 @@
+ProgramASTnode:
+ FunDeclASTnode:
+  FunProtoASTnode: int factorial(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int i
+    VarDeclASTnode: int factorial
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: factorial
+      ExprASTnode:
+       IntASTnode: 1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: i
+      ExprASTnode:
+       IntASTnode: 1
+    WhileASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: <=
+       LHS:
+        ExprASTnode:
+         IdentASTnode: i
+       RHS:
+        ExprASTnode:
+         IdentASTnode: n
+     BlockASTnode:
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: factorial
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: *
+          LHS:
+           ExprASTnode:
+            IdentASTnode: factorial
+          RHS:
+           ExprASTnode:
+            IdentASTnode: i
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: i
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: +
+          LHS:
+           ExprASTnode:
+            IdentASTnode: i
+          RHS:
+           ExprASTnode:
+            IntASTnode: 1
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: factorial

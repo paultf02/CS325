@@ -1,0 +1,62 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: int print_int(int)
+ FunDeclASTnode:
+  FunProtoASTnode: int addition(int, int)
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: n
+        RHS:
+         ExprASTnode:
+          IdentASTnode: m
+    IfASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: ==
+       LHS:
+        ExprASTnode:
+         IdentASTnode: n
+       RHS:
+        ExprASTnode:
+         IntASTnode: 4
+     BlockASTnode:
+      ExprASTnode:
+       FunCallASTnode:
+        IdentASTnode: print_int
+        Args:
+         ExprASTnode:
+          BinOpASTnode:
+           Binary Operation: +
+           LHS:
+            ExprASTnode:
+             IdentASTnode: n
+           RHS:
+            ExprASTnode:
+             IdentASTnode: m
+     ElseStmt:
+      BlockASTnode:
+       ExprASTnode:
+        FunCallASTnode:
+         IdentASTnode: print_int
+         Args:
+          ExprASTnode:
+           BinOpASTnode:
+            Binary Operation: *
+            LHS:
+             ExprASTnode:
+              IdentASTnode: n
+            RHS:
+             ExprASTnode:
+              IdentASTnode: m
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: result

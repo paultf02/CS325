@@ -1,0 +1,66 @@
+ProgramASTnode:
+ FunDeclASTnode:
+  FunProtoASTnode: int multiplyNumbers(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       IntASTnode: 0
+    IfASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: >=
+       LHS:
+        ExprASTnode:
+         IdentASTnode: n
+       RHS:
+        ExprASTnode:
+         IntASTnode: 1
+     BlockASTnode:
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: result
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: *
+          LHS:
+           ExprASTnode:
+            IdentASTnode: n
+          RHS:
+           ExprASTnode:
+            FunCallASTnode:
+             IdentASTnode: multiplyNumbers
+             Args:
+              ExprASTnode:
+               BinOpASTnode:
+                Binary Operation: -
+                LHS:
+                 ExprASTnode:
+                  IdentASTnode: n
+                RHS:
+                 ExprASTnode:
+                  IntASTnode: 1
+     ElseStmt:
+      BlockASTnode:
+       ExprASTnode:
+        AssignASTnode:
+         IdentASTnode: result
+         ExprASTnode:
+          IntASTnode: 1
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: result
+ FunDeclASTnode:
+  FunProtoASTnode: int rfact(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    ReturnASTnode:
+     ExprASTnode:
+      FunCallASTnode:
+       IdentASTnode: multiplyNumbers
+       Args:
+        ExprASTnode:
+         IdentASTnode: n

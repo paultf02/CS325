@@ -1,0 +1,157 @@
+ProgramASTnode:
+ FunDeclASTnode:
+  FunProtoASTnode: float pi()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: bool flag
+    VarDeclASTnode: float PI
+    VarDeclASTnode: int i
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: flag
+      ExprASTnode:
+       BoolASTnode: true
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: PI
+      ExprASTnode:
+       FloatASTnode: 3.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: i
+      ExprASTnode:
+       IntASTnode: 2
+    WhileASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: <
+       LHS:
+        ExprASTnode:
+         IdentASTnode: i
+       RHS:
+        ExprASTnode:
+         IntASTnode: 100
+     BlockASTnode:
+      IfASTnode:
+       ExprASTnode:
+        IdentASTnode: flag
+       BlockASTnode:
+        ExprASTnode:
+         AssignASTnode:
+          IdentASTnode: PI
+          ExprASTnode:
+           BinOpASTnode:
+            Binary Operation: +
+            LHS:
+             ExprASTnode:
+              IdentASTnode: PI
+            RHS:
+             ExprASTnode:
+              BinOpASTnode:
+               Binary Operation: /
+               LHS:
+                ExprASTnode:
+                 FloatASTnode: 4.0
+               RHS:
+                ExprASTnode:
+                 BinOpASTnode:
+                  Binary Operation: *
+                  LHS:
+                   ExprASTnode:
+                    IdentASTnode: i
+                  RHS:
+                   ExprASTnode:
+                    BinOpASTnode:
+                     Binary Operation: *
+                     LHS:
+                      ExprASTnode:
+                       BinOpASTnode:
+                        Binary Operation: +
+                        LHS:
+                         ExprASTnode:
+                          IdentASTnode: i
+                        RHS:
+                         ExprASTnode:
+                          IntASTnode: 1
+                     RHS:
+                      ExprASTnode:
+                       BinOpASTnode:
+                        Binary Operation: +
+                        LHS:
+                         ExprASTnode:
+                          IdentASTnode: i
+                        RHS:
+                         ExprASTnode:
+                          IntASTnode: 2
+       ElseStmt:
+        BlockASTnode:
+         ExprASTnode:
+          AssignASTnode:
+           IdentASTnode: PI
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: -
+             LHS:
+              ExprASTnode:
+               IdentASTnode: PI
+             RHS:
+              ExprASTnode:
+               BinOpASTnode:
+                Binary Operation: /
+                LHS:
+                 ExprASTnode:
+                  FloatASTnode: 4.0
+                RHS:
+                 ExprASTnode:
+                  BinOpASTnode:
+                   Binary Operation: *
+                   LHS:
+                    ExprASTnode:
+                     IdentASTnode: i
+                   RHS:
+                    ExprASTnode:
+                     BinOpASTnode:
+                      Binary Operation: *
+                      LHS:
+                       ExprASTnode:
+                        BinOpASTnode:
+                         Binary Operation: +
+                         LHS:
+                          ExprASTnode:
+                           IdentASTnode: i
+                         RHS:
+                          ExprASTnode:
+                           IntASTnode: 1
+                      RHS:
+                       ExprASTnode:
+                        BinOpASTnode:
+                         Binary Operation: +
+                         LHS:
+                          ExprASTnode:
+                           IdentASTnode: i
+                         RHS:
+                          ExprASTnode:
+                           IntASTnode: 2
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: flag
+        ExprASTnode:
+         UnOpASTnode:
+          Unary Operation: !
+          ExprASTnode:
+           IdentASTnode: flag
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: i
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: +
+          LHS:
+           ExprASTnode:
+            IdentASTnode: i
+          RHS:
+           ExprASTnode:
+            IntASTnode: 2
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: PI

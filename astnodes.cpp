@@ -674,15 +674,22 @@ Value* ExprASTnode::codegen(){
 
 Value* WhileASTnode::codegen(){
   Function *TheFunction = Builder->GetInsertBlock()->getParent();
+  BasicBlock *whilecond_ = BasicBlock::Create(*TheContext, "whilecondition", TheFunction);
   BasicBlock *whilebody_ = BasicBlock::Create(*TheContext, "whilebody", TheFunction);
-  BasicBlock *end_ = BasicBlock::Create(*TheContext, "endwhile");
+  BasicBlock *end_ = BasicBlock::Create(*TheContext, "endwhile", TheFunction);
+  
+  Builder->CreateBr(whilecond_);
+  Builder->SetInsertPoint(whilecond_);
   Value *cond = expr->codegen();
   Value *comp = Builder->CreateICmpNE(bool_cast(cond), ConstantInt::get(tok_to_llvm_type(BOOL_TOK), 0), "whilecond");
   Builder->CreateCondBr(comp, whilebody_, end_);
   Builder->SetInsertPoint(whilebody_);
   stmt->codegen();
-  Builder->CreateBr(end_);
-  TheFunction->insert(TheFunction->end(), end_);
+  Builder->CreateBr(whilecond_);
+
+  // Value *newcomp = Builder->CreateICmpNE(bool_cast(cond), ConstantInt::get(tok_to_llvm_type(BOOL_TOK), 0), "whilecond");
+  // Builder->CreateCondBr(newcomp, whilebody_, end_);
+  // TheFunction->insert(TheFunction->end(), end_);
   Builder->SetInsertPoint(end_);
   return llvmnull;
 };
@@ -710,12 +717,12 @@ Value* IfASTnode::codegen(){
 
   Value *llvmfalse = ConstantInt::get(*TheContext, APInt(32, 0, true));
   // auto t = llvmfalse->getType();
-  string typestring;
-  raw_string_ostream typeStream(typestring);
-  llvmfalse->getType()->print(typeStream);
-  llvm::outs() << "llvmfalse type string: " << typestring << "\n";
-  cond->getType()->print(typeStream);
-  llvm::outs() << "cond type string: " << typestring << "\n";
+  // string typestring;
+  // raw_string_ostream typeStream(typestring);
+  // llvmfalse->getType()->print(typeStream);
+  // llvm::outs() << "llvmfalse type string: " << typestring << "\n";
+  // cond->getType()->print(typeStream);
+  // llvm::outs() << "cond type string: " << typestring << "\n";
 
   //Value *comp = Builder->CreateICmpNE(cond, llvmfalse, "ifcond");
   
@@ -785,9 +792,8 @@ Value* BlockASTnode::codegen(){
   }
   NamedValuesVector.push_back(std::move(NamedValuesPtr));
   
-  Value* laststmt;
   for (auto &stmt : stmtlist){
-    laststmt = stmt->codegen();
+    stmt->codegen();
   }
 
   NamedValuesVector.pop_back(); // delete the top most symbol table after we exit the block
@@ -1055,9 +1061,9 @@ Value *int_cast(Value* val){
 Type* widest_type(Value* v1, Value* v2){
   Type* t1 = v1->getType();
   Type* t2 = v2->getType();
-  if (t1 == tok_to_llvm_type(FLOAT_TOK) || t1 == tok_to_llvm_type(FLOAT_TOK)){
+  if (t1 == tok_to_llvm_type(FLOAT_TOK) || t2 == tok_to_llvm_type(FLOAT_TOK)){
     return tok_to_llvm_type(FLOAT_TOK);
-  } else if (t1 == tok_to_llvm_type(INT_TOK) || t1 == tok_to_llvm_type(INT_TOK)){
+  } else if (t1 == tok_to_llvm_type(INT_TOK) || t2 == tok_to_llvm_type(INT_TOK)){
     return tok_to_llvm_type(INT_TOK);
   } else {
     return tok_to_llvm_type(BOOL_TOK);

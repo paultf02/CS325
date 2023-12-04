@@ -1,0 +1,139 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: float print_float(float)
+ FunDeclASTnode:
+  FunProtoASTnode: float cosine(float)
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: float cos
+    VarDeclASTnode: float n
+    VarDeclASTnode: float term
+    VarDeclASTnode: float eps
+    VarDeclASTnode: float alt
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: eps
+      ExprASTnode:
+       FloatASTnode: 0.000001
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: n
+      ExprASTnode:
+       FloatASTnode: 1.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: cos
+      ExprASTnode:
+       FloatASTnode: 1.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: term
+      ExprASTnode:
+       FloatASTnode: 1.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: alt
+      ExprASTnode:
+       UnOpASTnode:
+        Unary Operation: -
+        ExprASTnode:
+         FloatASTnode: 1.0
+    WhileASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: >
+       LHS:
+        ExprASTnode:
+         IdentASTnode: term
+       RHS:
+        ExprASTnode:
+         IdentASTnode: eps
+     BlockASTnode:
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: term
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: *
+          LHS:
+           ExprASTnode:
+            IdentASTnode: term
+          RHS:
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: *
+             LHS:
+              ExprASTnode:
+               IdentASTnode: x
+             RHS:
+              ExprASTnode:
+               BinOpASTnode:
+                Binary Operation: /
+                LHS:
+                 ExprASTnode:
+                  IdentASTnode: x
+                RHS:
+                 ExprASTnode:
+                  BinOpASTnode:
+                   Binary Operation: /
+                   LHS:
+                    ExprASTnode:
+                     IdentASTnode: n
+                   RHS:
+                    ExprASTnode:
+                     BinOpASTnode:
+                      Binary Operation: +
+                      LHS:
+                       ExprASTnode:
+                        IdentASTnode: n
+                      RHS:
+                       ExprASTnode:
+                        IntASTnode: 1
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: cos
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: +
+          LHS:
+           ExprASTnode:
+            IdentASTnode: cos
+          RHS:
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: *
+             LHS:
+              ExprASTnode:
+               IdentASTnode: alt
+             RHS:
+              ExprASTnode:
+               IdentASTnode: term
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: alt
+        ExprASTnode:
+         UnOpASTnode:
+          Unary Operation: -
+          ExprASTnode:
+           IdentASTnode: alt
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: n
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: +
+          LHS:
+           ExprASTnode:
+            IdentASTnode: n
+          RHS:
+           ExprASTnode:
+            IntASTnode: 2
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: cos
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: cos

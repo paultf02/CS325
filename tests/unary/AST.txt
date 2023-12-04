@@ -1,0 +1,154 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: int print_int(int)
+ ExternASTnode: 
+  FunProtoASTnode: float print_float(float)
+ FunDeclASTnode:
+  FunProtoASTnode: float unary(int, float)
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: float result
+    VarDeclASTnode: float sum
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: sum
+      ExprASTnode:
+       FloatASTnode: 0.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: n
+        RHS:
+         ExprASTnode:
+          IdentASTnode: m
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: sum
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: sum
+        RHS:
+         ExprASTnode:
+          IdentASTnode: result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: n
+        RHS:
+         ExprASTnode:
+          UnOpASTnode:
+           Unary Operation: -
+           ExprASTnode:
+            IdentASTnode: m
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: sum
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: sum
+        RHS:
+         ExprASTnode:
+          IdentASTnode: result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: n
+        RHS:
+         ExprASTnode:
+          UnOpASTnode:
+           Unary Operation: -
+           ExprASTnode:
+            UnOpASTnode:
+             Unary Operation: -
+             ExprASTnode:
+              IdentASTnode: m
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: sum
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: sum
+        RHS:
+         ExprASTnode:
+          IdentASTnode: result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          UnOpASTnode:
+           Unary Operation: -
+           ExprASTnode:
+            IdentASTnode: n
+        RHS:
+         ExprASTnode:
+          UnOpASTnode:
+           Unary Operation: -
+           ExprASTnode:
+            IdentASTnode: m
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: sum
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: sum
+        RHS:
+         ExprASTnode:
+          IdentASTnode: result
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: sum

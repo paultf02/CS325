@@ -51,6 +51,8 @@ palindrome=1
 recurse=1
 rfact=1
 
+
+
 cd tests/addition
 
 if [ $addition == 1 ]

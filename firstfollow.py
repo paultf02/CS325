@@ -499,10 +499,17 @@ need_lookahead_str += f"{len(t0)} cells with 0 entries\n{len(t1)} cells with 1 e
 need_lookahead_str += "cells with more than 1 entry:\n"
 for item in tm:
     need_lookahead_str += (item + '\n')
-with open(outputlookaheadfile, 'w+') as fout:
-    fout.write(need_lookahead_str)
+
+with open(outputlookaheadfile, 'w+') as fout2:
+    print(need_lookahead_str)
+    fout2.write(need_lookahead_str)
     print("Done saving which productions need lookahead in "+outputlookaheadfile)
 
+# fout2 = open(outputlookaheadfile, 'w+')
+# print(need_lookahead_str)
+# fout2.write(need_lookahead_str)
+# print("Done saving which productions need lookahead in "+outputlookaheadfile)
+# fout2.close()
 
 
 # print("lhs that depend on followsets that are defined below")

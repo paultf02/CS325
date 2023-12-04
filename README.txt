@@ -1,0 +1,1 @@
+Need to update pathprefix in mccomp.cpp to ensure supporting files are loaded

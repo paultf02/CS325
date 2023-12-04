@@ -1,0 +1,59 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: int print_int(int)
+ VarDeclASTnode: int test
+ VarDeclASTnode: float f
+ VarDeclASTnode: bool b
+ FunDeclASTnode:
+  FunProtoASTnode: int While(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: test
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IntASTnode: 11
+        RHS:
+         ExprASTnode:
+          IntASTnode: 1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       IntASTnode: 0
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_int
+      Args:
+       ExprASTnode:
+        IdentASTnode: test
+    WhileASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: <
+       LHS:
+        ExprASTnode:
+         IdentASTnode: result
+       RHS:
+        ExprASTnode:
+         IntASTnode: 10
+     ExprASTnode:
+      AssignASTnode:
+       IdentASTnode: result
+       ExprASTnode:
+        BinOpASTnode:
+         Binary Operation: +
+         LHS:
+          ExprASTnode:
+           IdentASTnode: result
+         RHS:
+          ExprASTnode:
+           IntASTnode: 1
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: result

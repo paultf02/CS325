@@ -1,0 +1,104 @@
+ProgramASTnode:
+ FunDeclASTnode:
+  FunProtoASTnode: bool palindrome(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int t
+    VarDeclASTnode: int rev
+    VarDeclASTnode: int rmndr
+    VarDeclASTnode: bool result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: rev
+      ExprASTnode:
+       IntASTnode: 0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       BoolASTnode: false
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: t
+      ExprASTnode:
+       IdentASTnode: number
+    WhileASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: >
+       LHS:
+        ExprASTnode:
+         IdentASTnode: number
+       RHS:
+        ExprASTnode:
+         IntASTnode: 0
+     BlockASTnode:
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: rmndr
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: %
+          LHS:
+           ExprASTnode:
+            IdentASTnode: number
+          RHS:
+           ExprASTnode:
+            IntASTnode: 10
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: rev
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: +
+          LHS:
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: *
+             LHS:
+              ExprASTnode:
+               IdentASTnode: rev
+             RHS:
+              ExprASTnode:
+               IntASTnode: 10
+          RHS:
+           ExprASTnode:
+            IdentASTnode: rmndr
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: number
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: /
+          LHS:
+           ExprASTnode:
+            IdentASTnode: number
+          RHS:
+           ExprASTnode:
+            IntASTnode: 10
+    IfASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: ==
+       LHS:
+        ExprASTnode:
+         IdentASTnode: t
+       RHS:
+        ExprASTnode:
+         IdentASTnode: rev
+     BlockASTnode:
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: result
+        ExprASTnode:
+         BoolASTnode: true
+     ElseStmt:
+      BlockASTnode:
+       ExprASTnode:
+        AssignASTnode:
+         IdentASTnode: result
+         ExprASTnode:
+          BoolASTnode: false
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: result
