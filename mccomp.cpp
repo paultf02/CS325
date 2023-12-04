@@ -87,7 +87,7 @@ unique_ptr<Module> TheModule;
 unique_ptr<IRBuilder<>> Builder;
 // map<string, AllocaInst*> NamedValues; // local var table(s)
 vector<unique_ptr<map<string, AllocaInst*>>> NamedValuesVector;
-map<string, AllocaInst*> GlobalNamedValues; //global var table
+map<string, GlobalVariable*> GlobalNamedValues; //global var table
 Value *llvmnull;
 
 // Main driver code.

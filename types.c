@@ -8,9 +8,11 @@ bool a = 8;
 bool b = 5;
 
 int m = 7;
-float m = 9.2;
+//float m = 9.2;
+
+bool t = true;
 
 int main(){
-    printf("%d\n", a);
+    printf("%d\n", -true);
     return 0;
 }

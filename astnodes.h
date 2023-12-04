@@ -41,8 +41,7 @@ extern unique_ptr<llvm::Module> TheModule;
 extern unique_ptr<llvm::IRBuilder<>> Builder;
 // extern std::map<std::string, AllocaInst*> NamedValues; // local var table(s)
 extern vector<unique_ptr<std::map<string, AllocaInst*>>> NamedValuesVector;
-extern std::map<std::string, AllocaInst*> GlobalNamedValues; //global var table
-
+extern std::map<std::string, GlobalVariable*> GlobalNamedValues; //global var table
 //===----------------------------------------------------------------------===//
 // AST nodes
 //===----------------------------------------------------------------------===//
@@ -446,7 +445,7 @@ AllocaInst* CreateEntryBlockAlloca(Function *TheFunction, const std::string &Var
 
 AllocaInst* find_local(string funcname);
 
-AllocaInst* find_local_global(string funcname);
+// AllocaInst* find_local_global(string funcname);
 
 string typetostring(Type* t);
 
@@ -455,6 +454,10 @@ Type *tok_to_llvm_type(TOKEN_TYPE tok);
 Value *widening_cast_or_err(Value* inputval, Type* goaltype, TOKEN tok);
 
 Value *bool_cast(Value* val);
+
+Value *int_cast(Value* val);
+
+Type* widest_type(Value* v1, Value* v2);
 
 
   // virtual string to_string(string pre) const override {

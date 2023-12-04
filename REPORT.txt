@@ -6,3 +6,7 @@ now compute follow sets in order of topological sort
 
 cpp parser
 read in first, follow, grammar
+
+Talk about global variable decisions
+It judges first time a global variable is defined to be the
+first time reading the source code top to bottom.

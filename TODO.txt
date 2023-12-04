@@ -2,11 +2,20 @@ CreateEntryBlockAlloca Type Done
 Function Proto Has Unique Arg Names Done
 Function Call Has Args That Match Types or Satisfy Conditions Done
 Function Return Type is of a valid type. Done
-Assignment only done with LHS a valid variable and RHS appropriate Type Done (enforced by parser)
+Assignment only done with LHS a valid variable Done (enforced by parser)
+If Condition and While Loop Condition Type Semantics Done
+Global Variable DONE
+  In Var Decl, we register it as a global value;
+  We add its name to GlobalValues but the value is a nullptr
+  While parsing the rest of the code
+    the first time it is defined we add this to GlobalValues
+    If attempting to define it again then we throw an error
+  It judges first time a global variable is defined to be the
+  first time reading the source code top to bottom.
 
-Global Variable definition
+If we use declared but not defined global
+  should we throw error or return default?
 
-If Condition and While Loop Condition Type Semantics
 Binary operations widen both their inputs to the widest of the two
   Then compute result
   Then possibly store result in
@@ -14,6 +23,11 @@ Binary operations widen both their inputs to the widest of the two
     while loop condition
     if condition
     nowhere for plain function calls;
+
+Unary operations DONE
+
+Assignment only done with RHS appropriate Type - what are the semantics for this?
+  We only need to change AssignASTnode
 && and || short circuit
 Abstract Syntax Tree beautifying
 

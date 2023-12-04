@@ -364,16 +364,26 @@ Value* BinOpASTnode::codegen(){
 };
 
 Value* UnOpASTnode::codegen(){
-  Value *val;
+  Value *val = expr->codegen();
+  Type *t = val->getType();
   switch(unop){
   case MINUS:
-    break;
-  case NOT:
-    break;
+    Value *ans;
+    if (t == tok_to_llvm_type(BOOL_TOK)) {
+      ans = Builder->CreateNeg(int_cast(val));
+    } else if (t == tok_to_llvm_type(INT_TOK)) {
+      ans = Builder->CreateNeg(val);
+    } else {
+      ans = Builder->CreateFNeg(val);
+    }
+    return ans;
   case PLUS:
-    break;
+    return val;
+  case NOT:
+    return Builder->CreateICmpNE(bool_cast(val), ConstantInt::get(tok_to_llvm_type(BOOL_TOK), 1), "not");
+  default:
+    throw CompileError(tok, "Token is not a valid unary operator");
   }
-  return val;
 };
 
 Value* IntASTnode::codegen(){
@@ -396,12 +406,24 @@ Value* BoolASTnode::codegen(){
 };
 
 Value* IdentASTnode::codegen(){
-  AllocaInst* alloca = find_local_global(name);
-  if (!alloca){
-    throw CompileError(tok, "Variable needs to be declared before being used");
+  AllocaInst* alloca = find_local(name);
+  if (!alloca){ // not found in any local variable symbol table
+    if (GlobalNamedValues.find(name) == GlobalNamedValues.end()){ // not found in global variable symbol table
+      throw CompileError(tok, "variable needs to be declared before being used");
+    } else { // we are referring to a already declared global variable
+      GlobalVariable* g = GlobalNamedValues.at(name);
+      if (g){ // this is not a nullptr so global variable has been defined once before
+        Value* v = Builder->CreateLoad(g->getValueType(), g, name);
+        return v;
+      } else { // nullptr which means global variable has been declared but not defined
+          throw CompileError(tok, "global variable has been declared but not defined yet");
+      }
+    }
+  } else { // load the existing local variable
+    Value* v = Builder->CreateLoad(alloca->getAllocatedType(), alloca, name);
+    return v;
   }
-  Value* v = Builder->CreateLoad(alloca->getAllocatedType(), alloca, name);
-  return v;
+  
 };
 
 Value* FunCallASTnode::codegen(){
@@ -414,7 +436,7 @@ Value* FunCallASTnode::codegen(){
   if (CalleeF->arg_size() != arglist.size()){
     throw CompileError(ident->tok, "Incorrect # arguments passed");
   }
-  auto goaltype = CalleeF->getArg(0)->getType();
+  // auto goaltype = CalleeF->getArg(0)->getType();
   // What about argument type error? also we need to allow for compatible but
   // different types
   
@@ -459,11 +481,13 @@ Value* VarDeclASTnode::codegen(){
     // // Builder->CreateStore(g, alloca);
     // cout << "in vardeclastnode, truthiness of g.get(): " << (bool) g.get() << '\n';
     // return g.get();
-    GlobalVariable *g;
+    if (GlobalNamedValues.find(ident->name) != GlobalNamedValues.end()){
+      throw CompileError(ident->tok, "Global variable cannot be declared more than once");
+    } 
+
     Type *t = vartype->codegen();
-    //cout << "from vartypeastnode, truthiness of t: " << (bool) t << '\n';
-    g = new GlobalVariable(*TheModule, t, false, GlobalValue::CommonLinkage, Constant::getNullValue(t));
-    
+    GlobalVariable *g = new GlobalVariable(*TheModule, t, false, GlobalValue::CommonLinkage, Constant::getNullValue(t), ident->name);
+    GlobalNamedValues.insert({ident->name, nullptr});
     // is there a global symbol table with an alloca?
     // can we use llvm functions to modify g or do we need to do smth else
     // as in do we need to use CreateStore?
@@ -477,13 +501,35 @@ Value* VarDeclASTnode::codegen(){
 };
 
 Value* AssignASTnode::codegen(){
-  AllocaInst* alloca = find_local_global(ident->name);
-  if (!alloca){
-    throw CompileError(ident->tok, "Variable needs to be declared before being defined");
-  }
   Value* rhsvalue = rhs->codegen();
-  Builder->CreateStore(rhsvalue, alloca);
-  return rhsvalue;
+  AllocaInst* alloca = find_local(ident->name);
+  if (!alloca){ // not found in any local variable symbol table
+    if (GlobalNamedValues.find(ident->name) == GlobalNamedValues.end()){ // not found in global variable symbol table
+      throw CompileError(ident->tok, "variable needs to be declared before being defined");
+    } else { // we are referring to a already declared global variable
+      GlobalVariable* g = GlobalNamedValues.at(ident->name);
+      if (g){ // this is not a nullptr so global variable has been defined once before
+        throw CompileError(ident->tok, "global variable cannot be defined more than once");
+      } else { // this is the first definition of the global variable
+        GlobalVariable *gnonnull = TheModule->getGlobalVariable(ident->name);
+        Builder->CreateStore(rhsvalue, gnonnull);
+        GlobalNamedValues.at(ident->name) = gnonnull;
+        return rhsvalue;
+        // throw CompileError(ident->tok, "NEED TO IMPLEMENT STORAGE OF GLOBALS");
+      }
+    }
+    
+  } else { // load to the existing local variable
+    // Value* v = Builder->CreateLoad(alloca->getAllocatedType(), alloca, name);
+    Builder->CreateStore(rhsvalue, alloca);
+    return rhsvalue;
+  }
+
+  //AllocaInst* alloca = find_local_global(ident->name);
+  // if (!alloca){
+  //   throw CompileError(ident->tok, "Variable needs to be declared before being defined");
+  // }
+  
 };
 
 TOKEN ExprASTnode::get_first_tok() const{
@@ -569,7 +615,9 @@ Value* IfASTnode::codegen(){
   BasicBlock *then_ = BasicBlock::Create(*TheContext, "then", TheFunction);
   BasicBlock *else_;
   BasicBlock *end_ = BasicBlock::Create(*TheContext, "endif");
+  
   Value *cond = expr->codegen();
+  Value *comp = Builder->CreateICmpNE(bool_cast(cond), ConstantInt::get(tok_to_llvm_type(BOOL_TOK), 0), "ifcond");
 
   Value *llvmfalse = ConstantInt::get(*TheContext, APInt(32, 0, true));
   // auto t = llvmfalse->getType();
@@ -580,8 +628,8 @@ Value* IfASTnode::codegen(){
   cond->getType()->print(typeStream);
   llvm::outs() << "cond type string: " << typestring << "\n";
 
-
-  Value *comp = Builder->CreateICmpNE(cond, llvmfalse, "ifcond");
+  //Value *comp = Builder->CreateICmpNE(cond, llvmfalse, "ifcond");
+  
   if (else_stmt){
     else_ = BasicBlock::Create(*TheContext, "else");
     Builder->CreateCondBr(comp, then_, else_);
@@ -780,7 +828,7 @@ Value* DeclASTnode::codegen(){
   if (isVar){
     return vardecl->codegen();
   } else {
-    cout << "here in the fundecl part of DeclASTnode\n";
+    //cout << "here in the fundecl part of DeclASTnode\n";
     return fundecl->codegen();
   }
 };
@@ -812,17 +860,17 @@ AllocaInst* find_local(string funcname){
   return nullptr;
 };
 
-AllocaInst* find_local_global(string funcname){
-  AllocaInst* lcl = find_local(funcname);
-  if (lcl) {
-    return lcl;
-  }
-  if (GlobalNamedValues.find(funcname) != GlobalNamedValues.end()){
-    return GlobalNamedValues.at(funcname);
-  } else {
-    return nullptr;
-  }
-};
+// AllocaInst* find_local_global(string funcname){
+//   AllocaInst* lcl = find_local(funcname);
+//   if (lcl) {
+//     return lcl;
+//   }
+//   if (GlobalNamedValues.find(funcname) != GlobalNamedValues.end()){
+//     return GlobalNamedValues.at(funcname);
+//   } else {
+//     return nullptr;
+//   }
+// };
 
 string typetostring(Type* t){
   std::string type_str;
@@ -884,3 +932,44 @@ Value *widening_cast_or_err(Value* inputval, Type* goaltype, TOKEN tok){
   //   throw CompileError(errmsg);
   // }
 };
+
+Value *bool_cast(Value *val){
+  Type *inputtype = val->getType();
+  if (inputtype==tok_to_llvm_type(BOOL_TOK)){
+    return val;
+  } else if (inputtype==tok_to_llvm_type(INT_TOK)){
+    Value *cmpresult = Builder->CreateICmpNE(val, ConstantInt::get(tok_to_llvm_type(INT_TOK), 0), "int_to_bool_one");
+    return Builder->CreateZExt(cmpresult, tok_to_llvm_type(BOOL_TOK), "int_to_bool_two");
+  } else if (inputtype==tok_to_llvm_type(FLOAT_TOK)){
+    Value *cmpresult = Builder->CreateFCmpUNE(val, ConstantFP::get(tok_to_llvm_type(FLOAT_TOK), 0.0), "float_to_bool_one");
+    return Builder->CreateZExt(cmpresult, tok_to_llvm_type(BOOL_TOK), "float_to_bool_two");
+  } else {
+    throw std::runtime_error("bool_cast exception because input value type is not a supported type");
+  }
+}
+
+Value *int_cast(Value* val){
+  Type *inputtype = val->getType();
+  if (inputtype==tok_to_llvm_type(BOOL_TOK)){
+    return Builder->CreateIntCast(val, tok_to_llvm_type(INT_TOK), false, "bool_int_cast");
+  } else if (inputtype==tok_to_llvm_type(INT_TOK)){
+    return val;
+  } else if (inputtype==tok_to_llvm_type(FLOAT_TOK)){
+    return Builder->CreateFPToSI(val, tok_to_llvm_type(INT_TOK), "float_int_cast");
+    throw std::runtime_error("bool_cast exception because input value type is not a supported type");
+  } else {
+    throw std::runtime_error("bool_cast exception because input value type is not a supported type");
+  }
+}
+
+Type* widest_type(Value* v1, Value* v2){
+  Type* t1 = v1->getType();
+  Type* t2 = v2->getType();
+  if (t1 == tok_to_llvm_type(FLOAT_TOK) || t1 == tok_to_llvm_type(FLOAT_TOK)){
+    return tok_to_llvm_type(FLOAT_TOK);
+  } else if (t1 == tok_to_llvm_type(INT_TOK) || t1 == tok_to_llvm_type(INT_TOK)){
+    return tok_to_llvm_type(INT_TOK);
+  } else {
+    return tok_to_llvm_type(BOOL_TOK);
+  }
+}

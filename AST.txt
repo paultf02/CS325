@@ -1,11 +1,5 @@
 ProgramASTnode:
- FunDeclASTnode:
-  FunProtoASTnode: int simple(int)
-  FunBodyASTnode:
-   BlockASTnode:
-    ReturnASTnode:
-     ExprASTnode:
-      FloatASTnode: 1.2
+ VarDeclASTnode: int glob
  FunDeclASTnode:
   FunProtoASTnode: int main()
   FunBodyASTnode:
@@ -19,13 +13,9 @@ ProgramASTnode:
        BoolASTnode: false
     ExprASTnode:
      AssignASTnode:
-      IdentASTnode: x
+      IdentASTnode: glob
       ExprASTnode:
-       FunCallASTnode:
-        IdentASTnode: simple
-        Args:
-         ExprASTnode:
-          IntASTnode: 4
+       IntASTnode: 1
     ReturnASTnode:
      ExprASTnode:
-      IdentASTnode: x
+      IdentASTnode: glob

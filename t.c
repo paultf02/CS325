@@ -43,10 +43,10 @@
 //     j = 10;
 //   }
 
-//   // while (i == 4) {
-//   //   // i = i + 1;
-//   // }
-//   return k;
+//   while (i == 4) {
+//     i = i + 1;
+//   }
+//   return i;
 // }
 
 // int main(){
@@ -65,14 +65,32 @@
 // }
 
 
-int simple(int a){
-  return 1.2;
-}
+// int simple(int a){
+//   return 1.2;
+// }
+
+// int main(){
+//   int x;
+//   bool y;
+//   y= false;
+//   x = simple(4);
+//   return x;
+// }
+
+// int glob;
+
+// int main(){
+//   int x;
+//   bool y;
+//   // bool glob;
+//   y = false;
+//   glob = 1;
+  
+  
+
+//   return glob;
+// }
 
 int main(){
-  int x;
-  bool y;
-  y= false;
-  x = simple(4);
-  return x;
+  
 }
