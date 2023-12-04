@@ -1,7 +1,7 @@
 # we have 3 categories of term
 # nonterminal, terminal, epsilon
 
-grammarversion = "8"
+grammarversion = "10"
 
 inputgrammarfile = f"./grammars/transformedgrammar{grammarversion}.txt"
 outputcsvfile = f"./firstfollow/firstfollowg{grammarversion}sep.csv"
@@ -451,7 +451,7 @@ for term in first.keys():
     thisrow = f"{term}{sep}{nullable[term]}{sep}{to_string(first[term])}{sep}{to_string(follow[term])}\n"
     ostring += thisrow
     #print(thisrow)
-with open(outputcsvfile, 'w') as fout:
+with open(outputcsvfile, 'w+') as fout:
     fout.write(ostring)
     print("first and follow sets saved into csv file")
 
@@ -499,7 +499,7 @@ need_lookahead_str += f"{len(t0)} cells with 0 entries\n{len(t1)} cells with 1 e
 need_lookahead_str += "cells with more than 1 entry:\n"
 for item in tm:
     need_lookahead_str += (item + '\n')
-with open(outputlookaheadfile, 'w') as fout:
+with open(outputlookaheadfile, 'w+') as fout:
     fout.write(need_lookahead_str)
     print("Done saving which productions need lookahead in "+outputlookaheadfile)
 
