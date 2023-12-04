@@ -133,7 +133,6 @@ public:
 class FunCallASTnode : public ASTnode{
 public:
   unique_ptr<IdentASTnode> ident;
-  // unique_ptr<ArgListASTnode> arglist;
   vector<unique_ptr<ExprASTnode>> arglist;
   // FunCallASTnode(unique_ptr<IdentASTnode> i,
   //                unique_ptr<ArgListASTnode> a
@@ -157,6 +156,17 @@ public:
   VarTypeASTnode(string vt) : vartype(vt) {};
   virtual Type *codegen();
   virtual string to_string(string pre) const override;
+  Type *getType(){
+    if (vartype=="int"){
+      return Type::getInt32Ty(*TheContext);
+    } else if (vartype=="float"){
+      return Type::getFloatTy(*TheContext);
+    } else if (vartype=="bool"){
+      return Type::getInt1Ty(*TheContext);
+    } else {
+      throw std::runtime_error("VarTypeASTnode has invalid vartype");
+    }
+  }
 };
 
 class VarDeclASTnode : public ASTnode{
@@ -194,6 +204,7 @@ public:
   ExprASTnode(unique_ptr<BoolASTnode> bo) : type("boollit"), boollit(std::move(bo)){};
   virtual llvm::Value *codegen();
   virtual string to_string(string pre) const override;
+  TOKEN get_first_tok() const;
 };
 
 class AssignASTnode : public ASTnode{
@@ -431,11 +442,19 @@ public:
   }
 };
 
-AllocaInst* CreateEntryBlockAlloca(Function *TheFunction, const std::string &VarName);
+AllocaInst* CreateEntryBlockAlloca(Function *TheFunction, const std::string &VarName, Type *argtype);
 
 AllocaInst* find_local(string funcname);
 
 AllocaInst* find_local_global(string funcname);
+
+string typetostring(Type* t);
+
+Type *tok_to_llvm_type(TOKEN_TYPE tok);
+
+Value *widening_cast_or_err(Value* inputval, Type* goaltype, TOKEN tok);
+
+Value *bool_cast(Value* val);
 
 
   // virtual string to_string(string pre) const override {

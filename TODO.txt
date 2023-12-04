@@ -1,9 +1,11 @@
-Global Variable
-CreateEntryBlockAlloca Type
-Function Proto Has Unique Arg Names 
-Function Call Has Args That Match Types or Satisfy Conditions 
-Assignment only done with LHS a valid variable and RHS appropriate Type
-Function Return Type is of a valid type.
+CreateEntryBlockAlloca Type Done
+Function Proto Has Unique Arg Names Done
+Function Call Has Args That Match Types or Satisfy Conditions Done
+Function Return Type is of a valid type. Done
+Assignment only done with LHS a valid variable and RHS appropriate Type Done (enforced by parser)
+
+Global Variable definition
+
 If Condition and While Loop Condition Type Semantics
 Binary operations widen both their inputs to the widest of the two
   Then compute result

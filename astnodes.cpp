@@ -1,5 +1,4 @@
 #include "astnodes.h"
-// #include "llvm/IR/Value.h"
 #include "llvm/ADT/APFloat.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/IR/BasicBlock.h"
@@ -379,17 +378,21 @@ Value* UnOpASTnode::codegen(){
 
 Value* IntASTnode::codegen(){
   cout << "in IntASTnode " << name << '\n';
-  return ConstantInt::get(*TheContext, APInt(32, val, true));
+  return ConstantInt::get(tok_to_llvm_type(INT_TOK), val);
+  //return ConstantInt::get(*TheContext, APInt(32, val, true));
 };
 
 Value* FloatASTnode::codegen(){
   cout << "in FloatASTnode " << name << '\n';
-  return ConstantFP::get(*TheContext, APFloat(val));
+  return ConstantFP::get(tok_to_llvm_type(FLOAT_TOK), val);
+  // return ConstantFP::get(Type::getFloatTy(*TheContext), val);
+  // return ConstantFP::get(*TheContext, APFloat(val));
 };
 
 Value* BoolASTnode::codegen(){
   int v = val ? 1 : 0;
-  return ConstantInt::get(*TheContext, APInt(32, v, true));
+  return ConstantInt::get(tok_to_llvm_type(BOOL_TOK), v);
+  //return ConstantInt::get(*TheContext, APInt(32, v, true));
 };
 
 Value* IdentASTnode::codegen(){
@@ -411,16 +414,19 @@ Value* FunCallASTnode::codegen(){
   if (CalleeF->arg_size() != arglist.size()){
     throw CompileError(ident->tok, "Incorrect # arguments passed");
   }
-
-  // What about argument type error?
+  auto goaltype = CalleeF->getArg(0)->getType();
+  // What about argument type error? also we need to allow for compatible but
+  // different types
   
   std::vector<Value *> argvals;
   for (int i = 0; i<arglist.size(); i++) {
-    argvals.push_back(arglist[i]->codegen());
+    Value *thisarg = arglist[i]->codegen();
+    TOKEN tok = arglist[i]->get_first_tok();
+    Value *casted = widening_cast_or_err(thisarg, CalleeF->getArg(i)->getType(), tok);
+    argvals.push_back(casted);
     if (!argvals.back()){
-      throw CompileError("argvals.back() is null in FunCallASTnode");
+      throw std::runtime_error("argvals.back() is null in FunCallASTnode");
       // return nullptr;
-
     }
   }
   CallInst *callinst = Builder->CreateCall(CalleeF, argvals, "calltmp");
@@ -430,11 +436,14 @@ Value* FunCallASTnode::codegen(){
 
 Type* VarTypeASTnode::codegen(){
   if (vartype == "bool"){
-    return Type::getInt1Ty(*TheContext);
+    // return Type::getInt1Ty(*TheContext);
+    return tok_to_llvm_type(BOOL_TOK);
   } else if (vartype == "float"){
-    return Type::getFloatTy(*TheContext);
+    // return Type::getFloatTy(*TheContext);
+    return tok_to_llvm_type(FLOAT_TOK);
   } else {
-    return Type::getInt32Ty(*TheContext);
+    // return Type::getInt32Ty(*TheContext);
+    return tok_to_llvm_type(INT_TOK);
   }
 };
 
@@ -462,8 +471,8 @@ Value* VarDeclASTnode::codegen(){
     //cout << "in vardeclastnode, truthiness of g.get(): " << (bool) g.get() << '\n';
     return g;
   } else {
-    return llvmnull;
-    //throw CompileError("have not implemented local decls yet");
+    throw std::runtime_error("local decl not implemented here, it is implemented in block");
+    // return llvmnull;
   }
 };
 
@@ -476,6 +485,28 @@ Value* AssignASTnode::codegen(){
   Builder->CreateStore(rhsvalue, alloca);
   return rhsvalue;
 };
+
+TOKEN ExprASTnode::get_first_tok() const{
+    TOKEN tok;
+    if (type == "assign"){
+      tok =  assign->ident->tok;
+    } else if (type == "binop"){
+      tok =  binop->lhs->get_first_tok();
+    } else if (type == "unop"){
+      tok =  unop->tok;
+    } else if (type == "ident"){
+      tok =  ident->tok;
+    } else if (type == "funcall"){
+      tok =  funcall->ident->tok;
+    } else if (type == "intlit"){
+      tok =  intlit->tok;
+    } else if (type == "floatlit"){
+      tok =  floatlit->tok;
+    } else if (type == "boollit"){
+      tok =  boollit->tok;
+    };
+    return tok;
+  };
 
 Value* ExprASTnode::codegen(){
   cout << "The type of ExprASTnode is: " << type << '\n';
@@ -511,7 +542,7 @@ Value* WhileASTnode::codegen(){
   BasicBlock *whilebody_ = BasicBlock::Create(*TheContext, "whilebody", TheFunction);
   BasicBlock *end_ = BasicBlock::Create(*TheContext, "endwhile");
   Value *cond = expr->codegen();
-  Value *comp = Builder->CreateICmpNE(cond, ConstantInt::get(*TheContext, APInt(32, 0, true)), "whilecond");
+  Value *comp = Builder->CreateICmpNE(bool_cast(cond), ConstantInt::get(tok_to_llvm_type(BOOL_TOK), 0), "whilecond");
   Builder->CreateCondBr(comp, whilebody_, end_);
   Builder->SetInsertPoint(whilebody_);
   stmt->codegen();
@@ -525,8 +556,11 @@ Value* ReturnASTnode::codegen(){
   if (isVoid){
     return Builder->CreateRetVoid();
   } else {
+    // type check the return value.
+    Type* rettype = Builder->getCurrentFunctionReturnType();
     Value* retval = expr->codegen();
-    return Builder->CreateRet(retval);
+    Value* casted = widening_cast_or_err(retval, rettype, expr->get_first_tok());
+    return Builder->CreateRet(casted);
   }
 };
 
@@ -603,13 +637,13 @@ Value* BlockASTnode::codegen(){
     // after the end of this function??
     // throw CompileError("have not implemented block yet");
     // which basic block should this alloca be in?
-
+    // ldecl->codegen();
     // if this name has already been defined in this block throw an error
     if (NamedValuesPtr->find(ldecl->vardecl->ident->name) != NamedValuesPtr->end()){
       throw CompileError(ldecl->vardecl->ident->tok, "Variable cannot be declared more than once in the given scope");
     }
-    //Type t = ldecl->vardecl->vartype->vartype;
-    AllocaInst *alloca = Builder->CreateAlloca(Type::getInt32Ty(*TheContext), 0, ldecl->vardecl->ident->name);
+    Type *t = ldecl->vardecl->vartype->getType();
+    AllocaInst *alloca = Builder->CreateAlloca(t, 0, ldecl->vardecl->ident->name);
     NamedValuesPtr->insert({ldecl->vardecl->ident->name, alloca});
   }
   NamedValuesVector.push_back(std::move(NamedValuesPtr));
@@ -629,7 +663,11 @@ Type *ParamASTnode::codegen(){
 
 vector<Type *> ParamListASTnode::codegen(){
   vector<Type *> ans;
+  vector<string> argnames;
   for (auto &param : paramlist){
+    if (find(argnames.begin(), argnames.end(), param->ident->name) != argnames.end()){
+      throw CompileError(param->ident->tok, "Cannot have repeated argument names in function prototype");
+    }
     ans.push_back(param->codegen());
   }
   return ans;
@@ -664,6 +702,9 @@ Value* FunBodyASTnode::codegen(){
 
 Value* FunDeclASTnode::codegen(){
   Function *TheFunction = TheModule->getFunction(funproto->ident->name);
+  if (TheFunction){
+    throw CompileError(funproto->ident->tok, "Function already declared, cannot be declared twice");
+  }
   if (!TheFunction){
     TheFunction = funproto->codegen();
   }
@@ -682,7 +723,8 @@ Value* FunDeclASTnode::codegen(){
   // NamedValues.clear();
   AllocaInst *alloca;
   for (auto &arg : TheFunction->args()) {
-    alloca = CreateEntryBlockAlloca(TheFunction, string(arg.getName()));
+    Type *argtype = arg.getType();
+    alloca = CreateEntryBlockAlloca(TheFunction, string(arg.getName()), argtype);
     // cout << "Dereferencing alloca:\n";
     // cout << "alloca boolvalue: " << (bool) alloca << '\n';
     // cout << (string) alloca->getName() << '\n';
@@ -753,10 +795,10 @@ Value* ProgramASTnode::codegen() {
   return llvmnull; 
 };
 
-AllocaInst* CreateEntryBlockAlloca(Function *TheFunction,const std::string &VarName) {
+AllocaInst* CreateEntryBlockAlloca(Function *TheFunction, const std::string &VarName, Type *argtype) {
   IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
   //return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), 0, VarName.c_str());
-  return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), 0, VarName);
+  return TmpB.CreateAlloca(argtype, 0, VarName);
   // return TmpB.CreateAlloca(Type::getInt32Ty(*TheContext), nullptr, VarName.c_str());
 }
 
@@ -780,4 +822,65 @@ AllocaInst* find_local_global(string funcname){
   } else {
     return nullptr;
   }
+};
+
+string typetostring(Type* t){
+  std::string type_str;
+  llvm::raw_string_ostream rso(type_str);
+  t->print(rso);
+  return rso.str();
+}
+
+Type *tok_to_llvm_type(TOKEN_TYPE tok){
+  switch(tok){
+  case BOOL_TOK:
+    return Type::getInt1Ty(*TheContext);
+  case INT_TOK:
+    return Type::getInt32Ty(*TheContext);
+  case FLOAT_TOK:
+    return Type::getFloatTy(*TheContext);
+  default:
+    throw CompileError("This TOKEN_TYPE is not a valid expression type: " + std::to_string((int) tok));
+  }
+}
+
+Value *widening_cast_or_err(Value* inputval, Type* goaltype, TOKEN tok){
+  Type * booltype = tok_to_llvm_type(BOOL_TOK);
+  Type * inttype = tok_to_llvm_type(INT_TOK);
+  Type * floattype = tok_to_llvm_type(FLOAT_TOK);
+
+  Type *inputtype = inputval->getType();
+  string errmsg = "cannot perform implicit narrowing cast when casting from " + typetostring(inputtype) + " to " + typetostring(goaltype) + "\n";
+
+  // if identical and not void then no cast needed
+  if (inputtype == goaltype && !inputtype->isVoidTy()){
+    return inputval;
+  }
+
+  // Handling if inputtype or goaltype is void
+  if (inputtype->isVoidTy()){
+    errmsg += "Cannot cast from void\n";
+  }
+  if (goaltype->isVoidTy()){
+    errmsg += "Cannot cast to void\n";
+  }
+
+  if (inputtype==booltype && goaltype==inttype) {
+    // bool to int
+    return Builder->CreateIntCast(inputval, goaltype, false, "bool_int_cast");
+  } else if (inputtype==booltype && goaltype==floattype){
+    // bool to float
+    Value* booltoint = Builder->CreateIntCast(inputval, goaltype, false, "bool_int_cast");
+    return Builder->CreateSIToFP(booltoint, tok_to_llvm_type(TOKEN_TYPE::FLOAT_TOK), "bool_float_cast");
+  } else if (inputtype==inttype && goaltype==floattype){
+    // int to float
+    return Builder->CreateSIToFP(inputval, tok_to_llvm_type(TOKEN_TYPE::FLOAT_TOK), "int_float_cast");
+  }
+  
+  throw CompileError(tok, errmsg);
+  // if (tok) {
+  //   throw CompileError(*tok, errmsg);
+  // } else {
+  //   throw CompileError(errmsg);
+  // }
 };

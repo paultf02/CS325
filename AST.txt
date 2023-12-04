@@ -1,58 +1,31 @@
 ProgramASTnode:
  FunDeclASTnode:
-  FunProtoASTnode: int comp1()
+  FunProtoASTnode: int simple(int)
   FunBodyASTnode:
    BlockASTnode:
-    VarDeclASTnode: int i
-    VarDeclASTnode: int j
-    VarDeclASTnode: bool k
-    ExprASTnode:
-     AssignASTnode:
-      IdentASTnode: i
-      ExprASTnode:
-       IntASTnode: 4
-    ExprASTnode:
-     AssignASTnode:
-      IdentASTnode: j
-      ExprASTnode:
-       BinOpASTnode:
-        Binary Operation: +
-        LHS:
-         ExprASTnode:
-          IdentASTnode: i
-        RHS:
-         ExprASTnode:
-          IntASTnode: 1
-    ExprASTnode:
-     AssignASTnode:
-      IdentASTnode: k
-      ExprASTnode:
-       BinOpASTnode:
-        Binary Operation: ==
-        LHS:
-         ExprASTnode:
-          IdentASTnode: j
-        RHS:
-         ExprASTnode:
-          IntASTnode: 5
-    IfASTnode:
-     ExprASTnode:
-      IdentASTnode: i
-     BlockASTnode:
-      ExprASTnode:
-       AssignASTnode:
-        IdentASTnode: j
-        ExprASTnode:
-         IntASTnode: 10
     ReturnASTnode:
      ExprASTnode:
-      IdentASTnode: k
+      FloatASTnode: 1.2
  FunDeclASTnode:
   FunProtoASTnode: int main()
   FunBodyASTnode:
    BlockASTnode:
+    VarDeclASTnode: int x
+    VarDeclASTnode: bool y
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: y
+      ExprASTnode:
+       BoolASTnode: false
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: x
+      ExprASTnode:
+       FunCallASTnode:
+        IdentASTnode: simple
+        Args:
+         ExprASTnode:
+          IntASTnode: 4
     ReturnASTnode:
      ExprASTnode:
-      FunCallASTnode:
-       IdentASTnode: comp1
-       Args:
+      IdentASTnode: x
