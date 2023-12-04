@@ -359,6 +359,8 @@ Value* BinOpASTnode::codegen(){
     break;
   case GT:
     break;
+  default:
+    throw CompileError(tok, "This is not a valid binary operation token");
   }
   return val;
 };
@@ -387,13 +389,13 @@ Value* UnOpASTnode::codegen(){
 };
 
 Value* IntASTnode::codegen(){
-  cout << "in IntASTnode " << name << '\n';
+  // cout << "in IntASTnode " << name << '\n';
   return ConstantInt::get(tok_to_llvm_type(INT_TOK), val);
   //return ConstantInt::get(*TheContext, APInt(32, val, true));
 };
 
 Value* FloatASTnode::codegen(){
-  cout << "in FloatASTnode " << name << '\n';
+  // cout << "in FloatASTnode " << name << '\n';
   return ConstantFP::get(tok_to_llvm_type(FLOAT_TOK), val);
   // return ConstantFP::get(Type::getFloatTy(*TheContext), val);
   // return ConstantFP::get(*TheContext, APFloat(val));
@@ -935,6 +937,7 @@ Value *widening_cast_or_err(Value* inputval, Type* goaltype, TOKEN tok){
 
 Value *bool_cast(Value *val){
   Type *inputtype = val->getType();
+  // std::cout << typetostring(inputtype) << "\n";
   if (inputtype==tok_to_llvm_type(BOOL_TOK)){
     return val;
   } else if (inputtype==tok_to_llvm_type(INT_TOK)){
