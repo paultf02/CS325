@@ -644,7 +644,7 @@ TOKEN ExprASTnode::get_first_tok() const{
   };
 
 Value* ExprASTnode::codegen(){
-  cout << "The type of ExprASTnode is: " << type << '\n';
+  // cout << "The type of ExprASTnode is: " << type << '\n';
   // cout << (type == "assign") << '\n';
   // cout << (type == "intlit") << '\n';
   // cout << (type == "floatlit") << '\n';
@@ -744,7 +744,7 @@ Value* IfASTnode::codegen(){
 };
 
 Value* StmtASTnode::codegen(){
-  cout << "The type of StmtASTnode is: " << whichtype << '\n';
+  // cout << "The type of StmtASTnode is: " << whichtype << '\n';
   // cout << "In StmtASTnode\n";
   // throw CompileError("have not implemented StmtASTnode");
   if (whichtype=="expr_stmt"){

@@ -1,3 +1,7 @@
+short circuiting
+assign type semantics
+beautify AST
+
 CreateEntryBlockAlloca Type Done
 Function Proto Has Unique Arg Names Done
 Function Call Has Args That Match Types or Satisfy Conditions Done

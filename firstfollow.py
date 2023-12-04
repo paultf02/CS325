@@ -1,7 +1,7 @@
 # we have 3 categories of term
 # nonterminal, terminal, epsilon
 
-grammarversion = "10"
+grammarversion = "8"
 
 inputgrammarfile = f"./grammars/transformedgrammar{grammarversion}.txt"
 outputcsvfile = f"./firstfollow/firstfollowg{grammarversion}sep.csv"
@@ -314,10 +314,10 @@ while True:
     # print(nametoterms)
 
 
-print("our final graphs is:")
-[print(f"{key}: {value}") for (key, value) in G.items()]
-print("the key for new nodes is:")
-[print(f"{key}: {value}") for (key, value) in nametoterms.items()]
+# print("our final graphs is:")
+# [print(f"{key}: {value}") for (key, value) in G.items()]
+# print("the key for new nodes is:")
+# [print(f"{key}: {value}") for (key, value) in nametoterms.items()]
 
 # now we need to topological sort the vertices of G
 
@@ -342,8 +342,8 @@ def topsort(graph):
     return stack
 
 tsortedvertices = list(reversed(topsort(G)))
-print("the topological sorted vertices of the graph are:")
-[print(v) for v in tsortedvertices]
+# print("the topological sorted vertices of the graph are:")
+# [print(v) for v in tsortedvertices]
 #print(tsortedvertices)
 
 
@@ -416,7 +416,7 @@ for key, replacementlist in replacekeywith.items():
 
 
 # print("the follow sets are:")
-[print(f"{key}: {value}") for (key, value) in follow.items()]
+# [print(f"{key}: {value}") for (key, value) in follow.items()]
 
 print(f"number of terms we computed followsets for: {len(follow.keys())}, number of terms in lhslist: {len(lhslist)}")
 assert len(follow.keys()) == len(lhslist)
@@ -453,7 +453,8 @@ for term in first.keys():
     #print(thisrow)
 with open(outputcsvfile, 'w') as fout:
     fout.write(ostring)
-print("first and follow sets saved into csv file")
+    print("first and follow sets saved into csv file")
+
 
 print("starting building parser table")
 
@@ -500,6 +501,7 @@ for item in tm:
     need_lookahead_str += (item + '\n')
 with open(outputlookaheadfile, 'w') as fout:
     fout.write(need_lookahead_str)
+    print("Done saving which productions need lookahead in "+outputlookaheadfile)
 
 
 

@@ -1,128 +1,55 @@
 ProgramASTnode:
- ExternASTnode: 
-  FunProtoASTnode: int print_int(int)
  FunDeclASTnode:
-  FunProtoASTnode: int fibonacci(int)
+  FunProtoASTnode: int factorial(int)
   FunBodyASTnode:
    BlockASTnode:
-    VarDeclASTnode: int first
-    VarDeclASTnode: int second
-    VarDeclASTnode: int next
-    VarDeclASTnode: int c
-    VarDeclASTnode: int total
-    ExprASTnode:
-     FunCallASTnode:
-      IdentASTnode: print_int
-      Args:
-       ExprASTnode:
-        IdentASTnode: n
+    VarDeclASTnode: int i
+    VarDeclASTnode: int factorial
     ExprASTnode:
      AssignASTnode:
-      IdentASTnode: first
-      ExprASTnode:
-       IntASTnode: 0
-    ExprASTnode:
-     AssignASTnode:
-      IdentASTnode: second
+      IdentASTnode: factorial
       ExprASTnode:
        IntASTnode: 1
     ExprASTnode:
      AssignASTnode:
-      IdentASTnode: c
+      IdentASTnode: i
       ExprASTnode:
        IntASTnode: 1
-    ExprASTnode:
-     AssignASTnode:
-      IdentASTnode: total
-      ExprASTnode:
-       IntASTnode: 0
     WhileASTnode:
      ExprASTnode:
       BinOpASTnode:
-       Binary Operation: <
+       Binary Operation: <=
        LHS:
         ExprASTnode:
-         IdentASTnode: c
+         IdentASTnode: i
        RHS:
         ExprASTnode:
          IdentASTnode: n
      BlockASTnode:
-      IfASTnode:
-       ExprASTnode:
-        BinOpASTnode:
-         Binary Operation: <=
-         LHS:
-          ExprASTnode:
-           IdentASTnode: c
-         RHS:
-          ExprASTnode:
-           IntASTnode: 1
-       BlockASTnode:
-        ExprASTnode:
-         AssignASTnode:
-          IdentASTnode: next
-          ExprASTnode:
-           IdentASTnode: c
-       ElseStmt:
-        BlockASTnode:
-         ExprASTnode:
-          AssignASTnode:
-           IdentASTnode: next
-           ExprASTnode:
-            BinOpASTnode:
-             Binary Operation: +
-             LHS:
-              ExprASTnode:
-               IdentASTnode: first
-             RHS:
-              ExprASTnode:
-               IdentASTnode: second
-         ExprASTnode:
-          AssignASTnode:
-           IdentASTnode: first
-           ExprASTnode:
-            IdentASTnode: second
-         ExprASTnode:
-          AssignASTnode:
-           IdentASTnode: second
-           ExprASTnode:
-            IdentASTnode: next
-      ExprASTnode:
-       FunCallASTnode:
-        IdentASTnode: print_int
-        Args:
-         ExprASTnode:
-          IdentASTnode: next
       ExprASTnode:
        AssignASTnode:
-        IdentASTnode: c
+        IdentASTnode: factorial
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: *
+          LHS:
+           ExprASTnode:
+            IdentASTnode: factorial
+          RHS:
+           ExprASTnode:
+            IdentASTnode: i
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: i
         ExprASTnode:
          BinOpASTnode:
           Binary Operation: +
           LHS:
            ExprASTnode:
-            IdentASTnode: c
+            IdentASTnode: i
           RHS:
            ExprASTnode:
             IntASTnode: 1
-      ExprASTnode:
-       AssignASTnode:
-        IdentASTnode: total
-        ExprASTnode:
-         BinOpASTnode:
-          Binary Operation: +
-          LHS:
-           ExprASTnode:
-            IdentASTnode: total
-          RHS:
-           ExprASTnode:
-            IdentASTnode: next
-    ExprASTnode:
-     FunCallASTnode:
-      IdentASTnode: print_int
-      Args:
-       ExprASTnode:
-        IdentASTnode: total
     ReturnASTnode:
      ExprASTnode:
-      IdentASTnode: total
+      IdentASTnode: factorial
