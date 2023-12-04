@@ -324,43 +324,130 @@ string ProgramASTnode::to_string(string pre) const {
 };
 
 Value* BinOpASTnode::codegen(){
-  //
   Value *val, *l, *r;
+  if (binop==COMMA) {
+
+  } else if (binop==COMMA) {
+
+  } else {
+  l = lhs->codegen();
+  r = rhs->codegen();
+  Type* widest = widest_type(l, r);
+  Value *lcast = widening_cast_or_err(l, widest, tok);
+  Value *rcast = widening_cast_or_err(r, widest, tok);
+  Type* floattype = tok_to_llvm_type(FLOAT_TOK);
+  Type* inttype = tok_to_llvm_type(INT_TOK);
   switch(binop){
   case AND:
+    val = Builder->CreateAdd(bool_cast(l), bool_cast(r), "and");
     break;
   case OR:
+    val = Builder->CreateOr(bool_cast(l), bool_cast(r), "or");
     break;
   case PLUS:
-    l = lhs->codegen();
-    r = rhs->codegen();
-    val = Builder->CreateAdd(l, r, "add");
+    if (widest==floattype){
+      val = Builder->CreateFAdd(lcast, rcast, "float_add");
+    } else {
+      val = Builder->CreateAdd(int_cast(l), int_cast(r), "int_add");
+    }
     break;
   case MINUS:
+    if (widest==floattype){
+      val = Builder->CreateFSub(lcast, rcast, "float_sub");
+    } else {
+      // cast bool to int if needed
+      val = Builder->CreateSub(int_cast(l), int_cast(r), "int_sub");
+    }
     break;
   case ASTERIX:
+    if (widest==floattype){
+      val = Builder->CreateFMul(lcast, rcast, "float_mul");
+    } else if (widest==inttype){
+      val = Builder->CreateMul(int_cast(l), int_cast(r), "int_mul");
+    } else {
+      val = Builder->CreateMul(l, r, "bool_mul");
+    }
     break;
   case DIV:
+    if (widest==floattype){
+        val = Builder->CreateFDiv(lcast, rcast, "float_div");
+      } else if (widest==inttype){
+        val = Builder->CreateSDiv(int_cast(l), int_cast(r), "int_sdiv");
+      } else {
+        val = Builder->CreateUDiv(l, r, "bool_udiv");
+      }
     break;
   case MOD:
+    if (widest==floattype){
+        throw CompileError(tok, "Neither operand of MOD can be a float");
+      } else if (widest==inttype){
+        val = Builder->CreateSRem(int_cast(l), int_cast(r), "int_srem");
+      } else {
+        val = Builder->CreateURem(l, r, "bool_urem");
+      }
     break;
   case EQ:
-    l = lhs->codegen();
-    r = rhs->codegen();
-    val = Builder->CreateICmpEQ(l, r, "equalitycheck");
+    if (widest==floattype){
+      val = Builder->CreateFCmpOEQ(lcast, rcast, "float_oeq");
+    } else if (widest==inttype){
+      val = Builder->CreateICmpEQ(int_cast(l), int_cast(r), "int_eq");
+    } else {
+      val = Builder->CreateICmpEQ(l, r, "bool_eq");
+    }
     break;
   case NE:
+    if (widest==floattype){
+      // nan is not equal to anything (including itself)
+      val = Builder->CreateFCmpUNE(lcast, rcast, "float_une");
+    } else if (widest==inttype){
+      val = Builder->CreateICmpNE(int_cast(l), int_cast(r), "int_ne");
+    } else {
+      val = Builder->CreateICmpNE(l, r, "bool_ne");
+    }
     break;
   case LE:
+    if (widest==floattype){
+      // nan is not le anything (including itself)
+      val = Builder->CreateFCmpOLE(lcast, rcast, "float_ole");
+    } else if (widest==inttype){
+      val = Builder->CreateICmpSLE(int_cast(l), int_cast(r), "int_sle");
+    } else {
+      val = Builder->CreateICmpULE(l, r, "bool_ule");
+    }
     break;
   case LT:
+    if (widest==floattype){
+      // nan is not lt anything (including itself)
+      val = Builder->CreateFCmpOLT(lcast, rcast, "float_olt");
+    } else if (widest==inttype){
+      val = Builder->CreateICmpSLT(int_cast(l), int_cast(r), "int_slt");
+    } else {
+      val = Builder->CreateICmpULT(l, r, "bool_ult");
+    }
     break;
   case GE:
+    if (widest==floattype){
+      // nan is not ge anything (including itself)
+      val = Builder->CreateFCmpOGE(lcast, rcast, "float_oge");
+    } else if (widest==inttype){
+      val = Builder->CreateICmpSGE(int_cast(l), int_cast(r), "int_sge");
+    } else {
+      val = Builder->CreateICmpUGE(l, r, "bool_uge");
+    }
     break;
   case GT:
+    if (widest==floattype){
+      // nan is not gt anything (including itself)
+      val = Builder->CreateFCmpOGT(lcast, rcast, "float_ogt");
+    } else if (widest==inttype){
+      val = Builder->CreateICmpSGT(int_cast(l), int_cast(r), "int_sgt");
+    } else {
+      val = Builder->CreateICmpUGT(l, r, "bool_ugt");
+    }
     break;
   default:
     throw CompileError(tok, "This is not a valid binary operation token");
+  }
   }
   return val;
 };

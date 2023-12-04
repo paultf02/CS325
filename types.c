@@ -13,6 +13,6 @@ int m = 7;
 bool t = true;
 
 int main(){
-    printf("%d\n", -true);
+    printf("%d\n", 3.2%2.1);
     return 0;
 }
