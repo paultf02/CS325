@@ -969,6 +969,7 @@ Value* FunDeclASTnode::codegen(){
   // }
   // Validate the generated code, checking for consistency.
 
+
   // below is a bit of a hack so that we dont have empty basic blocks
   for (BasicBlock &bb: *TheFunction){
     if (bb.size() == 0){
