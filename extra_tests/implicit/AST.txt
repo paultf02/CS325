@@ -1,0 +1,19 @@
+ProgramASTnode:
+ FunDeclASTnode:
+  FunProtoASTnode: int foo(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: X
+ FunDeclASTnode:
+  FunProtoASTnode: int implicit()
+  FunBodyASTnode:
+   BlockASTnode:
+    ReturnASTnode:
+     ExprASTnode:
+      FunCallASTnode:
+       IdentASTnode: foo
+       Args:
+        ExprASTnode:
+         FloatASTnode: 3.2

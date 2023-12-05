@@ -1234,7 +1234,7 @@ unique_ptr<ExprASTnode> parse_rvalprime(unique_ptr<ExprASTnode> lhs){
 // rval1 -> rval2 rval1prime
 unique_ptr<ExprASTnode> parse_rval1(){
   auto expr = parse_rval2();
-  auto root = parse_rvalprime(std::move(expr));
+  auto root = parse_rval1prime(std::move(expr));
   return std::move(root);
   // if (binop) {
   //   binop->lhs = std::move(expr);
@@ -1279,8 +1279,8 @@ unique_ptr<ExprASTnode> parse_rval2prime(unique_ptr<ExprASTnode> lhs){
     getNextToken();
     auto rhs = parse_rval3();
     binop = make_unique<BinOpASTnode>(EQ, std::move(lhs), std::move(rhs), temp);
-    auto expr = make_unique<ExprASTnode>(std::move(binop));
-    return parse_rval2prime(std::move(expr));
+    // auto expr = make_unique<ExprASTnode>(std::move(binop));
+    // return parse_rval2prime(std::move(expr));
     // return std::move(ans);
   } else if (CurTok.type == NE) {
     auto temp = CurTok;

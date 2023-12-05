@@ -1,0 +1,45 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: int print_int(int)
+ ExternASTnode: 
+  FunProtoASTnode: float print_float(float)
+ VarDeclASTnode: int z
+ FunDeclASTnode:
+  FunProtoASTnode: int assign()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int x
+    VarDeclASTnode: int y
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: x
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: y
+        ExprASTnode:
+         IntASTnode: 2
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: z
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: y
+        ExprASTnode:
+         IntASTnode: 3
+    ReturnASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: +
+       LHS:
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: +
+          LHS:
+           ExprASTnode:
+            IdentASTnode: x
+          RHS:
+           ExprASTnode:
+            IdentASTnode: y
+       RHS:
+        ExprASTnode:
+         IdentASTnode: z

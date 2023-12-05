@@ -1,0 +1,89 @@
+ProgramASTnode:
+ FunDeclASTnode:
+  FunProtoASTnode: int returns(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    WhileASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: ==
+       LHS:
+        ExprASTnode:
+         IdentASTnode: x
+       RHS:
+        ExprASTnode:
+         IntASTnode: 1
+     BlockASTnode:
+      ReturnASTnode:
+       ExprASTnode:
+        IntASTnode: 0
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: x
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: +
+          LHS:
+           ExprASTnode:
+            IdentASTnode: x
+          RHS:
+           ExprASTnode:
+            IntASTnode: 1
+    IfASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: >
+       LHS:
+        ExprASTnode:
+         IdentASTnode: x
+       RHS:
+        ExprASTnode:
+         IntASTnode: 1
+     BlockASTnode:
+      ReturnASTnode:
+       ExprASTnode:
+        IntASTnode: 1
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: x
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: +
+          LHS:
+           ExprASTnode:
+            IdentASTnode: x
+          RHS:
+           ExprASTnode:
+            IntASTnode: 1
+     ElseStmt:
+      BlockASTnode:
+       ReturnASTnode:
+        ExprASTnode:
+         IntASTnode: 2
+       ExprASTnode:
+        AssignASTnode:
+         IdentASTnode: x
+         ExprASTnode:
+          BinOpASTnode:
+           Binary Operation: +
+           LHS:
+            ExprASTnode:
+             IdentASTnode: x
+           RHS:
+            ExprASTnode:
+             IntASTnode: 1
+    ReturnASTnode:
+     ExprASTnode:
+      IntASTnode: 3
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: x
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: x
+        RHS:
+         ExprASTnode:
+          IntASTnode: 1

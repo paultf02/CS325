@@ -1,5 +1,5 @@
-; ModuleID = 'mini-c'
-source_filename = "mini-c"
+; ModuleID = './while.c'
+source_filename = "./while.c"
 
 declare i32 @print_int(i32)
 
@@ -9,34 +9,36 @@ define i32 @foo(i32 %x) {
 entry:
   %x1 = alloca i32, align 4
   store i32 %x, ptr %x1, align 4
-  br label %conditionalBlock
+  br label %whilecondition
 
-conditionalBlock:                                 ; preds = %continueBlock5, %entry
+whilecondition:                                   ; preds = %endif, %entry
   %x2 = load i32, ptr %x1, align 4
-  %0 = icmp slt i32 %x2, 10
-  br i1 %0, label %thenBlock, label %continueBlock
+  %int_slt = icmp slt i32 %x2, 10
+  %whilecond = icmp ne i1 %int_slt, false
+  br i1 %whilecond, label %whilebody, label %endwhile
 
-thenBlock:                                        ; preds = %conditionalBlock
+whilebody:                                        ; preds = %whilecondition
   %x3 = load i32, ptr %x1, align 4
-  %1 = icmp slt i32 %x3, 5
-  br i1 %1, label %thenBlock4, label %elseBlock
+  %int_slt4 = icmp slt i32 %x3, 5
+  %ifcond = icmp ne i1 %int_slt4, false
+  br i1 %ifcond, label %then, label %else
 
-continueBlock:                                    ; preds = %conditionalBlock
+endwhile:                                         ; preds = %whilecondition
   %x8 = load i32, ptr %x1, align 4
   ret i32 %x8
 
-thenBlock4:                                       ; preds = %thenBlock
+then:                                             ; preds = %whilebody
+  %x5 = load i32, ptr %x1, align 4
+  %int_add = add i32 %x5, 2
+  store i32 %int_add, ptr %x1, align 4
+  br label %endif
+
+else:                                             ; preds = %whilebody
   %x6 = load i32, ptr %x1, align 4
-  %2 = add i32 %x6, 2
-  store i32 %2, ptr %x1, align 4
-  br label %continueBlock5
+  %int_add7 = add i32 %x6, 1
+  store i32 %int_add7, ptr %x1, align 4
+  br label %endif
 
-elseBlock:                                        ; preds = %thenBlock
-  %x7 = load i32, ptr %x1, align 4
-  %3 = add i32 %x7, 1
-  store i32 %3, ptr %x1, align 4
-  br label %continueBlock5
-
-continueBlock5:                                   ; preds = %elseBlock, %thenBlock4
-  br label %conditionalBlock
+endif:                                            ; preds = %else, %then
+  br label %whilecondition
 }

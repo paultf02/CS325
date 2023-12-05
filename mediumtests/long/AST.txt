@@ -36,12 +36,12 @@ ProgramASTnode:
         Binary Operation: /
         LHS:
          ExprASTnode:
-          FloatASTnode: 4.0
-        RHS:
-         ExprASTnode:
           BinOpASTnode:
            Binary Operation: /
            LHS:
+            ExprASTnode:
+             FloatASTnode: 4.0
+           RHS:
             ExprASTnode:
              BinOpASTnode:
               Binary Operation: /
@@ -51,9 +51,9 @@ ProgramASTnode:
               RHS:
                ExprASTnode:
                 FloatASTnode: 2.0
-           RHS:
-            ExprASTnode:
-             FloatASTnode: 7.0
+        RHS:
+         ExprASTnode:
+          FloatASTnode: 7.0
     ExprASTnode:
      AssignASTnode:
       IdentASTnode: rhs_1
@@ -74,17 +74,17 @@ ProgramASTnode:
         Binary Operation: /
         LHS:
          ExprASTnode:
-          FloatASTnode: 4.0
-        RHS:
-         ExprASTnode:
           BinOpASTnode:
            Binary Operation: /
            LHS:
             ExprASTnode:
-             IdentASTnode: rhs_1
+             FloatASTnode: 4.0
            RHS:
             ExprASTnode:
-             FloatASTnode: 7.0
+             IdentASTnode: rhs_1
+        RHS:
+         ExprASTnode:
+          FloatASTnode: 7.0
     ReturnASTnode:
      ExprASTnode:
       BinOpASTnode:

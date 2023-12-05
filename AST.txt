@@ -1,104 +1,22 @@
 ProgramASTnode:
+ VarDeclASTnode: int a
  FunDeclASTnode:
-  FunProtoASTnode: bool palindrome(int)
+  FunProtoASTnode: int main()
   FunBodyASTnode:
    BlockASTnode:
-    VarDeclASTnode: int t
-    VarDeclASTnode: int rev
-    VarDeclASTnode: int rmndr
-    VarDeclASTnode: bool result
+    VarDeclASTnode: int b
     ExprASTnode:
      AssignASTnode:
-      IdentASTnode: rev
+      IdentASTnode: b
       ExprASTnode:
-       IntASTnode: 0
-    ExprASTnode:
-     AssignASTnode:
-      IdentASTnode: result
-      ExprASTnode:
-       BoolASTnode: false
-    ExprASTnode:
-     AssignASTnode:
-      IdentASTnode: t
-      ExprASTnode:
-       IdentASTnode: number
-    WhileASTnode:
-     ExprASTnode:
-      BinOpASTnode:
-       Binary Operation: >
-       LHS:
-        ExprASTnode:
-         IdentASTnode: number
-       RHS:
-        ExprASTnode:
-         IntASTnode: 0
-     BlockASTnode:
-      ExprASTnode:
-       AssignASTnode:
-        IdentASTnode: rmndr
-        ExprASTnode:
-         BinOpASTnode:
-          Binary Operation: %
-          LHS:
-           ExprASTnode:
-            IdentASTnode: number
-          RHS:
-           ExprASTnode:
-            IntASTnode: 10
-      ExprASTnode:
-       AssignASTnode:
-        IdentASTnode: rev
-        ExprASTnode:
-         BinOpASTnode:
-          Binary Operation: +
-          LHS:
-           ExprASTnode:
-            BinOpASTnode:
-             Binary Operation: *
-             LHS:
-              ExprASTnode:
-               IdentASTnode: rev
-             RHS:
-              ExprASTnode:
-               IntASTnode: 10
-          RHS:
-           ExprASTnode:
-            IdentASTnode: rmndr
-      ExprASTnode:
-       AssignASTnode:
-        IdentASTnode: number
-        ExprASTnode:
-         BinOpASTnode:
-          Binary Operation: /
-          LHS:
-           ExprASTnode:
-            IdentASTnode: number
-          RHS:
-           ExprASTnode:
-            IntASTnode: 10
-    IfASTnode:
-     ExprASTnode:
-      BinOpASTnode:
-       Binary Operation: ==
-       LHS:
-        ExprASTnode:
-         IdentASTnode: t
-       RHS:
-        ExprASTnode:
-         IdentASTnode: rev
-     BlockASTnode:
-      ExprASTnode:
-       AssignASTnode:
-        IdentASTnode: result
-        ExprASTnode:
-         BoolASTnode: true
-     ElseStmt:
-      BlockASTnode:
-       ExprASTnode:
-        AssignASTnode:
-         IdentASTnode: result
+       BinOpASTnode:
+        Binary Operation: &&
+        LHS:
          ExprASTnode:
           BoolASTnode: false
+        RHS:
+         ExprASTnode:
+          BoolASTnode: true
     ReturnASTnode:
      ExprASTnode:
-      IdentASTnode: result
+      IdentASTnode: b

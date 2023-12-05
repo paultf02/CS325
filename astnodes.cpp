@@ -505,7 +505,11 @@ Value* IdentASTnode::codegen(){
         Value* v = Builder->CreateLoad(g->getValueType(), g, name);
         return v;
       } else { // nullptr which means global variable has been declared but not defined
-          throw CompileError(tok, "global variable has been declared but not defined yet");
+          // we will return the null value of the global
+          // throw CompileError(tok, "global variable has been declared but not defined yet");
+          GlobalVariable* g = TheModule->getGlobalVariable(name);
+          Value* v = Builder->CreateLoad(g->getValueType(), g, name);
+          return v;
       }
     }
   } else { // load the existing local variable
@@ -794,6 +798,9 @@ Value* BlockASTnode::codegen(){
   
   for (auto &stmt : stmtlist){
     stmt->codegen();
+    if (stmt->whichtype == "return_stmt"){
+      break; // we do not codegen after the last return
+    }
   }
 
   NamedValuesVector.pop_back(); // delete the top most symbol table after we exit the block

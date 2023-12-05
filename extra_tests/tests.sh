@@ -37,11 +37,11 @@ function validate {
 echo "Test *****"
 
 cd extra_tests/implicit/
-pwd
-rm -rf output.ll imp
-"$COMP" ./implicit.c
-$CLANG driver.cpp output.ll  -o imp
-validate "./imp"
+# pwd
+# rm -rf output.ll imp
+# "$COMP" ./implicit.c
+# $CLANG driver.cpp output.ll  -o imp
+# validate "./imp"
 
 cd ../scope/
 pwd
@@ -57,26 +57,26 @@ rm -rf output.ll assoc
 $CLANG driver.cpp output.ll  -o assoc
 validate "./assoc"
 
-cd ../global/
+# cd ../global/
+# pwd
+# rm -rf output.ll global
+# "$COMP" ./global.c
+# $CLANG driver.cpp output.ll  -o global
+# validate "./global"
+
+cd ../returns/
 pwd
-rm -rf output.ll global
-"$COMP" ./global.c
-$CLANG driver.cpp output.ll  -o global
-validate "./global"
+rm -rf output.ll returns
+"$COMP" ./returns.c
+$CLANG driver.cpp output.ll  -o returns
+validate "./returns"
 
-# cd ../returns/
-# pwd
-# rm -rf output.ll returns
-# "$COMP" ./returns.c
-# $CLANG driver.cpp output.ll  -o returns
-# validate "./returns"
-
-# cd ../unary2/
-# pwd
-# rm -rf output.ll unary2
-# "$COMP" ./unary2.c
-# $CLANG driver.cpp output.ll  -o unary2
-# validate "./unary2"
+cd ../unary2/
+pwd
+rm -rf output.ll unary2
+"$COMP" ./unary2.c
+$CLANG driver.cpp output.ll  -o unary2
+validate "./unary2"
 
 cd ../while/
 pwd

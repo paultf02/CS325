@@ -1,0 +1,40 @@
+ProgramASTnode:
+ FunDeclASTnode:
+  FunProtoASTnode: int associativity()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int n
+    VarDeclASTnode: int m
+    VarDeclASTnode: int result
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: n
+      ExprASTnode:
+       IntASTnode: 4
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: m
+      ExprASTnode:
+       IntASTnode: 5
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: result
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: -
+        LHS:
+         ExprASTnode:
+          BinOpASTnode:
+           Binary Operation: -
+           LHS:
+            ExprASTnode:
+             IdentASTnode: n
+           RHS:
+            ExprASTnode:
+             IdentASTnode: m
+        RHS:
+         ExprASTnode:
+          IntASTnode: 3
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: result

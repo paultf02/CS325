@@ -18,11 +18,11 @@ entry:
   %lhs = alloca float, align 4
   %rhs_1 = alloca float, align 4
   %rhs = alloca float, align 4
-  store float 0x4032AAAAA0000000, ptr %lhs, align 4
+  store float 0x3FD8618620000000, ptr %lhs, align 4
   store float 1.500000e+00, ptr %rhs_1, align 4
   %rhs_11 = load float, ptr %rhs_1, align 4
-  %float_div = fdiv float %rhs_11, 7.000000e+00
-  %float_div2 = fdiv float 4.000000e+00, %float_div
+  %float_div = fdiv float 4.000000e+00, %rhs_11
+  %float_div2 = fdiv float %float_div, 7.000000e+00
   store float %float_div2, ptr %rhs, align 4
   %lhs3 = load float, ptr %lhs, align 4
   %rhs4 = load float, ptr %rhs, align 4

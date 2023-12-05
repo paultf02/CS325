@@ -1,34 +1,36 @@
-; ModuleID = 'mini-c'
-source_filename = "mini-c"
+; ModuleID = './returns.c'
+source_filename = "./returns.c"
 
 define i32 @returns(i32 %x) {
 entry:
   %x1 = alloca i32, align 4
   store i32 %x, ptr %x1, align 4
-  br label %conditionalBlock
+  br label %whilecondition
 
-conditionalBlock:                                 ; preds = %thenBlock, %entry
+whilecondition:                                   ; preds = %whilebody, %entry
   %x2 = load i32, ptr %x1, align 4
-  %0 = icmp eq i32 %x2, 1
-  br i1 %0, label %thenBlock, label %continueBlock
+  %int_eq = icmp eq i32 %x2, 1
+  %whilecond = icmp ne i1 %int_eq, false
+  br i1 %whilecond, label %whilebody, label %endwhile
 
-thenBlock:                                        ; preds = %conditionalBlock
+whilebody:                                        ; preds = %whilecondition
   ret i32 0
-  br label %conditionalBlock
+  br label %whilecondition
 
-continueBlock:                                    ; preds = %conditionalBlock
+endwhile:                                         ; preds = %whilecondition
   %x3 = load i32, ptr %x1, align 4
-  %1 = icmp sgt i32 %x3, 1
-  br i1 %1, label %thenBlock4, label %elseBlock
+  %int_sgt = icmp sgt i32 %x3, 1
+  %ifcond = icmp ne i1 %int_sgt, false
+  br i1 %ifcond, label %then, label %else
 
-thenBlock4:                                       ; preds = %continueBlock
+then:                                             ; preds = %endwhile
   ret i32 1
-  br label %continueBlock5
+  br label %endif
 
-elseBlock:                                        ; preds = %continueBlock
+else:                                             ; preds = %endwhile
   ret i32 2
-  br label %continueBlock5
+  br label %endif
 
-continueBlock5:                                   ; preds = %elseBlock, %thenBlock4
+endif:                                            ; preds = %else, %then
   ret i32 3
 }

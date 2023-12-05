@@ -1,0 +1,86 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: int print_int(int)
+ ExternASTnode: 
+  FunProtoASTnode: float print_float(float)
+ FunDeclASTnode:
+  FunProtoASTnode: int unary2()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: float f
+    VarDeclASTnode: int i
+    VarDeclASTnode: int i2
+    VarDeclASTnode: bool b
+    VarDeclASTnode: bool b2
+    VarDeclASTnode: int z
+    VarDeclASTnode: int z2
+    VarDeclASTnode: bool X
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: X
+      ExprASTnode:
+       BoolASTnode: true
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: i2
+      ExprASTnode:
+       IntASTnode: 0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: f
+      ExprASTnode:
+       FloatASTnode: 0.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: i
+      ExprASTnode:
+       IntASTnode: 1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: b
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          UnOpASTnode:
+           Unary Operation: -
+           ExprASTnode:
+            UnOpASTnode:
+             Unary Operation: !
+             ExprASTnode:
+              IdentASTnode: f
+        RHS:
+         ExprASTnode:
+          IdentASTnode: i
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: z2
+      ExprASTnode:
+       UnOpASTnode:
+        Unary Operation: -
+        ExprASTnode:
+         UnOpASTnode:
+          Unary Operation: !
+          ExprASTnode:
+           IdentASTnode: f
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: b2
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: ||
+        LHS:
+         ExprASTnode:
+          BoolASTnode: true
+        RHS:
+         ExprASTnode:
+          IdentASTnode: b
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: i2
+      ExprASTnode:
+       IdentASTnode: b2
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: i2

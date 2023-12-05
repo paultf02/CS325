@@ -1,0 +1,32 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: int print_int(int)
+ VarDeclASTnode: int a
+ FunDeclASTnode:
+  FunProtoASTnode: int foo()
+  FunBodyASTnode:
+   BlockASTnode:
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: a
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: a
+        RHS:
+         ExprASTnode:
+          IntASTnode: 1
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: a
+ FunDeclASTnode:
+  FunProtoASTnode: int global()
+  FunBodyASTnode:
+   BlockASTnode:
+    ReturnASTnode:
+     ExprASTnode:
+      FunCallASTnode:
+       IdentASTnode: foo
+       Args:
