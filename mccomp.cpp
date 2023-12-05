@@ -62,7 +62,7 @@ TOKEN CurTok;
 std::deque<TOKEN> tok_buffer;
 
 string pathprefix = "/dcs/21/u2022016/Documents/CS325/code1/";
-string grammarversion = "10";
+string grammarversion = "11";
 string csvfilename = pathprefix + "firstfollow/firstfollowg"+grammarversion+"sep.csv";
 string grammarfilename = pathprefix + "grammars/transformedgrammar"+grammarversion+".txt";
 string terminalfilename = pathprefix + "grammars/terminals2.txt";

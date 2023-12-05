@@ -1250,7 +1250,7 @@ unique_ptr<ExprASTnode> parse_rval1prime(unique_ptr<ExprASTnode> lhs){
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval2();
-    auto binop = make_unique<BinOpASTnode>(AND, nullptr, std::move(rhs), temp);
+    auto binop = make_unique<BinOpASTnode>(AND, std::move(lhs), std::move(rhs), temp);
     auto expr = make_unique<ExprASTnode>(std::move(binop));
     return parse_rval1prime(std::move(expr));
   } else {
@@ -1278,7 +1278,7 @@ unique_ptr<ExprASTnode> parse_rval2prime(unique_ptr<ExprASTnode> lhs){
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval3();
-    binop = make_unique<BinOpASTnode>(EQ, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(EQ, std::move(lhs), std::move(rhs), temp);
     auto expr = make_unique<ExprASTnode>(std::move(binop));
     return parse_rval2prime(std::move(expr));
     // return std::move(ans);
@@ -1286,7 +1286,7 @@ unique_ptr<ExprASTnode> parse_rval2prime(unique_ptr<ExprASTnode> lhs){
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval3();
-    binop = make_unique<BinOpASTnode>(NE, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(NE, std::move(lhs), std::move(rhs), temp);
 
     // return std::move(ans);
   } else {
@@ -1316,25 +1316,25 @@ unique_ptr<ExprASTnode> parse_rval3prime(unique_ptr<ExprASTnode> lhs){
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval4();
-    binop = make_unique<BinOpASTnode>(LE, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(LE, std::move(lhs), std::move(rhs), temp);
     // return std::move(ans);
   } else if (CurTok.type == LT) {
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval4();
-    binop = make_unique<BinOpASTnode>(LT, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(LT, std::move(lhs), std::move(rhs), temp);
     // return std::move(ans);
   } else if (CurTok.type == GE) {
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval4();
-    binop = make_unique<BinOpASTnode>(GE, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(GE, std::move(lhs), std::move(rhs), temp);
     // return std::move(ans);
   } else if (CurTok.type == GT) {
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval4();
-    binop = make_unique<BinOpASTnode>(GT, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(GT, std::move(lhs), std::move(rhs), temp);
     // return std::move(ans);
   } else {
     return std::move(lhs);
@@ -1363,13 +1363,13 @@ unique_ptr<ExprASTnode> parse_rval4prime(unique_ptr<ExprASTnode> lhs){
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval5();
-    binop = make_unique<BinOpASTnode>(PLUS, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(PLUS, std::move(lhs), std::move(rhs), temp);
     // return std::move(ans);
   } else if (CurTok.type == MINUS) {
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval5();
-    binop = make_unique<BinOpASTnode>(MINUS, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(MINUS, std::move(lhs), std::move(rhs), temp);
     // return std::move(ans);
   } else {
     return std::move(lhs);
@@ -1398,19 +1398,19 @@ unique_ptr<ExprASTnode> parse_rval5prime(unique_ptr<ExprASTnode> lhs){
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval6();
-    binop = make_unique<BinOpASTnode>(ASTERIX, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(ASTERIX, std::move(lhs), std::move(rhs), temp);
     // return std::move(ans);
   } else if (CurTok.type == DIV) {
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval6();
-    binop = make_unique<BinOpASTnode>(DIV, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(DIV, std::move(lhs), std::move(rhs), temp);
     // return std::move(ans);
   } else if (CurTok.type == MOD) {
     auto temp = CurTok;
     getNextToken();
     auto rhs = parse_rval6();
-    binop = make_unique<BinOpASTnode>(MOD, nullptr, std::move(rhs), temp);
+    binop = make_unique<BinOpASTnode>(MOD, std::move(lhs), std::move(rhs), temp);
     // return std::move(ans);
   } else {
     return std::move(lhs);

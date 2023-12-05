@@ -54,41 +54,41 @@ ProgramASTnode:
         IdentASTnode: term
         ExprASTnode:
          BinOpASTnode:
-          Binary Operation: *
+          Binary Operation: /
           LHS:
            ExprASTnode:
-            IdentASTnode: term
+            BinOpASTnode:
+             Binary Operation: /
+             LHS:
+              ExprASTnode:
+               BinOpASTnode:
+                Binary Operation: *
+                LHS:
+                 ExprASTnode:
+                  BinOpASTnode:
+                   Binary Operation: *
+                   LHS:
+                    ExprASTnode:
+                     IdentASTnode: term
+                   RHS:
+                    ExprASTnode:
+                     IdentASTnode: x
+                RHS:
+                 ExprASTnode:
+                  IdentASTnode: x
+             RHS:
+              ExprASTnode:
+               IdentASTnode: n
           RHS:
            ExprASTnode:
             BinOpASTnode:
-             Binary Operation: *
+             Binary Operation: +
              LHS:
               ExprASTnode:
-               IdentASTnode: x
+               IdentASTnode: n
              RHS:
               ExprASTnode:
-               BinOpASTnode:
-                Binary Operation: /
-                LHS:
-                 ExprASTnode:
-                  IdentASTnode: x
-                RHS:
-                 ExprASTnode:
-                  BinOpASTnode:
-                   Binary Operation: /
-                   LHS:
-                    ExprASTnode:
-                     IdentASTnode: n
-                   RHS:
-                    ExprASTnode:
-                     BinOpASTnode:
-                      Binary Operation: +
-                      LHS:
-                       ExprASTnode:
-                        IdentASTnode: n
-                      RHS:
-                       ExprASTnode:
-                        IntASTnode: 1
+               IntASTnode: 1
       ExprASTnode:
        AssignASTnode:
         IdentASTnode: cos

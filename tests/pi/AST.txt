@@ -58,21 +58,11 @@ ProgramASTnode:
                   Binary Operation: *
                   LHS:
                    ExprASTnode:
-                    IdentASTnode: i
-                  RHS:
-                   ExprASTnode:
                     BinOpASTnode:
                      Binary Operation: *
                      LHS:
                       ExprASTnode:
-                       BinOpASTnode:
-                        Binary Operation: +
-                        LHS:
-                         ExprASTnode:
-                          IdentASTnode: i
-                        RHS:
-                         ExprASTnode:
-                          IntASTnode: 1
+                       IdentASTnode: i
                      RHS:
                       ExprASTnode:
                        BinOpASTnode:
@@ -82,7 +72,17 @@ ProgramASTnode:
                           IdentASTnode: i
                         RHS:
                          ExprASTnode:
-                          IntASTnode: 2
+                          IntASTnode: 1
+                  RHS:
+                   ExprASTnode:
+                    BinOpASTnode:
+                     Binary Operation: +
+                     LHS:
+                      ExprASTnode:
+                       IdentASTnode: i
+                     RHS:
+                      ExprASTnode:
+                       IntASTnode: 2
        ElseStmt:
         BlockASTnode:
          ExprASTnode:
@@ -107,21 +107,11 @@ ProgramASTnode:
                    Binary Operation: *
                    LHS:
                     ExprASTnode:
-                     IdentASTnode: i
-                   RHS:
-                    ExprASTnode:
                      BinOpASTnode:
                       Binary Operation: *
                       LHS:
                        ExprASTnode:
-                        BinOpASTnode:
-                         Binary Operation: +
-                         LHS:
-                          ExprASTnode:
-                           IdentASTnode: i
-                         RHS:
-                          ExprASTnode:
-                           IntASTnode: 1
+                        IdentASTnode: i
                       RHS:
                        ExprASTnode:
                         BinOpASTnode:
@@ -131,7 +121,17 @@ ProgramASTnode:
                            IdentASTnode: i
                          RHS:
                           ExprASTnode:
-                           IntASTnode: 2
+                           IntASTnode: 1
+                   RHS:
+                    ExprASTnode:
+                     BinOpASTnode:
+                      Binary Operation: +
+                      LHS:
+                       ExprASTnode:
+                        IdentASTnode: i
+                      RHS:
+                       ExprASTnode:
+                        IntASTnode: 2
       ExprASTnode:
        AssignASTnode:
         IdentASTnode: flag

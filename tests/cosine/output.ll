@@ -29,15 +29,15 @@ whilecondition:                                   ; preds = %endif, %entry
 whilebody:                                        ; preds = %whilecondition
   %term4 = load float, ptr %term, align 4
   %x5 = load float, ptr %x1, align 4
+  %float_mul = fmul float %term4, %x5
   %x6 = load float, ptr %x1, align 4
-  %n7 = load float, ptr %n, align 4
+  %float_mul7 = fmul float %float_mul, %x6
   %n8 = load float, ptr %n, align 4
-  %float_add = fadd float %n8, 1.000000e+00
-  %float_div = fdiv float %n7, %float_add
-  %float_div9 = fdiv float %x6, %float_div
-  %float_mul = fmul float %x5, %float_div9
-  %float_mul10 = fmul float %term4, %float_mul
-  store float %float_mul10, ptr %term, align 4
+  %float_div = fdiv float %float_mul7, %n8
+  %n9 = load float, ptr %n, align 4
+  %float_add = fadd float %n9, 1.000000e+00
+  %float_div10 = fdiv float %float_div, %float_add
+  store float %float_div10, ptr %term, align 4
   %cos11 = load float, ptr %cos, align 4
   %alt12 = load float, ptr %alt, align 4
   %term13 = load float, ptr %term, align 4
