@@ -16,6 +16,7 @@ entry:
 
 define i32 @global() {
 entry:
+  store i32 5, ptr @a, align 4
   %calltmp = call i32 @foo()
   ret i32 %calltmp
 }

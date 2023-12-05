@@ -102,13 +102,20 @@
 //   return i==5;
 // }
 
+// int a;
+
+// int main(){
+//   // a = a + 9;
+//   int x;
+//   bool b;
+//   b = false || (x = x + 1);
+//   return b;
+// }
+
+// testing globals
+
 int a;
-
 int main(){
-  // a = a + 9;
-  int x;
-  bool b;
-  b = false || (x = x + 1);
-  return b;
+  a = a + 1;
+  return a;
 }
-

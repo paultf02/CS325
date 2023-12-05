@@ -47,13 +47,13 @@ $CLANG driver.cpp output.ll -o example_scope
 validate "./example_scope"
 rm ./example_scope
 
-# cd ../long/
-# pwd
-# rm -rf output.ll long
-# "$COMP" ./long.c
-# $CLANG driver.cpp output.ll -o long
-# validate "./long"
-# rm ./long
+cd ../long/
+pwd
+rm -rf output.ll long
+"$COMP" ./long.c
+$CLANG driver.cpp output.ll -o long
+validate "./long"
+rm ./long
 
 cd ../truthiness/
 pwd

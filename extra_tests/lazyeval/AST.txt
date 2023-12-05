@@ -1,0 +1,95 @@
+ProgramASTnode:
+ VarDeclASTnode: int mutable_var
+ FunDeclASTnode:
+  FunProtoASTnode: int mutating_function()
+  FunBodyASTnode:
+   BlockASTnode:
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: mutable_var
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: mutable_var
+        RHS:
+         ExprASTnode:
+          IntASTnode: 1
+    ReturnASTnode:
+     ExprASTnode:
+      IntASTnode: 1
+ FunDeclASTnode:
+  FunProtoASTnode: int lazyeval_and(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: mutable_var
+      ExprASTnode:
+       IntASTnode: 0
+    IfASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: &&
+       LHS:
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: ==
+          LHS:
+           ExprASTnode:
+            IdentASTnode: control
+          RHS:
+           ExprASTnode:
+            IntASTnode: 1
+       RHS:
+        ExprASTnode:
+         FunCallASTnode:
+          IdentASTnode: mutating_function
+          Args:
+     BlockASTnode:
+      ReturnASTnode:
+       ExprASTnode:
+        IdentASTnode: mutable_var
+     ElseStmt:
+      BlockASTnode:
+       ReturnASTnode:
+        ExprASTnode:
+         IdentASTnode: mutable_var
+ FunDeclASTnode:
+  FunProtoASTnode: int lazyeval_or(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: mutable_var
+      ExprASTnode:
+       IntASTnode: 0
+    IfASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: ||
+       LHS:
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: ==
+          LHS:
+           ExprASTnode:
+            IdentASTnode: control
+          RHS:
+           ExprASTnode:
+            IntASTnode: 1
+       RHS:
+        ExprASTnode:
+         FunCallASTnode:
+          IdentASTnode: mutating_function
+          Args:
+     BlockASTnode:
+      ReturnASTnode:
+       ExprASTnode:
+        IdentASTnode: mutable_var
+     ElseStmt:
+      BlockASTnode:
+       ReturnASTnode:
+        ExprASTnode:
+         IdentASTnode: mutable_var

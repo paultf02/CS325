@@ -25,6 +25,11 @@ ProgramASTnode:
   FunProtoASTnode: int global()
   FunBodyASTnode:
    BlockASTnode:
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: a
+      ExprASTnode:
+       IntASTnode: 5
     ReturnASTnode:
      ExprASTnode:
       FunCallASTnode:

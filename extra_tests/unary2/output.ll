@@ -27,7 +27,7 @@ entry:
   %i3 = load i32, ptr %i, align 4
   %int_add = add i32 %0, %i3
   %int_to_bool_one = icmp ne i32 %int_add, 0
-  store i32 %int_add, ptr %b, align 4
+  store i1 %int_to_bool_one, ptr %b, align 1
   %f4 = load float, ptr %f, align 4
   %float_to_bool_one5 = fcmp une float %f4, 0.000000e+00
   %not6 = icmp ne i1 %float_to_bool_one5, true
@@ -45,7 +45,7 @@ endshortcircuit:                                  ; preds = %checkrhs, %entry
   store i1 %mergeandshortcircuit, ptr %b2, align 1
   %b29 = load i1, ptr %b2, align 1
   %bool_int_cast10 = zext i1 %b29 to i32
-  store i1 %b29, ptr %i2, align 1
+  store i32 %bool_int_cast10, ptr %i2, align 4
   %i211 = load i32, ptr %i2, align 4
   ret i32 %i211
 }

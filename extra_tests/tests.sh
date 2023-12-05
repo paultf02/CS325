@@ -57,12 +57,12 @@ rm -rf output.ll assoc
 $CLANG driver.cpp output.ll  -o assoc
 validate "./assoc"
 
-# cd ../global/
-# pwd
-# rm -rf output.ll global
-# "$COMP" ./global.c
-# $CLANG driver.cpp output.ll  -o global
-# validate "./global"
+cd ../global/
+pwd
+rm -rf output.ll global
+"$COMP" ./global.c
+$CLANG driver.cpp output.ll  -o global
+validate "./global"
 
 cd ../returns/
 pwd
@@ -92,11 +92,11 @@ rm -rf output.ll assign
 $CLANG driver.cpp output.ll  -o assign
 validate "./assign"
 
-# cd ../lazyeval/
-# pwd
-# rm -rf output.ll lazyeval
-# "$COMP" ./lazyeval.c
-# $CLANG driver.cpp output.ll -o lazyeval
-# validate "./lazyeval"
+cd ../lazyeval/
+pwd
+rm -rf output.ll lazyeval
+"$COMP" ./lazyeval.c
+$CLANG driver.cpp output.ll -o lazyeval
+validate "./lazyeval"
 
 echo "***** ALL (HARDER) TESTS PASSED *****"

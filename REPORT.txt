@@ -12,3 +12,5 @@ It judges first time a global variable is defined to be the
 first time reading the source code top to bottom.
 
 we never allow narrowing casts for assignment operators
+
+show how to change global variable to always mutable to sometimes mutable

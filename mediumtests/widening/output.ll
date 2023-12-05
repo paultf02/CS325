@@ -57,9 +57,9 @@ entry:
   store float 1.000000e+00, ptr %bin_7, align 4
   store i32 2, ptr %bin_8, align 4
   store i32 0, ptr %bin_9, align 4
-  store i32 1, ptr %assign_if, align 4
-  store i1 true, ptr %assign_bf, align 1
-  store i1 true, ptr %assign_bi, align 1
+  store float 1.000000e+00, ptr %assign_if, align 4
+  store float 0.000000e+00, ptr %assign_bf, align 4
+  store i32 1, ptr %assign_bi, align 4
   %f41 = load float, ptr %f4, align 4
   %f12 = load float, ptr %f1, align 4
   %float_add = fadd float %f41, %f12
@@ -111,7 +111,7 @@ entry:
   %bool_int_cast36 = zext i1 %bt34 to i32
   %int_sub = sub i32 %bool_int_cast35, %bool_int_cast36
   %int_to_bool_one = icmp ne i32 %int_sub, 0
-  store i32 %int_sub, ptr %bin_9i, align 4
+  store i1 %int_to_bool_one, ptr %bin_9i, align 1
   %bin_137 = load float, ptr %bin_1, align 4
   %calltmp = call float @print_float(float %bin_137)
   %bin_238 = load float, ptr %bin_2, align 4

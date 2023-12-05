@@ -630,24 +630,41 @@ Value* AssignASTnode::codegen(){
       throw CompileError(ident->tok, "variable needs to be declared before being defined");
     } else { // we are referring to a already declared global variable
       GlobalVariable* g = GlobalNamedValues.at(ident->name);
-      if (g){ // this is not a nullptr so global variable has been defined once before
-        throw CompileError(ident->tok, "global variable cannot be defined more than once");
-      } else { // this is the first definition of the global variable
+
+////////// comment out uncomment exactly one of the below two
+
+/////////////////////////begining of global variables can only be defined once 
+      // if (g){ // this is not a nullptr so global variable has been defined once beforee
+      //   throw CompileError(ident->tok, "global variable cannot be defined more than once");
+      // } else { // this is the first definition of the global variable
+      //   GlobalVariable *gnonnull = TheModule->getGlobalVariable(ident->name);
+      //   Type *lhstype = gnonnull->getValueType();
+      //   Value *tostore = force_cast(rhsvalue, lhstype, rhs->get_first_tok());
+      //   Builder->CreateStore(tostore, gnonnull);
+      //   GlobalNamedValues.at(ident->name) = gnonnull;
+      //   return rhsvalue;
+      // }
+////////////////////////////////////////////// end of global variables can only be defined once
+
+///////////////////////////////// beginning of global variables can be defined many times
+
         GlobalVariable *gnonnull = TheModule->getGlobalVariable(ident->name);
         Type *lhstype = gnonnull->getValueType();
         Value *tostore = force_cast(rhsvalue, lhstype, rhs->get_first_tok());
-        Builder->CreateStore(rhsvalue, gnonnull);
+        Builder->CreateStore(tostore, gnonnull);
         GlobalNamedValues.at(ident->name) = gnonnull;
         return rhsvalue;
-        // throw CompileError(ident->tok, "NEED TO IMPLEMENT STORAGE OF GLOBALS");
-      }
+
+////////////////////////////////////// end of global variables can be defined many times.
+
+
     }
     
   } else { // we are referring to already declared local variable
     // Value* v = Builder->CreateLoad(alloca->getAllocatedType(), alloca, name);
     Type *lhstype = alloca->getAllocatedType();
     Value *tostore = force_cast(rhsvalue, lhstype, rhs->get_first_tok());
-    Builder->CreateStore(rhsvalue, alloca);
+    Builder->CreateStore(tostore, alloca);
     return rhsvalue;
   }
 
@@ -655,7 +672,8 @@ Value* AssignASTnode::codegen(){
   // if (!alloca){
   //   throw CompileError(ident->tok, "Variable needs to be declared before being defined");
   // }
-  
+  // below is to get rid of compiler warnings and debugging (but has not been needed)
+  throw CompileError(ident->tok, "We should not be reaching this part of the function");
 };
 
 TOKEN ExprASTnode::get_first_tok() const{
@@ -950,6 +968,17 @@ Value* FunDeclASTnode::codegen(){
   //   Builder->CreateRet(RetVal);
   // }
   // Validate the generated code, checking for consistency.
+
+  // below is a bit of a hack so that we dont have empty basic blocks
+  for (BasicBlock &bb: *TheFunction){
+    if (bb.size() == 0){
+      Type *returntype = TheFunction->getReturnType();
+      Value* funczero = Constant::getNullValue(returntype);
+      Builder->SetInsertPoint(&bb);
+      Builder->CreateRet(funczero);
+    }
+  }
+  
   verifyFunction(*TheFunction);
   //
   return TheFunction;
