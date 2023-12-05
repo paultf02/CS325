@@ -54,18 +54,34 @@ unique_ptr<IfASTnode> parse_if_stmt();
 unique_ptr<BlockASTnode> parse_else_stmt();
 unique_ptr<ReturnASTnode> parse_return_stmt();
 unique_ptr<ExprASTnode> parse_expr();
+
+// unique_ptr<ExprASTnode> parse_rval();
+// unique_ptr<BinOpASTnode> parse_rval_lf();
+// unique_ptr<ExprASTnode> parse_rval1();
+// unique_ptr<BinOpASTnode> parse_rval1_lf();
+// unique_ptr<ExprASTnode> parse_rval2();
+// unique_ptr<BinOpASTnode> parse_rval2_lf();
+// unique_ptr<ExprASTnode> parse_rval3();
+// unique_ptr<BinOpASTnode> parse_rval3_lf();
+// unique_ptr<ExprASTnode> parse_rval4();
+// unique_ptr<BinOpASTnode> parse_rval4_lf();
+// unique_ptr<ExprASTnode> parse_rval5();
+// unique_ptr<BinOpASTnode> parse_rval5_lf();
+
 unique_ptr<ExprASTnode> parse_rval();
-unique_ptr<BinOpASTnode> parse_rval_lf();
+unique_ptr<ExprASTnode> parse_rvalprime(unique_ptr<ExprASTnode> lhs);
+
 unique_ptr<ExprASTnode> parse_rval1();
-unique_ptr<BinOpASTnode> parse_rval1_lf();
+unique_ptr<BinOpASTnode> parse_rval1prime();
 unique_ptr<ExprASTnode> parse_rval2();
-unique_ptr<BinOpASTnode> parse_rval2_lf();
+unique_ptr<BinOpASTnode> parse_rval2prime();
 unique_ptr<ExprASTnode> parse_rval3();
-unique_ptr<BinOpASTnode> parse_rval3_lf();
+unique_ptr<BinOpASTnode> parse_rval3prime();
 unique_ptr<ExprASTnode> parse_rval4();
-unique_ptr<BinOpASTnode> parse_rval4_lf();
+unique_ptr<BinOpASTnode> parse_rval4prime();
 unique_ptr<ExprASTnode> parse_rval5();
-unique_ptr<BinOpASTnode> parse_rval5_lf();
+unique_ptr<BinOpASTnode> parse_rval5prime();
+
 unique_ptr<ExprASTnode> parse_rval6();
 unique_ptr<ExprASTnode> parse_rval7();
 void parse_args(vector<unique_ptr<ExprASTnode>> &arglist);

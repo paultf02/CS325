@@ -75,3 +75,8 @@
 //   }
 //   return type;
 // }
+
+
+
+
+rval = x + y && x * y
