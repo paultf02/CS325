@@ -70,17 +70,16 @@ unique_ptr<ExprASTnode> parse_expr();
 
 unique_ptr<ExprASTnode> parse_rval();
 unique_ptr<ExprASTnode> parse_rvalprime(unique_ptr<ExprASTnode> lhs);
-
 unique_ptr<ExprASTnode> parse_rval1();
-unique_ptr<BinOpASTnode> parse_rval1prime();
+unique_ptr<ExprASTnode> parse_rval1prime(unique_ptr<ExprASTnode> lhs);
 unique_ptr<ExprASTnode> parse_rval2();
-unique_ptr<BinOpASTnode> parse_rval2prime();
+unique_ptr<ExprASTnode> parse_rval2prime(unique_ptr<ExprASTnode> lhs);
 unique_ptr<ExprASTnode> parse_rval3();
-unique_ptr<BinOpASTnode> parse_rval3prime();
+unique_ptr<ExprASTnode> parse_rval3prime(unique_ptr<ExprASTnode> lhs);
 unique_ptr<ExprASTnode> parse_rval4();
-unique_ptr<BinOpASTnode> parse_rval4prime();
+unique_ptr<ExprASTnode> parse_rval4prime(unique_ptr<ExprASTnode> lhs);
 unique_ptr<ExprASTnode> parse_rval5();
-unique_ptr<BinOpASTnode> parse_rval5prime();
+unique_ptr<ExprASTnode> parse_rval5prime(unique_ptr<ExprASTnode> lhs);
 
 unique_ptr<ExprASTnode> parse_rval6();
 unique_ptr<ExprASTnode> parse_rval7();
