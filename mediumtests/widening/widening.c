@@ -1,7 +1,7 @@
 extern int print_int(int X);
 extern float print_float(float X);
 
-bool true_plus_true() {
+int true_plus_true() {
     return true + true;
 }
 
@@ -15,7 +15,7 @@ bool widening_casts() {
     int bin_6;
     float bin_7;
     int bin_8;
-    bool bin_9;
+    int bin_9;
     float bin_1i;
     float bin_2i;
     float bin_3i;

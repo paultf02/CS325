@@ -99,20 +99,50 @@ define i1 @drive() {
 entry:
   %calltmp = call i32 @nested_blocks(i32 5)
   %int_ne = icmp ne i32 %calltmp, 5
-  %calltmp1 = call i32 @shadowing()
-  %int_ne2 = icmp ne i32 %calltmp1, 5
-  %calltmp3 = call i32 @example_scope()
-  %int_ne4 = icmp ne i32 %calltmp3, 5
-  %calltmp5 = call i1 @strange_assoc()
-  %not = icmp ne i1 %calltmp5, true
-  %calltmp6 = call i32 @expr_stmt()
-  %int_ne7 = icmp ne i32 %calltmp6, 0
-  %calltmp8 = call i32 @void_param()
-  %int_ne9 = icmp ne i32 %calltmp8, 0
-  %or = or i1 %int_ne7, %int_ne9
-  %or10 = or i1 %not, %or
-  %or11 = or i1 %int_ne4, %or10
-  %or12 = or i1 %int_ne2, %or11
-  %or13 = or i1 %int_ne, %or12
-  ret i1 %or13
+  br i1 %int_ne, label %endshortcircuit8, label %checkrhs7
+
+checkrhs:                                         ; preds = %endshortcircuit2
+  %calltmp19 = call i32 @void_param()
+  %int_ne20 = icmp ne i32 %calltmp19, 0
+  br label %endshortcircuit
+
+endshortcircuit:                                  ; preds = %checkrhs, %endshortcircuit2
+  %mergeandshortcircuit21 = phi i1 [ true, %entry ], [ %int_ne20, %checkrhs ]
+  ret i1 %mergeandshortcircuit21
+
+checkrhs1:                                        ; preds = %endshortcircuit4
+  %calltmp16 = call i32 @expr_stmt()
+  %int_ne17 = icmp ne i32 %calltmp16, 0
+  br label %endshortcircuit2
+
+endshortcircuit2:                                 ; preds = %checkrhs1, %endshortcircuit4
+  %mergeandshortcircuit18 = phi i1 [ true, %entry ], [ %int_ne17, %checkrhs1 ]
+  br i1 %mergeandshortcircuit18, label %endshortcircuit, label %checkrhs
+
+checkrhs3:                                        ; preds = %endshortcircuit6
+  %calltmp14 = call i1 @strange_assoc()
+  %not = icmp ne i1 %calltmp14, true
+  br label %endshortcircuit4
+
+endshortcircuit4:                                 ; preds = %checkrhs3, %endshortcircuit6
+  %mergeandshortcircuit15 = phi i1 [ true, %entry ], [ %not, %checkrhs3 ]
+  br i1 %mergeandshortcircuit15, label %endshortcircuit2, label %checkrhs1
+
+checkrhs5:                                        ; preds = %endshortcircuit8
+  %calltmp11 = call i32 @example_scope()
+  %int_ne12 = icmp ne i32 %calltmp11, 5
+  br label %endshortcircuit6
+
+endshortcircuit6:                                 ; preds = %checkrhs5, %endshortcircuit8
+  %mergeandshortcircuit13 = phi i1 [ true, %entry ], [ %int_ne12, %checkrhs5 ]
+  br i1 %mergeandshortcircuit13, label %endshortcircuit4, label %checkrhs3
+
+checkrhs7:                                        ; preds = %entry
+  %calltmp9 = call i32 @shadowing()
+  %int_ne10 = icmp ne i32 %calltmp9, 5
+  br label %endshortcircuit8
+
+endshortcircuit8:                                 ; preds = %checkrhs7, %entry
+  %mergeandshortcircuit = phi i1 [ true, %entry ], [ %int_ne10, %checkrhs7 ]
+  br i1 %mergeandshortcircuit, label %endshortcircuit6, label %checkrhs5
 }

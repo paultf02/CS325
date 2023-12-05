@@ -457,6 +457,8 @@ Value *bool_cast(Value* val);
 
 Value *int_cast(Value* val);
 
+Value *force_cast(Value* inputval, Type* goaltype, TOKEN tok);
+
 Type* widest_type(Value* v1, Value* v2);
 
 

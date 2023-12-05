@@ -16,14 +16,14 @@ module load GCC/12.2.0
 
 DIR="$(pwd)"
 
-# ### Build mccomp compiler
-# echo "Cleanup *****"
-# rm -rf ./mccomp
+### Build mccomp compiler
+echo "Cleanup *****"
+rm -rf ./mccomp
 
-# echo "Compile *****"
+echo "Compile *****"
 
-# make clean
-# make -j mccomp
+make clean
+make -j mccomp
 
 COMP=$DIR/mccomp
 echo $COMP

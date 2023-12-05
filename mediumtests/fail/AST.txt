@@ -1,0 +1,25 @@
+ProgramASTnode:
+ FunDeclASTnode:
+  FunProtoASTnode: bool foo(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: x
+ FunDeclASTnode:
+  FunProtoASTnode: int main()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: bool x
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: x
+      ExprASTnode:
+       FunCallASTnode:
+        IdentASTnode: foo
+        Args:
+         ExprASTnode:
+          IntASTnode: 5
+    ReturnASTnode:
+     ExprASTnode:
+      IntASTnode: 0

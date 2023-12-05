@@ -634,8 +634,8 @@ Value* AssignASTnode::codegen(){
         throw CompileError(ident->tok, "global variable cannot be defined more than once");
       } else { // this is the first definition of the global variable
         GlobalVariable *gnonnull = TheModule->getGlobalVariable(ident->name);
-        Type *lhstype = gnonnull->getType();
-        Value *tostore = widening_cast_or_err(rhsvalue, lhstype, rhs->get_first_tok());
+        Type *lhstype = gnonnull->getValueType();
+        Value *tostore = force_cast(rhsvalue, lhstype, rhs->get_first_tok());
         Builder->CreateStore(rhsvalue, gnonnull);
         GlobalNamedValues.at(ident->name) = gnonnull;
         return rhsvalue;
@@ -646,7 +646,7 @@ Value* AssignASTnode::codegen(){
   } else { // we are referring to already declared local variable
     // Value* v = Builder->CreateLoad(alloca->getAllocatedType(), alloca, name);
     Type *lhstype = alloca->getAllocatedType();
-    Value *tostore = widening_cast_or_err(rhsvalue, lhstype, rhs->get_first_tok());
+    Value *tostore = force_cast(rhsvalue, lhstype, rhs->get_first_tok());
     Builder->CreateStore(rhsvalue, alloca);
     return rhsvalue;
   }
@@ -1096,6 +1096,20 @@ Value *int_cast(Value* val){
   } else {
     throw std::runtime_error("bool_cast exception because input value type is not a supported type");
   }
+}
+
+Value *force_cast(Value* inputval, Type* goaltype, TOKEN tok){
+  if (goaltype==tok_to_llvm_type(FLOAT_TOK)){
+    return widening_cast_or_err(inputval, goaltype, tok);
+  } else if (goaltype==tok_to_llvm_type(INT_TOK)){
+    return int_cast(inputval);
+  } else if (goaltype==tok_to_llvm_type(BOOL_TOK)){
+    return bool_cast(inputval);
+  } else {
+    string errmsg = "cannot perform implicit narrowing cast when casting from " + typetostring(inputval->getType()) + " to " + typetostring(goaltype) + "\n";
+    throw CompileError(tok, errmsg);
+  }
+
 }
 
 Type* widest_type(Value* v1, Value* v2){

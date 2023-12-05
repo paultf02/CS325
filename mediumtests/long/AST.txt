@@ -220,62 +220,16 @@ ProgramASTnode:
        LHS:
         ExprASTnode:
          BinOpASTnode:
-          Binary Operation: !=
-          LHS:
-           ExprASTnode:
-            FunCallASTnode:
-             IdentASTnode: nested_blocks
-             Args:
-              ExprASTnode:
-               IntASTnode: 5
-          RHS:
-           ExprASTnode:
-            IntASTnode: 5
-       RHS:
-        ExprASTnode:
-         BinOpASTnode:
           Binary Operation: ||
           LHS:
-           ExprASTnode:
-            BinOpASTnode:
-             Binary Operation: !=
-             LHS:
-              ExprASTnode:
-               FunCallASTnode:
-                IdentASTnode: shadowing
-                Args:
-             RHS:
-              ExprASTnode:
-               IntASTnode: 5
-          RHS:
            ExprASTnode:
             BinOpASTnode:
              Binary Operation: ||
              LHS:
               ExprASTnode:
                BinOpASTnode:
-                Binary Operation: !=
-                LHS:
-                 ExprASTnode:
-                  FunCallASTnode:
-                   IdentASTnode: example_scope
-                   Args:
-                RHS:
-                 ExprASTnode:
-                  IntASTnode: 5
-             RHS:
-              ExprASTnode:
-               BinOpASTnode:
                 Binary Operation: ||
                 LHS:
-                 ExprASTnode:
-                  UnOpASTnode:
-                   Unary Operation: !
-                   ExprASTnode:
-                    FunCallASTnode:
-                     IdentASTnode: strange_assoc
-                     Args:
-                RHS:
                  ExprASTnode:
                   BinOpASTnode:
                    Binary Operation: ||
@@ -286,11 +240,13 @@ ProgramASTnode:
                       LHS:
                        ExprASTnode:
                         FunCallASTnode:
-                         IdentASTnode: expr_stmt
+                         IdentASTnode: nested_blocks
                          Args:
+                          ExprASTnode:
+                           IntASTnode: 5
                       RHS:
                        ExprASTnode:
-                        IntASTnode: 0
+                        IntASTnode: 5
                    RHS:
                     ExprASTnode:
                      BinOpASTnode:
@@ -298,8 +254,52 @@ ProgramASTnode:
                       LHS:
                        ExprASTnode:
                         FunCallASTnode:
-                         IdentASTnode: void_param
+                         IdentASTnode: shadowing
                          Args:
                       RHS:
                        ExprASTnode:
-                        IntASTnode: 0
+                        IntASTnode: 5
+                RHS:
+                 ExprASTnode:
+                  BinOpASTnode:
+                   Binary Operation: !=
+                   LHS:
+                    ExprASTnode:
+                     FunCallASTnode:
+                      IdentASTnode: example_scope
+                      Args:
+                   RHS:
+                    ExprASTnode:
+                     IntASTnode: 5
+             RHS:
+              ExprASTnode:
+               UnOpASTnode:
+                Unary Operation: !
+                ExprASTnode:
+                 FunCallASTnode:
+                  IdentASTnode: strange_assoc
+                  Args:
+          RHS:
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: !=
+             LHS:
+              ExprASTnode:
+               FunCallASTnode:
+                IdentASTnode: expr_stmt
+                Args:
+             RHS:
+              ExprASTnode:
+               IntASTnode: 0
+       RHS:
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: !=
+          LHS:
+           ExprASTnode:
+            FunCallASTnode:
+             IdentASTnode: void_param
+             Args:
+          RHS:
+           ExprASTnode:
+            IntASTnode: 0
