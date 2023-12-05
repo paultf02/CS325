@@ -164,22 +164,22 @@ string WhileASTnode::to_string(string pre) const {
 
 string IntASTnode::to_string(string pre) const {
   // std::cout << "in IntASTnode token on lineNo " + std::to_string(tok.lineNo) + nl;
-  string ans = pre + "IntASTnode: " + tok.lexeme + nl;
+  string ans = pre + "IntASTnode: " + tok.lexeme + " <line: " + std::to_string(tok.lineNo) + ", column: " + std::to_string(tok.columnNo) + ">" + nl;
   return ans;
 };
 
 string FloatASTnode::to_string(string pre) const {
-  string ans = pre + "FloatASTnode: " + tok.lexeme + nl;
+  string ans = pre + "FloatASTnode: " + tok.lexeme + " <line: " + std::to_string(tok.lineNo) + ", column: " + std::to_string(tok.columnNo) + ">" + nl;
   return ans;
 };
 
 string BoolASTnode::to_string(string pre) const {
-  string ans = pre + "BoolASTnode: " + tok.lexeme + nl;
+  string ans = pre + "BoolASTnode: " + tok.lexeme + " <line: " + std::to_string(tok.lineNo) + ", column: " + std::to_string(tok.columnNo) + ">" + nl;
   return ans;
 };
 
 string IdentASTnode::to_string(string pre) const {
-  string ans = pre + "IdentASTnode: " + tok.lexeme + nl;
+  string ans = pre + "IdentASTnode: " + tok.lexeme + " <line: " + std::to_string(tok.lineNo) + ", column: " + std::to_string(tok.columnNo) + ">" + nl;
   return ans;
 };
 
@@ -192,7 +192,8 @@ string VarDeclASTnode::to_string(string pre) const {
   // std::cout << "called VarDeclASTnode\n";
   string npre = pre + sp;
   string ans = "";
-  ans += pre + "VarDeclASTnode: " + vartype->vartype + sp + ident->name + nl;
+  ans += pre + "VarDeclASTnode: " + vartype->vartype + sp + ident->name;
+  ans += + " <line: " + std::to_string(ident->tok.lineNo) + ", column: " + std::to_string(ident->tok.columnNo) + ">" + nl;
   // std::cout << "before 158\n";
   auto x = ident->tok.lexeme;
   auto y = std::to_string(ident->tok.lineNo);
@@ -263,7 +264,8 @@ string FunProtoASTnode::to_string(string pre) const {
     ans.pop_back();
     ans.pop_back();
   }
-  ans += ")" + nl;
+  ans += ")";
+  ans += " <line: " + std::to_string(ident->tok.lineNo) + ", column: " + std::to_string(ident->tok.columnNo) + ">" + nl;
   return ans;
 };
 
