@@ -19,7 +19,7 @@ entry:
   store float -1.000000e+00, ptr %alt, align 4
   br label %whilecondition
 
-whilecondition:                                   ; preds = %whilebody, %entry
+whilecondition:                                   ; preds = %endif, %entry
   %term2 = load float, ptr %term, align 4
   %eps3 = load float, ptr %eps, align 4
   %float_ogt = fcmp ogt float %term2, %eps3
@@ -50,13 +50,23 @@ whilebody:                                        ; preds = %whilecondition
   %n17 = load float, ptr %n, align 4
   %float_add18 = fadd float %n17, 2.000000e+00
   store float %float_add18, ptr %n, align 4
-  %term19 = load float, ptr %term, align 4
-  %calltmp = call float @print_float(float %term19)
-  br label %whilecondition
+  %n19 = load float, ptr %n, align 4
+  %float_olt = fcmp olt float %n19, 2.000000e+05
+  %ifcond = icmp ne i1 %float_olt, false
+  br i1 %ifcond, label %then, label %endif
 
 endwhile:                                         ; preds = %whilecondition
-  %cos20 = load float, ptr %cos, align 4
-  %calltmp21 = call float @print_float(float %cos20)
-  %cos22 = load float, ptr %cos, align 4
-  ret float %cos22
+  %cos24 = load float, ptr %cos, align 4
+  ret float %cos24
+
+then:                                             ; preds = %whilebody
+  %term20 = load float, ptr %term, align 4
+  %calltmp = call float @print_float(float %term20)
+  %cos21 = load float, ptr %cos, align 4
+  %calltmp22 = call float @print_float(float %cos21)
+  %calltmp23 = call float @print_float(float 4.200000e+01)
+  br label %endif
+
+endif:                                            ; preds = %then, %whilebody
+  br label %whilecondition
 }

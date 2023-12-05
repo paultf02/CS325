@@ -128,18 +128,35 @@ ProgramASTnode:
           RHS:
            ExprASTnode:
             IntASTnode: 2
-      ExprASTnode:
-       FunCallASTnode:
-        IdentASTnode: print_float
-        Args:
-         ExprASTnode:
-          IdentASTnode: term
-    ExprASTnode:
-     FunCallASTnode:
-      IdentASTnode: print_float
-      Args:
+      IfASTnode:
        ExprASTnode:
-        IdentASTnode: cos
+        BinOpASTnode:
+         Binary Operation: <
+         LHS:
+          ExprASTnode:
+           IdentASTnode: n
+         RHS:
+          ExprASTnode:
+           IntASTnode: 200000
+       BlockASTnode:
+        ExprASTnode:
+         FunCallASTnode:
+          IdentASTnode: print_float
+          Args:
+           ExprASTnode:
+            IdentASTnode: term
+        ExprASTnode:
+         FunCallASTnode:
+          IdentASTnode: print_float
+          Args:
+           ExprASTnode:
+            IdentASTnode: cos
+        ExprASTnode:
+         FunCallASTnode:
+          IdentASTnode: print_float
+          Args:
+           ExprASTnode:
+            FloatASTnode: 42.0
     ReturnASTnode:
      ExprASTnode:
       IdentASTnode: cos
