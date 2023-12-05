@@ -1,9 +1,10 @@
 short circuiting
 assign type semantics - (widening only for equality)
+beautify AST
+
 declared but not defined global should have a default value?
   yes
 fix brackets parsing issue
-beautify AST
 
 CreateEntryBlockAlloca Type Done
 Function Proto Has Unique Arg Names Done

@@ -4,19 +4,30 @@ ProgramASTnode:
   FunProtoASTnode: int main()
   FunBodyASTnode:
    BlockASTnode:
-    VarDeclASTnode: int b
+    VarDeclASTnode: int x
+    VarDeclASTnode: bool b
     ExprASTnode:
      AssignASTnode:
       IdentASTnode: b
       ExprASTnode:
        BinOpASTnode:
-        Binary Operation: &&
+        Binary Operation: ||
         LHS:
          ExprASTnode:
           BoolASTnode: false
         RHS:
          ExprASTnode:
-          BoolASTnode: true
+          AssignASTnode:
+           IdentASTnode: x
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: +
+             LHS:
+              ExprASTnode:
+               IdentASTnode: x
+             RHS:
+              ExprASTnode:
+               IntASTnode: 1
     ReturnASTnode:
      ExprASTnode:
       IdentASTnode: b

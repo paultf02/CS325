@@ -106,8 +106,9 @@ int a;
 
 int main(){
   // a = a + 9;
-  int b;
-  b = (false) && (true);
+  int x;
+  bool b;
+  b = false || (x = x + 1);
   return b;
 }
 

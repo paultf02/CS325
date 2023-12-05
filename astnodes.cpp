@@ -325,9 +325,38 @@ string ProgramASTnode::to_string(string pre) const {
 
 Value* BinOpASTnode::codegen(){
   Value *val, *l, *r;
-  if (binop==COMMA) {
-
-  } else if (binop==COMMA) {
+  if (binop==AND) {
+    Function *TheFunction = Builder->GetInsertBlock()->getParent();
+    BasicBlock *original = Builder->GetInsertBlock();
+    BasicBlock *checkrhs = BasicBlock::Create(*TheContext, "checkrhs", TheFunction);
+    BasicBlock *end = BasicBlock::Create(*TheContext, "endshortcircuit", TheFunction);
+    l = bool_cast(lhs->codegen());
+    Builder->CreateCondBr(l, checkrhs, end);
+    Builder->SetInsertPoint(checkrhs);
+    r = bool_cast(rhs->codegen());
+    Builder->CreateBr(end);
+    Builder->SetInsertPoint(end);
+    PHINode *phi = Builder->CreatePHI(tok_to_llvm_type(BOOL_TOK), 2, "mergeandshortcircuit");
+    Value *llvmfalse = ConstantInt::get(tok_to_llvm_type(BOOL_TOK), 0);
+    phi->addIncoming(llvmfalse, original);
+    phi->addIncoming(r, checkrhs);
+    return phi;
+  } else if (binop==OR) {
+    Function *TheFunction = Builder->GetInsertBlock()->getParent();
+    BasicBlock *original = Builder->GetInsertBlock();
+    BasicBlock *checkrhs = BasicBlock::Create(*TheContext, "checkrhs", TheFunction);
+    BasicBlock *end = BasicBlock::Create(*TheContext, "endshortcircuit", TheFunction);
+    l = bool_cast(lhs->codegen());
+    Builder->CreateCondBr(l, end, checkrhs);
+    Builder->SetInsertPoint(checkrhs);
+    r = bool_cast(rhs->codegen());
+    Builder->CreateBr(end);
+    Builder->SetInsertPoint(end);
+    PHINode *phi = Builder->CreatePHI(tok_to_llvm_type(BOOL_TOK), 2, "mergeandshortcircuit");
+    Value *llvmtrue = ConstantInt::get(tok_to_llvm_type(BOOL_TOK), 1);
+    phi->addIncoming(llvmtrue, original);
+    phi->addIncoming(r, checkrhs);
+    return phi;
 
   } else {
   l = lhs->codegen();
@@ -339,7 +368,7 @@ Value* BinOpASTnode::codegen(){
   Type* inttype = tok_to_llvm_type(INT_TOK);
   switch(binop){
   case AND:
-    val = Builder->CreateAdd(bool_cast(l), bool_cast(r), "and");
+    val = Builder->CreateAnd(bool_cast(l), bool_cast(r), "and");
     break;
   case OR:
     val = Builder->CreateOr(bool_cast(l), bool_cast(r), "or");
@@ -605,6 +634,8 @@ Value* AssignASTnode::codegen(){
         throw CompileError(ident->tok, "global variable cannot be defined more than once");
       } else { // this is the first definition of the global variable
         GlobalVariable *gnonnull = TheModule->getGlobalVariable(ident->name);
+        Type *lhstype = gnonnull->getType();
+        Value *tostore = widening_cast_or_err(rhsvalue, lhstype, rhs->get_first_tok());
         Builder->CreateStore(rhsvalue, gnonnull);
         GlobalNamedValues.at(ident->name) = gnonnull;
         return rhsvalue;
@@ -612,8 +643,10 @@ Value* AssignASTnode::codegen(){
       }
     }
     
-  } else { // load to the existing local variable
+  } else { // we are referring to already declared local variable
     // Value* v = Builder->CreateLoad(alloca->getAllocatedType(), alloca, name);
+    Type *lhstype = alloca->getAllocatedType();
+    Value *tostore = widening_cast_or_err(rhsvalue, lhstype, rhs->get_first_tok());
     Builder->CreateStore(rhsvalue, alloca);
     return rhsvalue;
   }
