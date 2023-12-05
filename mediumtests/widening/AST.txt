@@ -1,0 +1,715 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: int print_int(int)
+ ExternASTnode: 
+  FunProtoASTnode: float print_float(float)
+ FunDeclASTnode:
+  FunProtoASTnode: bool true_plus_true()
+  FunBodyASTnode:
+   BlockASTnode:
+    ReturnASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: +
+       LHS:
+        ExprASTnode:
+         BoolASTnode: true
+       RHS:
+        ExprASTnode:
+         BoolASTnode: true
+ FunDeclASTnode:
+  FunProtoASTnode: bool widening_casts()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: float bin_1
+    VarDeclASTnode: float bin_2
+    VarDeclASTnode: float bin_3
+    VarDeclASTnode: float bin_31
+    VarDeclASTnode: float bin_4
+    VarDeclASTnode: int bin_5
+    VarDeclASTnode: int bin_6
+    VarDeclASTnode: float bin_7
+    VarDeclASTnode: int bin_8
+    VarDeclASTnode: bool bin_9
+    VarDeclASTnode: float bin_1i
+    VarDeclASTnode: float bin_2i
+    VarDeclASTnode: float bin_3i
+    VarDeclASTnode: float bin_31i
+    VarDeclASTnode: float bin_4i
+    VarDeclASTnode: int bin_5i
+    VarDeclASTnode: int bin_6i
+    VarDeclASTnode: float bin_7i
+    VarDeclASTnode: int bin_8i
+    VarDeclASTnode: bool bin_9i
+    VarDeclASTnode: float assign_if
+    VarDeclASTnode: float assign_bf
+    VarDeclASTnode: int assign_bi
+    VarDeclASTnode: float f4
+    VarDeclASTnode: float f1
+    VarDeclASTnode: int i3
+    VarDeclASTnode: int i1
+    VarDeclASTnode: bool bf
+    VarDeclASTnode: bool bt
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: f4
+      ExprASTnode:
+       FloatASTnode: 4.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: f1
+      ExprASTnode:
+       FloatASTnode: 1.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: i3
+      ExprASTnode:
+       IntASTnode: 3
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: i1
+      ExprASTnode:
+       IntASTnode: 1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bf
+      ExprASTnode:
+       BoolASTnode: false
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bt
+      ExprASTnode:
+       BoolASTnode: true
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_1
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          FloatASTnode: 4.0
+        RHS:
+         ExprASTnode:
+          FloatASTnode: 1.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_2
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          FloatASTnode: 4.0
+        RHS:
+         ExprASTnode:
+          IntASTnode: 1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_3
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          FloatASTnode: 4.0
+        RHS:
+         ExprASTnode:
+          BoolASTnode: true
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_31
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          FloatASTnode: 4.0
+        RHS:
+         ExprASTnode:
+          BoolASTnode: false
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_4
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IntASTnode: 3
+        RHS:
+         ExprASTnode:
+          FloatASTnode: 1.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_5
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IntASTnode: 3
+        RHS:
+         ExprASTnode:
+          IntASTnode: 1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_6
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IntASTnode: 3
+        RHS:
+         ExprASTnode:
+          BoolASTnode: true
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_7
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          BoolASTnode: true
+        RHS:
+         ExprASTnode:
+          FloatASTnode: 1.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_8
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          BoolASTnode: true
+        RHS:
+         ExprASTnode:
+          IntASTnode: 1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_9
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: -
+        LHS:
+         ExprASTnode:
+          BoolASTnode: true
+        RHS:
+         ExprASTnode:
+          BoolASTnode: true
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: assign_if
+      ExprASTnode:
+       IntASTnode: 1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: assign_bf
+      ExprASTnode:
+       BoolASTnode: true
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: assign_bi
+      ExprASTnode:
+       BoolASTnode: true
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_1i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: f4
+        RHS:
+         ExprASTnode:
+          IdentASTnode: f1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_2i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: f4
+        RHS:
+         ExprASTnode:
+          IdentASTnode: i1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_3i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: f4
+        RHS:
+         ExprASTnode:
+          IdentASTnode: bt
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_31i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: f4
+        RHS:
+         ExprASTnode:
+          IdentASTnode: bf
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_4i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: i3
+        RHS:
+         ExprASTnode:
+          IdentASTnode: f1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_5i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: i3
+        RHS:
+         ExprASTnode:
+          IdentASTnode: i1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_6i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: i3
+        RHS:
+         ExprASTnode:
+          IdentASTnode: bt
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_7i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: bt
+        RHS:
+         ExprASTnode:
+          IdentASTnode: f1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_8i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IdentASTnode: bt
+        RHS:
+         ExprASTnode:
+          IdentASTnode: i1
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: bin_9i
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: -
+        LHS:
+         ExprASTnode:
+          IdentASTnode: bt
+        RHS:
+         ExprASTnode:
+          IdentASTnode: bt
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_1
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_2
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_3
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_31
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_4
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_int
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_5
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_int
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_6
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_float
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_7
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_int
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_8
+    ExprASTnode:
+     FunCallASTnode:
+      IdentASTnode: print_int
+      Args:
+       ExprASTnode:
+        IdentASTnode: bin_9
+    ReturnASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: &&
+       LHS:
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: ==
+          LHS:
+           ExprASTnode:
+            IdentASTnode: bin_1
+          RHS:
+           ExprASTnode:
+            FloatASTnode: 5.0
+       RHS:
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: &&
+          LHS:
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: ==
+             LHS:
+              ExprASTnode:
+               IdentASTnode: bin_2
+             RHS:
+              ExprASTnode:
+               FloatASTnode: 5.0
+          RHS:
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: &&
+             LHS:
+              ExprASTnode:
+               BinOpASTnode:
+                Binary Operation: ==
+                LHS:
+                 ExprASTnode:
+                  IdentASTnode: bin_3
+                RHS:
+                 ExprASTnode:
+                  FloatASTnode: 5.0
+             RHS:
+              ExprASTnode:
+               BinOpASTnode:
+                Binary Operation: &&
+                LHS:
+                 ExprASTnode:
+                  BinOpASTnode:
+                   Binary Operation: ==
+                   LHS:
+                    ExprASTnode:
+                     IdentASTnode: bin_31
+                   RHS:
+                    ExprASTnode:
+                     FloatASTnode: 4.0
+                RHS:
+                 ExprASTnode:
+                  BinOpASTnode:
+                   Binary Operation: &&
+                   LHS:
+                    ExprASTnode:
+                     BinOpASTnode:
+                      Binary Operation: ==
+                      LHS:
+                       ExprASTnode:
+                        IdentASTnode: bin_4
+                      RHS:
+                       ExprASTnode:
+                        FloatASTnode: 4.0
+                   RHS:
+                    ExprASTnode:
+                     BinOpASTnode:
+                      Binary Operation: &&
+                      LHS:
+                       ExprASTnode:
+                        BinOpASTnode:
+                         Binary Operation: ==
+                         LHS:
+                          ExprASTnode:
+                           IdentASTnode: bin_5
+                         RHS:
+                          ExprASTnode:
+                           IntASTnode: 4
+                      RHS:
+                       ExprASTnode:
+                        BinOpASTnode:
+                         Binary Operation: &&
+                         LHS:
+                          ExprASTnode:
+                           BinOpASTnode:
+                            Binary Operation: ==
+                            LHS:
+                             ExprASTnode:
+                              IdentASTnode: bin_6
+                            RHS:
+                             ExprASTnode:
+                              IntASTnode: 4
+                         RHS:
+                          ExprASTnode:
+                           BinOpASTnode:
+                            Binary Operation: &&
+                            LHS:
+                             ExprASTnode:
+                              BinOpASTnode:
+                               Binary Operation: ==
+                               LHS:
+                                ExprASTnode:
+                                 IdentASTnode: bin_7
+                               RHS:
+                                ExprASTnode:
+                                 FloatASTnode: 2.0
+                            RHS:
+                             ExprASTnode:
+                              BinOpASTnode:
+                               Binary Operation: &&
+                               LHS:
+                                ExprASTnode:
+                                 BinOpASTnode:
+                                  Binary Operation: ==
+                                  LHS:
+                                   ExprASTnode:
+                                    IdentASTnode: bin_8
+                                  RHS:
+                                   ExprASTnode:
+                                    IntASTnode: 2
+                               RHS:
+                                ExprASTnode:
+                                 BinOpASTnode:
+                                  Binary Operation: &&
+                                  LHS:
+                                   ExprASTnode:
+                                    BinOpASTnode:
+                                     Binary Operation: ==
+                                     LHS:
+                                      ExprASTnode:
+                                       IdentASTnode: bin_9
+                                     RHS:
+                                      ExprASTnode:
+                                       BoolASTnode: false
+                                  RHS:
+                                   ExprASTnode:
+                                    BinOpASTnode:
+                                     Binary Operation: &&
+                                     LHS:
+                                      ExprASTnode:
+                                       BinOpASTnode:
+                                        Binary Operation: ==
+                                        LHS:
+                                         ExprASTnode:
+                                          IdentASTnode: bin_1i
+                                        RHS:
+                                         ExprASTnode:
+                                          FloatASTnode: 5.0
+                                     RHS:
+                                      ExprASTnode:
+                                       BinOpASTnode:
+                                        Binary Operation: &&
+                                        LHS:
+                                         ExprASTnode:
+                                          BinOpASTnode:
+                                           Binary Operation: ==
+                                           LHS:
+                                            ExprASTnode:
+                                             IdentASTnode: bin_2i
+                                           RHS:
+                                            ExprASTnode:
+                                             FloatASTnode: 5.0
+                                        RHS:
+                                         ExprASTnode:
+                                          BinOpASTnode:
+                                           Binary Operation: &&
+                                           LHS:
+                                            ExprASTnode:
+                                             BinOpASTnode:
+                                              Binary Operation: ==
+                                              LHS:
+                                               ExprASTnode:
+                                                IdentASTnode: bin_3i
+                                              RHS:
+                                               ExprASTnode:
+                                                FloatASTnode: 5.0
+                                           RHS:
+                                            ExprASTnode:
+                                             BinOpASTnode:
+                                              Binary Operation: &&
+                                              LHS:
+                                               ExprASTnode:
+                                                BinOpASTnode:
+                                                 Binary Operation: ==
+                                                 LHS:
+                                                  ExprASTnode:
+                                                   IdentASTnode: bin_31i
+                                                 RHS:
+                                                  ExprASTnode:
+                                                   FloatASTnode: 4.0
+                                              RHS:
+                                               ExprASTnode:
+                                                BinOpASTnode:
+                                                 Binary Operation: &&
+                                                 LHS:
+                                                  ExprASTnode:
+                                                   BinOpASTnode:
+                                                    Binary Operation: ==
+                                                    LHS:
+                                                     ExprASTnode:
+                                                      IdentASTnode: bin_4i
+                                                    RHS:
+                                                     ExprASTnode:
+                                                      FloatASTnode: 4.0
+                                                 RHS:
+                                                  ExprASTnode:
+                                                   BinOpASTnode:
+                                                    Binary Operation: &&
+                                                    LHS:
+                                                     ExprASTnode:
+                                                      BinOpASTnode:
+                                                       Binary Operation: ==
+                                                       LHS:
+                                                        ExprASTnode:
+                                                         IdentASTnode: bin_5i
+                                                       RHS:
+                                                        ExprASTnode:
+                                                         IntASTnode: 4
+                                                    RHS:
+                                                     ExprASTnode:
+                                                      BinOpASTnode:
+                                                       Binary Operation: &&
+                                                       LHS:
+                                                        ExprASTnode:
+                                                         BinOpASTnode:
+                                                          Binary Operation: ==
+                                                          LHS:
+                                                           ExprASTnode:
+                                                            IdentASTnode: bin_6i
+                                                          RHS:
+                                                           ExprASTnode:
+                                                            IntASTnode: 4
+                                                       RHS:
+                                                        ExprASTnode:
+                                                         BinOpASTnode:
+                                                          Binary Operation: &&
+                                                          LHS:
+                                                           ExprASTnode:
+                                                            BinOpASTnode:
+                                                             Binary Operation: ==
+                                                             LHS:
+                                                              ExprASTnode:
+                                                               IdentASTnode: bin_7i
+                                                             RHS:
+                                                              ExprASTnode:
+                                                               FloatASTnode: 2.0
+                                                          RHS:
+                                                           ExprASTnode:
+                                                            BinOpASTnode:
+                                                             Binary Operation: &&
+                                                             LHS:
+                                                              ExprASTnode:
+                                                               BinOpASTnode:
+                                                                Binary Operation: ==
+                                                                LHS:
+                                                                 ExprASTnode:
+                                                                  IdentASTnode: bin_8i
+                                                                RHS:
+                                                                 ExprASTnode:
+                                                                  IntASTnode: 2
+                                                             RHS:
+                                                              ExprASTnode:
+                                                               BinOpASTnode:
+                                                                Binary Operation: &&
+                                                                LHS:
+                                                                 ExprASTnode:
+                                                                  BinOpASTnode:
+                                                                   Binary Operation: ==
+                                                                   LHS:
+                                                                    ExprASTnode:
+                                                                     IdentASTnode: bin_9i
+                                                                   RHS:
+                                                                    ExprASTnode:
+                                                                     BoolASTnode: false
+                                                                RHS:
+                                                                 ExprASTnode:
+                                                                  BinOpASTnode:
+                                                                   Binary Operation: &&
+                                                                   LHS:
+                                                                    ExprASTnode:
+                                                                     BinOpASTnode:
+                                                                      Binary Operation: ==
+                                                                      LHS:
+                                                                       ExprASTnode:
+                                                                        IdentASTnode: assign_if
+                                                                      RHS:
+                                                                       ExprASTnode:
+                                                                        FloatASTnode: 1.0
+                                                                   RHS:
+                                                                    ExprASTnode:
+                                                                     BinOpASTnode:
+                                                                      Binary Operation: &&
+                                                                      LHS:
+                                                                       ExprASTnode:
+                                                                        BinOpASTnode:
+                                                                         Binary Operation: ==
+                                                                         LHS:
+                                                                          ExprASTnode:
+                                                                           IdentASTnode: assign_bf
+                                                                         RHS:
+                                                                          ExprASTnode:
+                                                                           FloatASTnode: 1.0
+                                                                      RHS:
+                                                                       ExprASTnode:
+                                                                        BinOpASTnode:
+                                                                         Binary Operation: ==
+                                                                         LHS:
+                                                                          ExprASTnode:
+                                                                           IdentASTnode: assign_bi
+                                                                         RHS:
+                                                                          ExprASTnode:
+                                                                           IntASTnode: 1

@@ -128,6 +128,12 @@ ProgramASTnode:
           RHS:
            ExprASTnode:
             IntASTnode: 2
+      ExprASTnode:
+       FunCallASTnode:
+        IdentASTnode: print_float
+        Args:
+         ExprASTnode:
+          IdentASTnode: term
     ExprASTnode:
      FunCallASTnode:
       IdentASTnode: print_float

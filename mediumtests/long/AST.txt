@@ -1,0 +1,305 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: int print_int(int)
+ ExternASTnode: 
+  FunProtoASTnode: float print_float(float)
+ FunDeclASTnode:
+  FunProtoASTnode: int nested_blocks(int)
+  FunBodyASTnode:
+   BlockASTnode:
+    BlockASTnode:
+     BlockASTnode:
+      BlockASTnode:
+       BlockASTnode:
+        BlockASTnode:
+         BlockASTnode:
+          BlockASTnode:
+           BlockASTnode:
+            BlockASTnode:
+             BlockASTnode:
+              BlockASTnode:
+               ReturnASTnode:
+                ExprASTnode:
+                 IdentASTnode: x
+ FunDeclASTnode:
+  FunProtoASTnode: bool strange_assoc()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: float lhs
+    VarDeclASTnode: float rhs_1
+    VarDeclASTnode: float rhs
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: lhs
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: /
+        LHS:
+         ExprASTnode:
+          FloatASTnode: 4.0
+        RHS:
+         ExprASTnode:
+          BinOpASTnode:
+           Binary Operation: /
+           LHS:
+            ExprASTnode:
+             BinOpASTnode:
+              Binary Operation: /
+              LHS:
+               ExprASTnode:
+                FloatASTnode: 3.0
+              RHS:
+               ExprASTnode:
+                FloatASTnode: 2.0
+           RHS:
+            ExprASTnode:
+             FloatASTnode: 7.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: rhs_1
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: /
+        LHS:
+         ExprASTnode:
+          FloatASTnode: 3.0
+        RHS:
+         ExprASTnode:
+          FloatASTnode: 2.0
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: rhs
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: /
+        LHS:
+         ExprASTnode:
+          FloatASTnode: 4.0
+        RHS:
+         ExprASTnode:
+          BinOpASTnode:
+           Binary Operation: /
+           LHS:
+            ExprASTnode:
+             IdentASTnode: rhs_1
+           RHS:
+            ExprASTnode:
+             FloatASTnode: 7.0
+    ReturnASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: ==
+       LHS:
+        ExprASTnode:
+         IdentASTnode: lhs
+       RHS:
+        ExprASTnode:
+         IdentASTnode: rhs
+ FunDeclASTnode:
+  FunProtoASTnode: int void_param()
+  FunBodyASTnode:
+   BlockASTnode:
+    ReturnASTnode:
+     ExprASTnode:
+      IntASTnode: 0
+ FunDeclASTnode:
+  FunProtoASTnode: int example_scope()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int x
+    VarDeclASTnode: int y
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: x
+      ExprASTnode:
+       BinOpASTnode:
+        Binary Operation: +
+        LHS:
+         ExprASTnode:
+          IntASTnode: 2
+        RHS:
+         ExprASTnode:
+          IntASTnode: 3
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: y
+      ExprASTnode:
+       IntASTnode: 2
+    WhileASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: >
+       LHS:
+        ExprASTnode:
+         IdentASTnode: y
+       RHS:
+        ExprASTnode:
+         IntASTnode: 0
+     BlockASTnode:
+      VarDeclASTnode: int x
+      VarDeclASTnode: bool cond
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: cond
+        ExprASTnode:
+         BoolASTnode: true
+      WhileASTnode:
+       ExprASTnode:
+        IdentASTnode: cond
+       BlockASTnode:
+        ExprASTnode:
+         AssignASTnode:
+          IdentASTnode: x
+          ExprASTnode:
+           IntASTnode: 17
+        ExprASTnode:
+         AssignASTnode:
+          IdentASTnode: cond
+          ExprASTnode:
+           BoolASTnode: false
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: x
+        ExprASTnode:
+         IntASTnode: 2
+      ExprASTnode:
+       AssignASTnode:
+        IdentASTnode: y
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: -
+          LHS:
+           ExprASTnode:
+            IdentASTnode: y
+          RHS:
+           ExprASTnode:
+            IdentASTnode: x
+    ReturnASTnode:
+     ExprASTnode:
+      IdentASTnode: x
+ FunDeclASTnode:
+  FunProtoASTnode: int expr_stmt()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int x
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: x
+      ExprASTnode:
+       IntASTnode: 5
+    ExprASTnode:
+     IdentASTnode: x
+    ReturnASTnode:
+     ExprASTnode:
+      IntASTnode: 0
+ FunDeclASTnode:
+  FunProtoASTnode: int shadowing()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: int nested_blocks
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: nested_blocks
+      ExprASTnode:
+       IntASTnode: 5
+    ReturnASTnode:
+     ExprASTnode:
+      FunCallASTnode:
+       IdentASTnode: nested_blocks
+       Args:
+        ExprASTnode:
+         IdentASTnode: nested_blocks
+ FunDeclASTnode:
+  FunProtoASTnode: bool drive()
+  FunBodyASTnode:
+   BlockASTnode:
+    ReturnASTnode:
+     ExprASTnode:
+      BinOpASTnode:
+       Binary Operation: ||
+       LHS:
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: !=
+          LHS:
+           ExprASTnode:
+            FunCallASTnode:
+             IdentASTnode: nested_blocks
+             Args:
+              ExprASTnode:
+               IntASTnode: 5
+          RHS:
+           ExprASTnode:
+            IntASTnode: 5
+       RHS:
+        ExprASTnode:
+         BinOpASTnode:
+          Binary Operation: ||
+          LHS:
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: !=
+             LHS:
+              ExprASTnode:
+               FunCallASTnode:
+                IdentASTnode: shadowing
+                Args:
+             RHS:
+              ExprASTnode:
+               IntASTnode: 5
+          RHS:
+           ExprASTnode:
+            BinOpASTnode:
+             Binary Operation: ||
+             LHS:
+              ExprASTnode:
+               BinOpASTnode:
+                Binary Operation: !=
+                LHS:
+                 ExprASTnode:
+                  FunCallASTnode:
+                   IdentASTnode: example_scope
+                   Args:
+                RHS:
+                 ExprASTnode:
+                  IntASTnode: 5
+             RHS:
+              ExprASTnode:
+               BinOpASTnode:
+                Binary Operation: ||
+                LHS:
+                 ExprASTnode:
+                  UnOpASTnode:
+                   Unary Operation: !
+                   ExprASTnode:
+                    FunCallASTnode:
+                     IdentASTnode: strange_assoc
+                     Args:
+                RHS:
+                 ExprASTnode:
+                  BinOpASTnode:
+                   Binary Operation: ||
+                   LHS:
+                    ExprASTnode:
+                     BinOpASTnode:
+                      Binary Operation: !=
+                      LHS:
+                       ExprASTnode:
+                        FunCallASTnode:
+                         IdentASTnode: expr_stmt
+                         Args:
+                      RHS:
+                       ExprASTnode:
+                        IntASTnode: 0
+                   RHS:
+                    ExprASTnode:
+                     BinOpASTnode:
+                      Binary Operation: !=
+                      LHS:
+                       ExprASTnode:
+                        FunCallASTnode:
+                         IdentASTnode: void_param
+                         Args:
+                      RHS:
+                       ExprASTnode:
+                        IntASTnode: 0

@@ -1,0 +1,25 @@
+ProgramASTnode:
+ ExternASTnode: 
+  FunProtoASTnode: int print_int(int)
+ ExternASTnode: 
+  FunProtoASTnode: float print_float(float)
+ FunDeclASTnode:
+  FunProtoASTnode: int foo()
+  FunBodyASTnode:
+   BlockASTnode:
+    VarDeclASTnode: float x
+    ExprASTnode:
+     AssignASTnode:
+      IdentASTnode: x
+      ExprASTnode:
+       FloatASTnode: 5.0
+    IfASTnode:
+     ExprASTnode:
+      IdentASTnode: x
+     BlockASTnode:
+      ReturnASTnode:
+       ExprASTnode:
+        IntASTnode: 5
+    ReturnASTnode:
+     ExprASTnode:
+      IntASTnode: 0

@@ -61,7 +61,7 @@ int lineNo, columnNo; // not static because used in mccomp.cpp
 TOKEN CurTok;
 std::deque<TOKEN> tok_buffer;
 
-string pathprefix = "/dcs/21/u2022016/Documents/CS325/code/";
+string pathprefix = "/dcs/21/u2022016/Documents/CS325/code1/";
 string grammarversion = "10";
 string csvfilename = pathprefix + "firstfollow/firstfollowg"+grammarversion+"sep.csv";
 string grammarfilename = pathprefix + "grammars/transformedgrammar"+grammarversion+".txt";
